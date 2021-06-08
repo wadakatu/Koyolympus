@@ -1,10 +1,13 @@
 <template>
-    <div class="photo-list" ontouchstart="">
-        <h2 v-show="noPhoto">There are no photos in this page.</h2>
-        <div class="images" v-for="photo in photos">
-            <img class="item" :src="photo.url" :key="photo.url" v-lazy="photo.url"
-                 alt="This photo taken by Koyo Isono.">
+    <div>
+        <div class="photo-list" ontouchstart="">
+            <h2 v-show="noPhoto">There are no photos in this page.</h2>
+            <div class="images" v-for="photo in photos">
+                <img class="item" :src="photo.url" :key="photo.url" v-lazy="photo.url" @click="openModal(photo)"
+                     alt="This photo taken by Koyo Isono.">
+            </div>
         </div>
+        <photo-modal-component :val="postItem" v-show="showContent" @close="closeModal"></photo-modal-component>
     </div>
 </template>
 
@@ -27,11 +30,14 @@ export default {
     name: "RandomPhotoList.vue",
     components: {
         PaginateComponent: () => import('./PaginateComponent'),
+        PhotoModalComponent: () => import('./PhotoModalComponent')
     },
     data() {
         return {
             photos: [],
             noPhoto: false,
+            showContent: false,
+            postItem: ''
         }
     },
     methods: {
@@ -56,6 +62,13 @@ export default {
                 self.noPhoto = true;
             }
         },
+        openModal: function (photo) {
+            this.showContent = true;
+            this.postItem = photo;
+        },
+        closeModal: function () {
+            this.showContent = false;
+        }
     },
     watch: {
         $route: {

@@ -2,12 +2,17 @@
     <transition name="component-fade">
         <div id="overlay" @click="$emit('close')">
             <div id="modal-content">
-                <img :src="val.url" alt="This photo taken by Koyo Isono.">
-                <button @click="$emit('close')">閉じる</button>
+                <div id="modal-content-top">
+                    <img :src="val.url" alt="This photo taken by Koyo Isono.">
+                </div>
+                <div id="modal-content-bottom">
+                    <button class="good">いいね！</button>
+                    <button class="close" @click="$emit('close')">閉じる</button>
+                </div>
             </div>
         </div>
     </transition>
-</template>
+</template>s
 
 <script>
 export default {
@@ -28,7 +33,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 
     /*　画面の中央に要素を表示させる設定　*/
     display: flex;
@@ -39,9 +44,24 @@ export default {
 #modal-content {
     z-index: 2;
     width: 80%;
-    height: 60vh;
+    height: 55vh;
     padding: 1em;
-    background: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modal-content-top {
+    width: 80vw;
+    text-align: center;
+    /*width: 50vw;*/
+    /*text-align: center;*/
+}
+
+#modal-content-bottom {
+    width: 80vw;
+    margin-top: 5vh;
+    text-align: center;
+    /*display: inline-block;*/
+    /*width: 15vw;*/
 }
 
 .component-fade-enter-active,
@@ -55,9 +75,14 @@ export default {
 }
 
 img {
-    object-fit: cover;
-    width: 650px;
+    object-fit: contain;
+    height: 400px;
+    pointer-events: none;
 }
 
+.close {
+    /*top: 0;*/
+    /*left: 25vw;*/
+}
 
 </style>

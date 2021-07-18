@@ -1,13 +1,14 @@
 <template>
     <transition name="component-fade">
-        <div id="overlay" @click="$emit('close')">
-            <div id="modal-content">
-                <div id="modal-content-top">
+        <div id="overlay" @click.self="$emit('close')">
+            <div id="modal-content" @click.self="$emit('close')">
+                <div id="modal-content-top" @click.self="$emit('close')">
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <i class="like-heart" v-on:click.stop="close()"></i>
-                    <span class="liked">liked!</span>
+                    <i id="like-heart" @click.self="like()"></i>
+                    <p id="like-count">いいね数：3</p>
+                    <span id="liked">liked!</span>
                 </div>
             </div>
         </div>
@@ -18,12 +19,16 @@
 export default {
     name: "PhotoModalComponent.vue",
     props: ['val'],
+    methods: {
+        like() {
+            console.log(this.$store.state.photo.like);
+            $("#like-heart,#liked").toggleClass("press", 1000);
+        },
+    },
+    computed: {
+
+    }
 }
-$(function () {
-    $("i").click(function () {
-        $("i,span").toggleClass("press", 1000);
-    });
-});
 </script>
 
 <style scoped>
@@ -38,7 +43,7 @@ $(function () {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.5);
 
     /*　画面の中央に要素を表示させる設定　*/
     display: flex;
@@ -48,8 +53,8 @@ $(function () {
 
 #modal-content {
     z-index: 2;
-    width: 80%;
-    height: 50vh;
+    width: 80vw;
+    height: 55vh;
     padding: 1em;
     background-color: rgba(0, 0, 0, 0.5);
 }
@@ -57,16 +62,12 @@ $(function () {
 #modal-content-top {
     width: 80vw;
     text-align: center;
-    /*width: 50vw;*/
-    /*text-align: center;*/
 }
 
 #modal-content-bottom {
     width: 80vw;
     margin-top: 3vh;
     text-align: center;
-    /*display: inline-block;*/
-    /*width: 15vw;*/
 }
 
 .component-fade-enter-active,
@@ -83,9 +84,10 @@ img {
     object-fit: contain;
     height: 400px;
     pointer-events: none;
+    border: 1px solid white;
 }
 
-.like-heart {
+#like-heart {
     cursor: pointer;
     padding: 10px 12px 8px;
     background: #fff;
@@ -96,17 +98,17 @@ img {
     transition: .2s;
 }
 
-.like-heart:hover {
+#like-heart:hover {
     color: #666;
 }
 
-.like-heart:before {
+#like-heart:before {
     font-family: fontawesome;
     content: '\f004';
     font-style: normal;
 }
 
-.liked {
+#liked {
     position: absolute;
     bottom: 100px;
     left: 0;
@@ -119,16 +121,20 @@ img {
     font-weight: 400;
 }
 
-.like-heart.press {
+#like-heart.press {
     animation: size .6s;
     color: #e23b3b;
 }
 
-.liked.press {
+#liked.press {
     bottom: 180px;
     font-size: 20px;
     visibility: visible;
     animation: fade 2s;
+}
+
+#like-count {
+    color: #fff;
 }
 
 @keyframes fade {

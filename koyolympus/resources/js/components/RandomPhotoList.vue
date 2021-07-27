@@ -7,7 +7,8 @@
                      alt="This photo taken by Koyo Isono.">
             </div>
         </div>
-        <photo-modal-component :val="postItem" v-show="showContent" @close="closeModal"></photo-modal-component>
+        <photo-modal-component :val="postItem" :pressed="liked" v-show="showContent"
+                               @close="closeModal"></photo-modal-component>
     </div>
 </template>
 
@@ -16,13 +17,13 @@ import {OK} from '../util';
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
-const loadimage = require('/public/images/Spin-0.7s-154px.png')
-const errorimage = require('/public/images/20200501_noimage.png')
+const loadImage = require('/public/images/Spin-0.7s-154px.png')
+const errorImage = require('/public/images/20200501_noimage.png')
 
 Vue.use(VueLazyload, {
     preLoad: 1.1,
-    loading: loadimage,
-    error: errorimage,
+    loading: loadImage,
+    error: errorImage,
     attempt: 1
 })
 
@@ -37,7 +38,8 @@ export default {
             photos: [],
             noPhoto: false,
             showContent: false,
-            postItem: ''
+            postItem: '',
+            liked: false
         }
     },
     methods: {
@@ -63,11 +65,24 @@ export default {
             }
         },
         openModal: function (photo) {
-            this.showContent = true;
             this.postItem = photo;
+
+            this.liked = false;
+            const likeArray = this.$store.state.photo.like;
+            console.log(likeArray);
+            if (likeArray.includes(photo.id)) {
+                this.liked = true;
+            }
+
+            this.showContent = true;
         },
         closeModal: function () {
             this.showContent = false;
+        }
+    },
+    computed: {
+        likeStatus() {
+            return this.$store.state.photo.like;
         }
     },
     watch: {

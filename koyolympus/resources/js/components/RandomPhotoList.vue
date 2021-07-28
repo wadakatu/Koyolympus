@@ -7,7 +7,7 @@
                      alt="This photo taken by Koyo Isono.">
             </div>
         </div>
-        <photo-modal-component :val="postItem" :pressed="liked" v-show="showContent"
+        <photo-modal-component :val="postItem" v-show="showContent"
                                @close="closeModal"></photo-modal-component>
     </div>
 </template>
@@ -39,7 +39,6 @@ export default {
             noPhoto: false,
             showContent: false,
             postItem: '',
-            liked: false
         }
     },
     methods: {
@@ -66,23 +65,10 @@ export default {
         },
         openModal: function (photo) {
             this.postItem = photo;
-
-            this.liked = false;
-            const likeArray = this.$store.state.photo.like;
-            console.log(likeArray);
-            if (likeArray.includes(photo.id)) {
-                this.liked = true;
-            }
-
             this.showContent = true;
         },
         closeModal: function () {
             this.showContent = false;
-        }
-    },
-    computed: {
-        likeStatus() {
-            return this.$store.state.photo.like;
         }
     },
     watch: {

@@ -1,10 +1,14 @@
 <template>
-    <div class="photo-list" ontouchstart="">
-        <h2 v-show="noPhoto">There are no photos in this page.</h2>
-        <div class="images" v-for="photo in photos">
-            <img class="item" :src="photo.url" :key="photo.url" v-lazy="photo.url"
-                 alt="This photo taken by Koyo Isono.">
+    <div>
+        <div class="photo-list" ontouchstart="">
+            <h2 v-show="noPhoto">There are no photos in this page.</h2>
+            <div class="images" v-for="photo in photos">
+                <img class="item" :src="photo.url" :key="photo.url" v-lazy="photo.url" @click="openModal(photo)"
+                     alt="This photo taken by Koyo Isono.">
+            </div>
         </div>
+        <photo-modal-component :val="postItem" v-show="showContent"
+                               @close="closeModal"></photo-modal-component>
     </div>
 </template>
 
@@ -13,13 +17,13 @@ import {OK} from '../util';
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
-const loadimage = require('/public/images/Spin-0.7s-154px.png')
-const errorimage = require('/public/images/20200501_noimage.png')
+const loadImage = require('/public/images/Spin-0.7s-154px.png')
+const errorImage = require('/public/images/20200501_noimage.png')
 
 Vue.use(VueLazyload, {
     preLoad: 1.1,
-    loading: loadimage,
-    error: errorimage,
+    loading: loadImage,
+    error: errorImage,
     attempt: 1
 })
 
@@ -27,11 +31,14 @@ export default {
     name: "RandomPhotoList.vue",
     components: {
         PaginateComponent: () => import('./PaginateComponent'),
+        PhotoModalComponent: () => import('./PhotoModalComponent')
     },
     data() {
         return {
             photos: [],
             noPhoto: false,
+            showContent: false,
+            postItem: '',
         }
     },
     methods: {
@@ -56,6 +63,13 @@ export default {
                 self.noPhoto = true;
             }
         },
+        openModal: function (photo) {
+            this.postItem = photo;
+            this.showContent = true;
+        },
+        closeModal: function () {
+            this.showContent = false;
+        }
     },
     watch: {
         $route: {

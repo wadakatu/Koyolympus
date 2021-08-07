@@ -24,10 +24,33 @@ const mutations = {
     },
     setLike(state, likePhotoId) {
         state.like.push(likePhotoId);
+    },
+    unsetLike(state, index) {
+        state.like.splice(index, 1);
     }
 }
 
-const actions = {}
+const actions = {
+    LikePhotoAction(context, likePhotoId) {
+        let result = true;
+        const likeArray = context.getters.like;
+
+        for (let i = 0; i < likeArray.length; i++) {
+            if (likeArray[i] === likePhotoId) {
+                context.commit('unsetLike', i);
+                result = false;
+                return new Promise((resolve, reject) => {
+                    resolve(result);
+                });
+            }
+        }
+
+        context.commit('setLike', likePhotoId);
+        return new Promise((resolve, reject) => {
+            resolve(result);
+        });
+    }
+}
 
 export default {
     namespaced: true,

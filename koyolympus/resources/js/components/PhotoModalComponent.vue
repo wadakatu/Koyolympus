@@ -6,10 +6,10 @@
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <i id="like-heart" v-bind:class="{ press: likeStatus(val.id) }"
+                    <i id="like-heart" v-bind:class="{ press: likeStatus(val.id) || isLiked }"
                        @click.self="like(val.id)"></i>
                     <p id="like-count">いいね数：3</p>
-                    <span id="liked" v-bind:class="{ press: likeStatus(val.id) }">liked!</span>
+                    <span id="liked" v-bind:class="{ press: likeStatus(val.id) || isLiked }">liked!</span>
                 </div>
             </div>
         </div>
@@ -20,12 +20,17 @@
 export default {
     name: "PhotoModalComponent.vue",
     props: ['val'],
+    data() {
+        return {
+            isLiked: false
+        };
+    },
     methods: {
         like(photoId) {
-            if (!this.likeStatus(photoId)) {
-                this.$store.commit('photo/setLike', photoId);
-                $("#like-heart,#liked").toggleClass("press", 500);
-            }
+            let self = this;
+            this.$store.dispatch('photo/LikePhotoAction', photoId).then(function (result) {
+                self.isLiked = !!result;
+            });
         },
     },
     computed: {

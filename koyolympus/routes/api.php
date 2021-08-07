@@ -37,7 +37,8 @@ Route::get('/user', function () {
 Route::post('/bizinq/send', 'v1\BizInquiriesController@sendBizInquiries')->name('bizInq.send');
 //写真取得メソッド
 Route::get('/photos', 'v1\ImageController@getPhoto')->name('get.photo');
-
+//ランダム写真取得メソッド
 Route::get('/randomPhotos', 'v1\ImageController@getRandomPhoto')->name('get.randomPhoto');
 
+Route::get('/like/{id}', 'v1\LikeController@likePhoto')->name('like.photo');
 

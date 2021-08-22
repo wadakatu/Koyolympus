@@ -31,12 +31,13 @@ const mutations = {
 }
 
 const actions = {
-    LikePhotoAction(context, likePhotoId) {
+    async LikePhotoAction(context, likePhotoId) {
         let result = true;
         const likeArray = context.getters.like;
 
         for (let i = 0; i < likeArray.length; i++) {
             if (likeArray[i] === likePhotoId) {
+                await context.dispatch('unlikePhoto', likePhotoId).then(r => console.log(r));
                 context.commit('unsetLike', i);
                 result = false;
                 return new Promise((resolve, reject) => {
@@ -45,11 +46,18 @@ const actions = {
             }
         }
 
+        await context.dispatch('likePhoto', likePhotoId).then(r => console.log(r));
         context.commit('setLike', likePhotoId);
         return new Promise((resolve, reject) => {
             resolve(result);
         });
-    }
+    },
+    async likePhoto(photoId) {
+        return await axios.post(`/api/like`, {id: photoId});
+    },
+    async unlikePhoto(photoId) {
+        return await axios.post(`/api/unlike`, {id: photoId});
+    },
 }
 
 export default {

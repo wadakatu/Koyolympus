@@ -6,8 +6,8 @@
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <i id="like-heart" v-bind:class="{ press: likeStatus(val.id) || isLiked }"
-                       @click.self="like(val.id)"></i>
+                    <button id="like-heart" v-bind:class="{ press: likeStatus(val.id) || isLiked }"
+                            @click.self="like(val.id)"></button>
                     <p id="like-count">いいね数：3</p>
                     <span id="liked" v-bind:class="{ press: likeStatus(val.id) || isLiked }">liked!</span>
                 </div>
@@ -103,13 +103,14 @@ img {
 
 #like-heart {
     cursor: pointer;
-    padding: 10px 12px 8px;
+    padding: 20px;
     background: #fff;
-    border-radius: 50%;
+    border-radius: 80%;
     display: inline-block;
     margin: 0 0 15px;
     color: #aaa;
     transition: .2s;
+    border: solid 3px #aaa;
 }
 
 #like-heart:hover {
@@ -120,6 +121,7 @@ img {
     font-family: fontawesome;
     content: '\f004';
     font-style: normal;
+    font-size: 25px;
 }
 
 #liked {

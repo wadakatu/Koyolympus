@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Str;
 
 class LikeController extends Controller
@@ -14,17 +16,25 @@ class LikeController extends Controller
 
     }
 
-    public function likePhoto(string $id)
+    public function likePhoto(Request $request): JsonResponse
     {
+        $id = $request->get('id');
+
         if (!Str::isUuid($id)) {
-            return response()->json(['sorry, it is invalid ID.']);
+            return response()->json(['name' => 'sorry, it is invalid ID. LIKE']);
         }
 
         return response()->json(['name' => 'hello, world']);
     }
 
-    public function unlikePhoto()
+    public function unlikePhoto(Request $request): JsonResponse
     {
+        $id = $request->get('id');
 
+        if (!Str::isUuid($id)) {
+            return response()->json(['name' => 'sorry, it is invalid ID. UNLIKE']);
+        }
+
+        return response()->json(['name' => 'hello, hell']);
     }
 }

@@ -40,5 +40,6 @@ Route::get('/photos', 'v1\ImageController@getPhoto')->name('get.photo');
 //ランダム写真取得メソッド
 Route::get('/randomPhotos', 'v1\ImageController@getRandomPhoto')->name('get.randomPhoto');
 
-Route::get('/like/{id}', 'v1\LikeController@likePhoto')->name('like.photo');
+Route::post('/like', 'v1\LikeController@likePhoto')->name('like.photo');
 
+Route::post('/unlike', 'v1\LikeController@unlikePhoto')->name('unlike.photo');

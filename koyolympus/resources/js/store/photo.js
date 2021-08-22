@@ -37,8 +37,9 @@ const actions = {
 
         for (let i = 0; i < likeArray.length; i++) {
             if (likeArray[i] === likePhotoId) {
-                await context.dispatch('unlikePhoto', likePhotoId).then(r => console.log(r));
-                context.commit('unsetLike', i);
+                await context.dispatch('unlikePhoto', likePhotoId).then(r => {
+                    context.commit('unsetLike', i);
+                });
                 result = false;
                 return new Promise((resolve, reject) => {
                     resolve(result);
@@ -46,10 +47,11 @@ const actions = {
             }
         }
 
-        await context.dispatch('likePhoto', likePhotoId).then(r => console.log(r));
-        context.commit('setLike', likePhotoId);
-        return new Promise((resolve, reject) => {
-            resolve(result);
+        await context.dispatch('likePhoto', likePhotoId).then(r => {
+            context.commit('setLike', likePhotoId);
+            return new Promise((resolve, reject) => {
+                resolve(result);
+            });
         });
     },
     async likePhoto(photoId) {

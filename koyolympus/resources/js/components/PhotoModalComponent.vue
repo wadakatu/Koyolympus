@@ -7,7 +7,7 @@
                 </div>
                 <div id="modal-content-bottom">
                     <button id="like-heart" v-bind:class="{ press: likeStatus(val.id) || isLiked }"
-                            @click.self="like(val.id)"></button>
+                            @click.self="like(val.id)" :disabled="isProcessing"></button>
                     <p id="like-count">いいね数：3</p>
                     <span id="liked" v-bind:class="{ press: likeStatus(val.id) || isLiked }">liked!</span>
                 </div>
@@ -22,15 +22,18 @@ export default {
     props: ['val'],
     data() {
         return {
-            isLiked: false
+            isLiked: false,
+            isProcessing: false
         };
     },
     methods: {
         like(photoId) {
             let self = this;
+            self.isProcessing = true;
             this.$store.dispatch('photo/LikePhotoAction', photoId).then(function (result) {
                 self.isLiked = !!result;
             });
+            self.isProcessing = false;
         },
     },
     computed: {
@@ -138,8 +141,9 @@ img {
 }
 
 #like-heart.press {
-    animation: size .6s;
+    animation: size, border .6s;
     color: #e23b3b;
+    border: solid 3px #e23b3b;
 }
 
 #liked.press {
@@ -167,14 +171,26 @@ img {
 
 @keyframes size {
     0% {
-        padding: 10px 12px 8px;
+        padding: 20px;
     }
     50% {
-        padding: 14px 16px 12px;
-        margin-top: -4px;
+        padding: 25px;
+        margin-top: -10px;
     }
     100% {
-        padding: 10px 12px 8px;
+        padding: 20px;
+    }
+}
+
+@keyframes border {
+    0% {
+        border: solid 3px #aaaaaa;
+    }
+    50% {
+        border: solid 3px #d36561;
+    }
+    100% {
+        border: solid 3px #e23b3b;
     }
 }
 

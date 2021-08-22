@@ -77,7 +77,6 @@ class ImageController extends Controller
         $fileName = $file->getClientOriginalName();
         $genre = $request->input('genre');
 
-        $uniqueFileName = null;
         DB::beginTransaction();
 
         try {

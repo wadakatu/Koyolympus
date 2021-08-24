@@ -3,9 +3,12 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Photo;
+use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Storage;
 
 
@@ -91,7 +94,7 @@ class PhotoService
     }
 
     /**
-     * 写真一覧から重複している写真データを探索
+     * 写真一覧から重複している写真データを探索（複数写真が対象）
      * @return Collection
      */
     public function searchMultipleDuplicatePhotos(): Collection
@@ -132,6 +135,8 @@ class PhotoService
     }
 
     /**
+     * 重複した写真をDBとS3から削除する
+     *
      * @param string $fileName
      * @return array
      */
@@ -151,6 +156,13 @@ class PhotoService
         return ['deleteFile' => $fileName, 'count' => $duplicatePhotoFiles->count()];
     }
 
+    /**
+     * 重複する写真を検索（１つの写真が対象）
+     *
+     * @param Collection $fileList
+     * @param string $fileName
+     * @return Collection
+     */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection
     {
         //取得した写真レコードから、入力されたファイル名と一致するレコードのみ残す
@@ -168,11 +180,83 @@ class PhotoService
             throw new \Error('There is no duplicate file in the database.');
         }
 
-        //一番直近でアップロードされた写真は削除対象にしないので削除
+        //一番直近でアップロードされた写真は削除対象にしない
         $indexFileList = $fileList->values();
         unset($indexFileList[0]);
 
         return $indexFileList;
+    }
+
+    /**
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    public function includeUuidFromIdToFilePath()
+    {
+        //写真情報を全件取得
+        $photoList = $this->photo::all();
+
+        //一件ずつ写真情報を取り出す。
+        foreach ($photoList as $photo) {
+            $id = $photo->id;
+            //IDがUUIDでない場合は、情報をUUIDを含むものに更新
+            //S3のパスに設定している写真名も更新
+            if (!Str::isUuid($id)) {
+                $oldPath = $photo->file_path;
+                $newInfo = $this->createLatestPhotoInfoIncludingUuid($photo->file_path);
+                $this->updatePhotoInfoToIncludeUuid($photo, $newInfo);
+                $this->movePhotoToNewFolder($oldPath, $newInfo['path']);
+            }
+        }
+    }
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public function createLatestPhotoInfoIncludingUuid(string $oldS3Path): array
+    {
+        $disk = Storage::disk('s3');
+        $uuid = Str::uuid()->toString();
+
+        //S3に写真が存在しない場合
+        if (!$disk->exists($oldS3Path)) {
+            throw new FileNotFoundException("File Not Found. Path: $oldS3Path");
+        }
+
+        //変数に渡されたS3パスの中から、写真名を検索
+        $pathInfo = explode('/', $oldS3Path);
+        $oldNameArr = explode('.', $pathInfo[array_key_last($pathInfo)]);
+
+        //写真名先頭の文字列をUUIDに変更
+        $oldNameArr[0] = $uuid;
+        //新しい写真名を生成
+        $newPhotoName = implode('.', $oldNameArr);
+
+        //S3パス内の古い写真名を新しい写真名で上書き
+        $pathInfo[array_key_last($pathInfo)] = $newPhotoName;
+        //新しい写真名を含むS3パスを生成
+        $newS3Path = implode('/', $pathInfo);
+
+        return ['id' => $uuid, 'name' => $newPhotoName, 'path' => $newS3Path];
+    }
+
+    public function updatePhotoInfoToIncludeUuid(Photo $photo, array $newInfo): bool
+    {
+        return $photo->update([
+            'id' => $newInfo['id'],
+            'file_name' => $newInfo['name'],
+            'file_path' => $newInfo['path'],
+        ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function movePhotoToNewFolder(string $oldS3Path, string $newS3Path): bool
+    {
+        $disk = Storage::disk('s3');
+
+        return $disk->move($oldS3Path, $newS3Path);
     }
 
 }

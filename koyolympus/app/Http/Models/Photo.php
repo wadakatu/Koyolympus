@@ -38,7 +38,7 @@ class Photo extends Model
 
     public function getRandomId(): string
     {
-        return Str::uuid();
+        return Str::uuid()->toString();
     }
 
     public function getUrlAttribute(): string

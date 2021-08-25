@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Exceptions\UpdateFailedException;
 use App\Http\Services\PhotoService;
 use DB;
+use Error;
+use Exception;
 use Illuminate\Console\Command;
 
 class ReplaceAllPhotoId extends Command
@@ -48,12 +51,11 @@ class ReplaceAllPhotoId extends Command
             DB::beginTransaction();
             $this->photoService->includeUuidFromIdToFilePath();
             DB::commit();
-
             return;
-        } catch (\Error | \Exception $e) {
+        } catch (Error | Exception | UpdateFailedException $e) {
             DB::rollBack();
-            $this->error($e->getMessage());
-            $this->error('ID置換異常発生');
+            $this->error(get_class($e) . '：' . $e->getMessage());
+            $this->error('例外発生');
             return;
         } finally {
             $this->info('ID置換終了');

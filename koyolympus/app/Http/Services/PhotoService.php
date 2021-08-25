@@ -2,8 +2,8 @@
 
 namespace App\Http\Services;
 
-use App\Exceptions\S3MoveFailedException;
-use App\Exceptions\updateFailedException;
+use App\Exceptions\Model\ModelUpdateFailedException;
+use App\Exceptions\S3\S3MoveFailedException;
 use App\Http\Models\Photo;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -191,8 +191,8 @@ class PhotoService
 
     /**
      * @throws FileNotFoundException
-     * @throws UpdateFailedException
      * @throws S3MoveFailedException
+     * @throws ModelUpdateFailedException
      */
     public function includeUuidFromIdToFilePath()
     {
@@ -210,12 +210,12 @@ class PhotoService
 //                $updateResult = $this->updatePhotoInfoToIncludeUuid($photo, $newInfo);
                 $updateResult = true;
                 if (!$updateResult) {
-                    throw new UpdateFailedException('Model update Failed for some reason.', $photo);
+                    throw new ModelUpdateFailedException($photo, 'Model update Failed for some reason.');
                 }
 //                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path']);
                 $moveResult = false;
                 if (!$moveResult) {
-                    throw new S3MoveFailedException('A file move failed for some reason.');
+                    throw new S3MoveFailedException($oldPath, $newInfo['path'], 'A file move failed for some reason.');
                 }
             }
         }

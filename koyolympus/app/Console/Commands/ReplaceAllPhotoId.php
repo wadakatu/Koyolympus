@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Exceptions\UpdateFailedException;
 use App\Http\Services\PhotoService;
 use DB;
 use Error;
@@ -41,7 +40,7 @@ class ReplaceAllPhotoId extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -52,8 +51,9 @@ class ReplaceAllPhotoId extends Command
             $this->photoService->includeUuidFromIdToFilePath();
             DB::commit();
             return;
-        } catch (Error | Exception | UpdateFailedException $e) {
+        } catch (Error | Exception $e) {
             DB::rollBack();
+            report($e);
             $this->error(get_class($e) . '：' . $e->getMessage());
             $this->error('例外発生');
             return;

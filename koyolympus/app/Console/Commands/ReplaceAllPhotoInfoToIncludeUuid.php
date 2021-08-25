@@ -8,7 +8,7 @@ use Error;
 use Exception;
 use Illuminate\Console\Command;
 
-class ReplaceAllPhotoId extends Command
+class ReplaceAllPhotoInfoToIncludeUuid extends Command
 {
     /**
      * The name and signature of the console command.
@@ -44,7 +44,7 @@ class ReplaceAllPhotoId extends Command
      */
     public function handle()
     {
-        $this->info('ID置換開始');
+        $this->info('UUID置換処理開始');
 
         try {
             DB::beginTransaction();
@@ -58,7 +58,7 @@ class ReplaceAllPhotoId extends Command
             $this->error('例外発生');
             return;
         } finally {
-            $this->info('ID置換終了');
+            $this->info('UUID置換処理終了');
         }
     }
 }

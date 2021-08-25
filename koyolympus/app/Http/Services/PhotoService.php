@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
 use App\Http\Models\Photo;
-use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
@@ -202,26 +201,29 @@ class PhotoService
         //一件ずつ写真情報を取り出す。
         foreach ($photoList as $photo) {
             $id = $photo->id;
-            //IDがUUIDでない場合は、情報をUUIDを含むものに更新
-            //S3のパスに設定している写真名も更新
+            //IDがUUIDでない場合
             if (!Str::isUuid($id)) {
+                //古いS3パスを取得
                 $oldPath = $photo->file_path;
-                $newInfo = $this->createLatestPhotoInfoIncludingUuid($photo->file_path);
-//                $updateResult = $this->updatePhotoInfoToIncludeUuid($photo, $newInfo);
-                $updateResult = true;
-                if (!$updateResult) {
-                    throw new ModelUpdateFailedException($photo, 'Model update Failed for some reason.');
-                }
-//                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path']);
-                $moveResult = false;
+                //UUIDを含む写真名とS3パスを新たに生成
+                $newInfo = $this->createLatestPhotoInfoIncludingUuid($oldPath);
+                //S3の写真を移動させる
+                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path']);
                 if (!$moveResult) {
                     throw new S3MoveFailedException($oldPath, $newInfo['path'], 'A file move failed for some reason.');
+                }
+                //DB内の写真情報をUUIDを含むものに更新
+                $updateResult = $this->updatePhotoInfoToIncludeUuid($photo, $newInfo);
+                if (!$updateResult) {
+                    throw new ModelUpdateFailedException($photo, 'Model update Failed for some reason.');
                 }
             }
         }
     }
 
     /**
+     * @param string $oldS3Path
+     * @return array
      * @throws FileNotFoundException
      */
     public function createLatestPhotoInfoIncludingUuid(string $oldS3Path): array
@@ -231,7 +233,7 @@ class PhotoService
 
         //S3に写真が存在しない場合
         if (!$disk->exists($oldS3Path)) {
-            throw new FileNotFoundException("File Not Found. Path: $oldS3Path");
+            throw new FileNotFoundException("Photo file not found. Path: $oldS3Path");
         }
 
         //変数に渡されたS3パスの中から、写真名を検索
@@ -251,6 +253,11 @@ class PhotoService
         return ['id' => $uuid, 'name' => $newPhotoName, 'path' => $newS3Path];
     }
 
+    /**
+     * @param Photo $photo
+     * @param array $newInfo
+     * @return bool
+     */
     public function updatePhotoInfoToIncludeUuid(Photo $photo, array $newInfo): bool
     {
         return $photo->update([
@@ -261,7 +268,9 @@ class PhotoService
     }
 
     /**
-     * @throws Exception
+     * @param string $oldS3Path
+     * @param string $newS3Path
+     * @return bool
      */
     public function movePhotoToNewFolder(string $oldS3Path, string $newS3Path): bool
     {

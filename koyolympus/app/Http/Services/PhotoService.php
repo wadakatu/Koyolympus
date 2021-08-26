@@ -208,7 +208,7 @@ class PhotoService
                 //UUIDを含む写真名とS3パスを新たに生成
                 $newInfo = $this->createLatestPhotoInfoIncludingUuid($oldPath);
                 //S3の写真を移動させる
-                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path']);
+                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path'], $photo->genre);
                 if (!$moveResult) {
                     throw new S3MoveFailedException($oldPath, $newInfo['path'], 'A file move failed for some reason.');
                 }
@@ -270,13 +270,43 @@ class PhotoService
     /**
      * @param string $oldS3Path
      * @param string $newS3Path
+     * @param int $genre
+     * @return bool
+     * @throws FileNotFoundException
+     */
+    public function movePhotoToNewFolder(string $oldS3Path, string $newS3Path, int $genre): bool
+    {
+        //S3のストレージ
+        $disk = Storage::disk('s3');
+        $public = Storage::disk('public');
+        //新しい写真名を新しいS3パスから取得
+        $fileName = basename($newS3Path);
+
+        //ジャンルからS3ファイルパスを取得
+        $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
+        //ローカルのファイルパスを取得
+        $localFilePath = storage_path('app/public') . '/local/' . $fileName;
+
+        //S3の写真をローカルにダウンロード
+        $public->put('/local/' . $fileName, $disk->get($oldS3Path));
+        //ローカルの写真をUploadedFileオブジェクトに変換
+        $file = new UploadedFile($localFilePath, $fileName);
+
+        //S3に写真をアップロード（新しいS3パス）
+        $disk->putFileAs($filePath, $file, $fileName, 'public');
+
+        //古いパスの写真をS3から削除
+        return $disk->delete($oldS3Path);
+    }
+
+    /**
+     * ローカルのディレクトリを削除する。
+     * @param string $dir ディレクトリ名（例：/local/)
      * @return bool
      */
-    public function movePhotoToNewFolder(string $oldS3Path, string $newS3Path): bool
+    public function deleteAllLocalPhoto(string $dir): bool
     {
-        $disk = Storage::disk('s3');
-
-        return $disk->move($oldS3Path, $newS3Path);
+        return Storage::disk('public')->deleteDirectory($dir);
     }
 
 }

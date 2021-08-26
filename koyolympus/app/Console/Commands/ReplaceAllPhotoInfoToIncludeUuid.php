@@ -58,6 +58,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
             $this->error('例外発生');
             return;
         } finally {
+            $this->photoService->deleteAllLocalPhoto('/local/');
             $this->info('UUID置換処理終了');
         }
     }

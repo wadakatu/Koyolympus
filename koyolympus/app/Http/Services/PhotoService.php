@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Storage;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 
 class PhotoService
@@ -193,10 +194,14 @@ class PhotoService
      * @throws S3MoveFailedException
      * @throws ModelUpdateFailedException
      */
-    public function includeUuidFromIdToFilePath()
+    public function includeUuidInRecord(ProgressBar $progressBar)
     {
         //写真情報を全件取得
         $photoList = $this->photo::all();
+
+        //プログレスバーに値をセットし、スタート
+        $progressBar->setMaxSteps($photoList->count());
+        $progressBar->start();
 
         //一件ずつ写真情報を取り出す。
         foreach ($photoList as $photo) {
@@ -218,6 +223,8 @@ class PhotoService
                     throw new ModelUpdateFailedException($photo, 'Model update Failed for some reason.');
                 }
             }
+            //一件処理が終わるごとに、バーを１つ進める
+            $progressBar->advance();
         }
     }
 
@@ -278,25 +285,39 @@ class PhotoService
     {
         //S3のストレージ
         $disk = Storage::disk('s3');
-        $public = Storage::disk('public');
         //新しい写真名を新しいS3パスから取得
         $fileName = basename($newS3Path);
 
         //ジャンルからS3ファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
-        //ローカルのファイルパスを取得
-        $localFilePath = storage_path('app/public') . '/local/' . $fileName;
 
-        //S3の写真をローカルにダウンロード
-        $public->put('/local/' . $fileName, $disk->get($oldS3Path));
-        //ローカルの写真をUploadedFileオブジェクトに変換
-        $file = new UploadedFile($localFilePath, $fileName);
+        //古い写真をS3からローカルにダウンロード
+        $file = $this->downloadS3PhotoToPublicDir($fileName, $disk->get($oldS3Path));
 
         //S3に写真をアップロード（新しいS3パス）
         $disk->putFileAs($filePath, $file, $fileName, 'public');
 
         //古いパスの写真をS3から削除
         return $disk->delete($oldS3Path);
+    }
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public function downloadS3PhotoToPublicDir(string $fileName, string $content): UploadedFile
+    {
+        //ローカルストレージ
+        $disk = Storage::disk('public');
+
+        //ローカルのファイルパスを取得
+        $path = '/local/' . $fileName;
+        $localFullPath = storage_path('app/public') . $path;
+
+        //S3の写真をローカルにダウンロード
+        $disk->put($path, $content);
+
+        //ローカルの写真をUploadedFileオブジェクトに変換し、返却
+        return new UploadedFile($localFullPath, $fileName);
     }
 
     /**

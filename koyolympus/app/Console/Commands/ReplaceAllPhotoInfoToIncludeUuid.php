@@ -46,10 +46,13 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
     {
         $this->info('UUID置換処理開始');
 
+        $progressBar = $this->output->createProgressBar();
+        $progressBar->setFormat("%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%\n");
         try {
             DB::beginTransaction();
-            $this->photoService->includeUuidFromIdToFilePath();
+            $this->photoService->IncludeUuidInRecord($progressBar);
             DB::commit();
+            $progressBar->finish();
             return;
         } catch (Error | Exception $e) {
             DB::rollBack();

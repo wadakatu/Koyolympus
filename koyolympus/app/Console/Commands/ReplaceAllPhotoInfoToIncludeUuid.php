@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Http\Services\PhotoService;
-use DB;
 use Error;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class ReplaceAllPhotoInfoToIncludeUuid extends Command
 {
@@ -41,6 +41,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
      * Execute the console command.
      *
      * @return void
+     * @throws Exception
      */
     public function handle()
     {
@@ -50,7 +51,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
         $progressBar->setFormat("%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%\n");
         try {
             DB::beginTransaction();
-            $this->photoService->IncludeUuidInRecord($progressBar);
+            $this->photoService->includeUuidInRecord($progressBar);
             DB::commit();
             $progressBar->finish();
             return;

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Services\PhotoService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -40,6 +41,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws Exception
      */
     public function handle(): void
     {

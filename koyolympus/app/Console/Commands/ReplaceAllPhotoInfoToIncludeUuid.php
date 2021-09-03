@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Http\Services\PhotoService;
+use App\Http\Services\ReplaceUuid\BaseService;
 use Error;
 use Exception;
 use Illuminate\Console\Command;
@@ -24,17 +25,17 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
      */
     protected $description = 'make all photo data including uuid.(id, file_name, file_path)';
 
-    private $photoService;
+    private $replaceUuIdService;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(PhotoService $photoService)
+    public function __construct(BaseService $baseService)
     {
         parent::__construct();
-        $this->photoService = $photoService;
+        $this->replaceUuIdService = $baseService;
     }
 
     /**
@@ -47,13 +48,10 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
     {
         $this->info('UUID置換処理開始');
 
-        $progressBar = $this->output->createProgressBar();
-        $progressBar->setFormat("%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%\n");
         try {
             DB::beginTransaction();
-            $this->photoService->includeUuidInRecord($progressBar);
+            $this->replaceUuIdService->includeUuidInRecord();
             DB::commit();
-            $progressBar->finish();
             return;
         } catch (Error | Exception $e) {
             DB::rollBack();
@@ -62,7 +60,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
             $this->error('例外発生');
             return;
         } finally {
-            $this->photoService->deleteAllLocalPhoto('/local/');
+            $this->replaceUuIdService->deleteAllLocalPhoto('/local/');
             $this->info('UUID置換処理終了');
         }
     }

@@ -1,24 +1,24 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
 
-use App\Http\Services\PhotoService;
+use App\Http\Services\ReplaceUuid\BaseService;
 use DB;
 use Mockery;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Tests\TestCase;
 
 class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 {
-    private $photoService;
+    private $replaceUuidService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->photoService = Mockery::mock(PhotoService::class);
-        $this->app->instance(PhotoService::class, $this->photoService);
+        $this->replaceUuidService = Mockery::mock(BaseService::class);
+        $this->app->instance(BaseService::class, $this->replaceUuidService);
     }
 
     protected function tearDown(): void
@@ -35,20 +35,16 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
     {
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
-        $this->photoService
+        $this->replaceUuidService
             ->shouldReceive('includeUuidInRecord')
-            ->once()
-            ->with(Mockery::on(function ($actual) {
-                $this->assertInstanceOf(ProgressBar::class, $actual);
-                return true;
-            }));
+            ->once();
         DB::shouldReceive('commit')->once();
 
         //catch statement.
         DB::shouldReceive('rollBack')->never();
 
         //finally statement.
-        $this->photoService
+        $this->replaceUuidService
             ->shouldReceive('deleteAllLocalPhoto')
             ->once()
             ->with('/local/');
@@ -68,13 +64,9 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
     {
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
-        $this->photoService
+        $this->replaceUuidService
             ->shouldReceive('includeUuidInRecord')
             ->once()
-            ->with(Mockery::on(function ($actual) {
-                $this->assertInstanceOf(ProgressBar::class, $actual);
-                return true;
-            }))
             ->andThrow(new \Exception('エラー！'));
         DB::shouldReceive('commit')->never();
 
@@ -82,7 +74,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         //finally statement.
-        $this->photoService
+        $this->replaceUuidService
             ->shouldReceive('deleteAllLocalPhoto')
             ->once()
             ->with('/local/');

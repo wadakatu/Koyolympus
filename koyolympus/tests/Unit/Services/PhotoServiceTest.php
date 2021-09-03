@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
@@ -6,10 +7,11 @@ use App\Http\Models\Photo;
 use App\Http\Services\PhotoService;
 use Config;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
+use Str;
 use Tests\TestCase;
 
 class PhotoServiceTest extends TestCase
@@ -229,7 +231,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード１つ２件()
+    public function searchMultipleDuplicatePhotos_duplicateTwoRecordsAboutOnePhoto()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -270,7 +272,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード１つ３件()
+    public function searchMultipleDuplicatePhotos_duplicateOneRecordAboutOnePhoto()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -321,7 +323,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード2つ２件()
+    public function searchMultipleDuplicatePhotos_duplicateTwoEachRecordsAboutTwoPhotos()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -372,7 +374,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード２つ３件()
+    public function searchMultipleDuplicatePhotos_duplicateThreeEachRecordsAboutTwoPhotos()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -721,7 +723,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_重複レコード１つ２件()
+    public function searchDuplicatePhoto_duplicateTwoRecords()
     {
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection([
@@ -759,7 +761,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_重複レコード１つ3件()
+    public function searchDuplicatePhoto_duplicateThreeRecords()
     {
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection([
@@ -807,7 +809,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_コレクション内１件のみ()
+    public function searchDuplicatePhoto_oneElementInCollection()
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('There is no duplicate file in the database.');
@@ -835,7 +837,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_コレクション空()
+    public function searchDuplicatePhoto_emptyCollection()
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('There is no duplicate file in the database.');

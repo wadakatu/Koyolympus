@@ -11,7 +11,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Storage;
 
-class BaseService{
+class BaseService
+{
 
     private $photo;
 
@@ -21,6 +22,9 @@ class BaseService{
     }
 
     /**
+     * 写真情報を１つずつ確認し、IdがUuidでない場合は
+     * [id, file_name, file_path]をUuidを含むものに変更する。
+     *
      * @throws FileNotFoundException
      * @throws S3MoveFailedException
      * @throws ModelUpdateFailedException
@@ -45,7 +49,7 @@ class BaseService{
                     throw new S3MoveFailedException($oldPath, $newInfo['path'], 'A file move failed for some reason.');
                 }
                 //DB内の写真情報をUUIDを含むものに更新
-                $updateResult = $this->updatePhotoInfoToIncludeUuid($photo, $newInfo);
+                $updateResult = $photo->update($newInfo);
                 if (!$updateResult) {
                     throw new ModelUpdateFailedException($photo, 'Model update Failed for some reason.');
                 }
@@ -54,7 +58,9 @@ class BaseService{
     }
 
     /**
-     * @param string $oldS3Path
+     * Uuidを含むレコードを作成する
+     *
+     * @param string $oldS3Path S3パス（uuidなし）
      * @return array
      * @throws FileNotFoundException
      */
@@ -82,27 +88,15 @@ class BaseService{
         //新しい写真名を含むS3パスを生成
         $newS3Path = implode('/', $pathInfo);
 
-        return ['id' => $uuid, 'name' => $newPhotoName, 'path' => $newS3Path];
+        return ['id' => $uuid, 'file_name' => $newPhotoName, 'file_path' => $newS3Path];
     }
 
     /**
-     * @param Photo $photo
-     * @param array $newInfo
-     * @return bool
-     */
-    public function updatePhotoInfoToIncludeUuid(Photo $photo, array $newInfo): bool
-    {
-        return $photo->update([
-            'id' => $newInfo['id'],
-            'file_name' => $newInfo['name'],
-            'file_path' => $newInfo['path'],
-        ]);
-    }
-
-    /**
-     * @param string $oldS3Path
-     * @param string $newS3Path
-     * @param int $genre
+     * S3上の写真を新しいフォルダーに移動する
+     *
+     * @param string $oldS3Path S3パス（uuidなし）
+     * @param string $newS3Path S3パス（uuidあり）
+     * @param int $genre 写真のジャンル
      * @return bool
      * @throws FileNotFoundException
      */
@@ -117,7 +111,7 @@ class BaseService{
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
         //古い写真をS3からローカルにダウンロード
-        $file = $this->downloadS3PhotoToPublicDir($fileName, $disk->get($oldS3Path));
+        $file = $this->downloadS3PhotoToLocal($fileName, $disk->get($oldS3Path));
 
         //S3に写真をアップロード（新しいS3パス）
         $disk->putFileAs($filePath, $file, $fileName, 'public');
@@ -127,9 +121,13 @@ class BaseService{
     }
 
     /**
-     * @throws FileNotFoundException
+     * s3にある写真をローカルディレクトリにダウンロードする
+     *
+     * @param string $fileName ファイル名
+     * @param string $content 画像の中身
+     * @return UploadedFile
      */
-    public function downloadS3PhotoToPublicDir(string $fileName, string $content): UploadedFile
+    public function downloadS3PhotoToLocal(string $fileName, string $content): UploadedFile
     {
         //ローカルストレージ
         $disk = Storage::disk('public');
@@ -147,6 +145,7 @@ class BaseService{
 
     /**
      * ローカルのディレクトリを削除する。
+     *
      * @param string $dir ディレクトリ名（例：/local/)
      * @return bool
      */

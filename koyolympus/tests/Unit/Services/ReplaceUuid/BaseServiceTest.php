@@ -7,8 +7,11 @@ use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
 use App\Http\Models\Photo;
 use App\Http\Services\ReplaceUuid\BaseService;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Mockery;
+use Storage;
 use Str;
 use Tests\TestCase;
 
@@ -230,7 +233,8 @@ class BaseServiceTest extends TestCase
             ->with($newInfo)
             ->andReturn($params['updatePhoto']['return']);
 
-        $this->expectException($expected);
+        $this->expectException($expected['exception']);
+        $this->expectExceptionMessage($expected['message']);
 
         $this->baseService->includeUuidInRecord();
     }
@@ -255,7 +259,10 @@ class BaseServiceTest extends TestCase
                         'return' => true
                     ],
                 ],
-                'expected' => S3MoveFailedException::class
+                'expected' => [
+                    'exception' => S3MoveFailedException::class,
+                    'message' => 'A file move failed for some reason.',
+                ],
             ],
             'DB更新失敗' => [
                 'param' => [
@@ -268,9 +275,60 @@ class BaseServiceTest extends TestCase
                         'return' => false
                     ],
                 ],
-                'expected' => ModelUpdateFailedException::class
+                'expected' => [
+                    'exception' => ModelUpdateFailedException::class,
+                    'message' => 'Model update Failed for some reason.',
+                ],
             ]
         ];
+    }
+
+    /**
+     * 古いS3パスから生成された配列の中身が、Uuidを含む
+     * [id, file_name, file_path]になっているかどうかテスト
+     * 例外なしバージョン
+     *
+     * @test
+     */
+    public function createLatestPhotoInfoIncludingUuid_withoutException()
+    {
+        Storage::fake('s3');
+        $disk = Storage::disk('s3');
+        $fileName = '12345.test.jpeg';
+        $file = UploadedFile::fake()->image($fileName);
+
+        $disk->putFileAs('/old', $file, $fileName);
+
+        $oldS3Path = 'old/' . $fileName;
+
+        $result = $this->baseService->createLatestPhotoInfoIncludingUuid($oldS3Path);
+
+        $nameArr = explode('.', $result['file_name']);
+        $pathArr = explode('/', $result['file_path']);
+        $pathNameArr = explode('.', $pathArr[1]);
+
+        $this->assertTrue(Str::isUuid($result['id']));
+        $this->assertTrue(Str::isUuid($nameArr[0]));
+        $this->assertTrue(Str::isUuid($pathNameArr[0]));
+
+        $this->assertSame($result['id'], $nameArr[0]);
+        $this->assertSame($result['id'], $pathNameArr[0]);
+    }
+
+    /**
+     * 引数のS3パスにファイルが存在しない場合、例外が投げられることをテスト
+     *
+     * @test
+     */
+    public function createLatestPhotoInfoIncludingUuid_withException()
+    {
+        Storage::fake('s3');
+        $oldS3Path = 'old/test.jpeg';
+
+        $this->expectException(FileNotFoundException::class);
+        $this->expectExceptionMessage("Photo file not found. Path: $oldS3Path");
+
+        $this->baseService->createLatestPhotoInfoIncludingUuid($oldS3Path);
     }
 
 }

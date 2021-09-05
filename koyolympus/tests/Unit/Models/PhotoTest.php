@@ -7,6 +7,7 @@ use App\Http\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Str;
 use Tests\TestCase;
 
 class PhotoTest extends TestCase
@@ -51,6 +52,7 @@ class PhotoTest extends TestCase
     public function getRandomId()
     {
         $uuid = $this->photo->getRandomId();
+        $this->assertTrue(Str::isUuid($uuid));
         $this->assertIsString($uuid);
     }
 

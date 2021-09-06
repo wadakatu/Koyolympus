@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Models;
 
@@ -38,7 +39,7 @@ class Photo extends Model
 
     public function getRandomId(): string
     {
-        return Str::uuid();
+        return Str::uuid()->toString();
     }
 
     public function getUrlAttribute(): string

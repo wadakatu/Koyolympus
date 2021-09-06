@@ -15,10 +15,12 @@ class BaseService
 {
 
     private $photo;
+    private $publicDir;
 
     public function __construct(Photo $photo)
     {
         $this->photo = $photo;
+        $this->publicDir = 'local/';
     }
 
     /**
@@ -44,9 +46,10 @@ class BaseService
                 //UUIDを含む写真名とS3パスを新たに生成
                 $newInfo = $this->createLatestPhotoInfoIncludingUuid($oldPath);
                 //S3の写真を移動させる
-                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['path'], $photo->genre);
+                $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['file_name'], $photo->genre);
                 if (!$moveResult) {
-                    throw new S3MoveFailedException($oldPath, $newInfo['path'], 'A file move failed for some reason.');
+                    throw new S3MoveFailedException($oldPath, $newInfo['file_path'],
+                        'A file move failed for some reason.');
                 }
                 //DB内の写真情報をUUIDを含むものに更新
                 $updateResult = $photo->update($newInfo);
@@ -95,17 +98,15 @@ class BaseService
      * S3上の写真を新しいフォルダーに移動する
      *
      * @param string $oldS3Path S3パス（uuidなし）
-     * @param string $newS3Path S3パス（uuidあり）
+     * @param string $fileName 新しいファイル名
      * @param int $genre 写真のジャンル
      * @return bool
      * @throws FileNotFoundException
      */
-    public function movePhotoToNewFolder(string $oldS3Path, string $newS3Path, int $genre): bool
+    public function movePhotoToNewFolder(string $oldS3Path, string $fileName, int $genre): bool
     {
         //S3のストレージ
         $disk = Storage::disk('s3');
-        //新しい写真名を新しいS3パスから取得
-        $fileName = basename($newS3Path);
 
         //ジャンルからS3ファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
@@ -122,6 +123,7 @@ class BaseService
 
     /**
      * s3にある写真をローカルディレクトリにダウンロードする
+     * その写真をUploadedFileオブジェクトにして返却
      *
      * @param string $fileName ファイル名
      * @param string $content 画像の中身
@@ -132,9 +134,9 @@ class BaseService
         //ローカルストレージ
         $disk = Storage::disk('public');
 
-        //ローカルのファイルパスを取得
-        $path = '/local/' . $fileName;
-        $localFullPath = storage_path('app/public') . $path;
+        //ローカルの保存先パスを生成
+        $path = $this->publicDir . $fileName;
+        $localFullPath = $disk->path($path);
 
         //S3の写真をローカルにダウンロード
         $disk->put($path, $content);
@@ -146,11 +148,10 @@ class BaseService
     /**
      * ローカルのディレクトリを削除する。
      *
-     * @param string $dir ディレクトリ名（例：/local/)
      * @return bool
      */
-    public function deleteAllLocalPhoto(string $dir): bool
+    public function deleteAllLocalPhoto(): bool
     {
-        return Storage::disk('public')->deleteDirectory($dir);
+        return Storage::disk('public')->deleteDirectory($this->publicDir);
     }
 }

@@ -7,8 +7,10 @@ use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
 use App\Http\Models\Photo;
 use App\Http\Services\ReplaceUuid\BaseService;
+use Config;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Mockery;
 use Storage;
@@ -17,12 +19,17 @@ use Tests\TestCase;
 
 class BaseServiceTest extends TestCase
 {
+    /** @var Photo|Mockery\LegacyMockInterface|Mockery\MockInterface photo */
     private $photo;
+
+    /** @var Mockery\Mock|BaseService baseService */
     private $baseService;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        /** @var Mockery\MockInterface|Photo photo */
         $this->photo = Mockery::mock(Photo::class);
 
         /** @var Mockery\MockInterface|BaseService baseService */
@@ -44,12 +51,13 @@ class BaseServiceTest extends TestCase
      */
     public function includeUuidInRecord_withoutException($params)
     {
-        $oldPath = 'old/test.jpeg';
+        $fileName = 'test.jpeg';
+        $oldPath = 'old/' . $fileName;
+        $path = 'test/' . $fileName;
         $genre = 1;
-        $path = 'test/test.jpeg';
         $id = 'id_test';
 
-        $newInfo = ['path' => $path];
+        $newInfo = ['file_name' => $fileName, 'file_path' => $path];
 
         $p = new Photo(['id' => $id, 'file_path' => $oldPath, 'genre' => $genre]);
         $photo = Mockery::mock($p);
@@ -68,7 +76,7 @@ class BaseServiceTest extends TestCase
             ->andReturn($newInfo);
         $this->baseService->shouldReceive('movePhotoToNewFolder')
             ->times($params['movePhotoToNewFolder']['times'])
-            ->with($oldPath, $path, $genre)
+            ->with($oldPath, $fileName, $genre)
             ->andReturn(true);
         $photo->shouldReceive('update')
             ->times($params['updatePhoto']['times'])
@@ -97,7 +105,7 @@ class BaseServiceTest extends TestCase
                     ],
                     'updatePhoto' => [
                         'times' => 1,
-                    ]
+                    ],
                 ],
             ],
             'Uuidを含まないレコードが2件' => [
@@ -205,12 +213,13 @@ class BaseServiceTest extends TestCase
      */
     public function includeUuidInRecord_withException($params, $expected)
     {
-        $oldPath = 'old/test.jpeg';
+        $fileName = 'exception.jpeg';
         $genre = 1;
-        $path = 'test/test.jpeg';
+        $oldPath = 'old/' . $fileName;
+        $path = 'test/' . $fileName;
         $id = 'id_test';
 
-        $newInfo = ['path' => $path];
+        $newInfo = ['file_name' => $fileName, 'file_path' => $path];
 
         $p = new Photo(['id' => $id, 'file_path' => $oldPath, 'genre' => $genre]);
         $photo = Mockery::mock($p);
@@ -226,7 +235,7 @@ class BaseServiceTest extends TestCase
             ->andReturn($newInfo);
         $this->baseService->shouldReceive('movePhotoToNewFolder')
             ->times($params['movePhotoToNewFolder']['times'])
-            ->with($oldPath, $path, $genre)
+            ->with($oldPath, $fileName, $genre)
             ->andReturn($params['movePhotoToNewFolder']['return']);
         $photo->shouldReceive('update')
             ->times($params['updatePhoto']['times'])
@@ -292,14 +301,11 @@ class BaseServiceTest extends TestCase
      */
     public function createLatestPhotoInfoIncludingUuid_withoutException()
     {
-        Storage::fake('s3');
-        $disk = Storage::disk('s3');
         $fileName = '12345.test.jpeg';
-        $file = UploadedFile::fake()->image($fileName);
-
-        $disk->putFileAs('/old', $file, $fileName);
-
         $oldS3Path = 'old/' . $fileName;
+
+        Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+        $s3Disk->shouldReceive('exists')->once()->with($oldS3Path)->andReturnTrue();
 
         $result = $this->baseService->createLatestPhotoInfoIncludingUuid($oldS3Path);
 
@@ -322,13 +328,80 @@ class BaseServiceTest extends TestCase
      */
     public function createLatestPhotoInfoIncludingUuid_withException()
     {
-        Storage::fake('s3');
         $oldS3Path = 'old/test.jpeg';
+        Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+        $s3Disk->shouldReceive('exists')->once()->with($oldS3Path)->andReturnFalse();
 
         $this->expectException(FileNotFoundException::class);
         $this->expectExceptionMessage("Photo file not found. Path: $oldS3Path");
 
         $this->baseService->createLatestPhotoInfoIncludingUuid($oldS3Path);
+    }
+
+    /**
+     * Storageとモデルのメソッドが適切に呼び出されているかテスト
+     *
+     * @test
+     */
+    public function movePhotoToNewFolder()
+    {
+        Config::set('const.PHOTO.GENRE_FILE_URL.1', 'new/');
+
+        $fileName = 'test.jpeg';
+        $oldS3Path = 'old/' . $fileName;
+        $genre = 1;
+        $file = UploadedFile::fake()->image($fileName);
+        $content = 'test';
+
+        Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+
+        $s3Disk->shouldReceive('get')->once()->with($oldS3Path)->andReturn($content);
+        $s3Disk->shouldReceive('putFileAs')->once()->with('new/', $file, $fileName, 'public');
+        $s3Disk->shouldReceive('delete')->once()->with($oldS3Path)->andReturnTrue();
+
+        $this->baseService
+            ->shouldReceive('downloadS3PhotoToLocal')
+            ->once()
+            ->with($fileName, $content)
+            ->andReturn($file);
+
+        $result = $this->baseService->movePhotoToNewFolder($oldS3Path, $fileName, $genre);
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * ローカルにファイルをダウンロードし、そのファイルを適切に返却できるかテスト
+     *
+     * @test
+     */
+    public function downloadS3PhotoToLocal()
+    {
+        $disk = Storage::fake('public');
+        $fileName = 'test.jpeg';
+        $content = 'test';
+
+        $file = $this->baseService->downloadS3PhotoToLocal($fileName, $content);
+
+        $disk->assertExists('local/' . $fileName);
+        $this->assertSame('jpeg', $file->getExtension());
+        $this->assertSame($fileName, $file->getClientOriginalName());
+        $this->assertSame($disk->path('local/' . $fileName), $file->getPathname());
+    }
+
+    /**
+     * Storageのメソッドが適切に呼び出されるかテスト
+     *
+     * @test
+     */
+    public function deleteAllLocalPhoto()
+    {
+        Storage::shouldReceive('disk')->with('public')->andReturn($publicDisk = Mockery::mock(FilesystemAdapter::class));
+        $publicDisk->shouldReceive('deleteDirectory')->once()->with('local/')->andReturnTrue();
+
+        $result = $this->baseService->deleteAllLocalPhoto();
+
+        $this->assertTrue($result);
     }
 
 }

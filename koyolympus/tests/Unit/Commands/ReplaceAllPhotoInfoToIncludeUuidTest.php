@@ -47,7 +47,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         $this->replaceUuidService
             ->shouldReceive('deleteAllLocalPhoto')
             ->once()
-            ->with('/local/');
+            ->andReturnTrue();
 
         $this->artisan('command:includeUuid')
             ->expectsOutput('UUID置換処理開始')
@@ -77,7 +77,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         $this->replaceUuidService
             ->shouldReceive('deleteAllLocalPhoto')
             ->once()
-            ->with('/local/');
+            ->andReturnTrue();
 
         $this->artisan('command:includeUuid')
             ->expectsOutput('Exception：エラー！')

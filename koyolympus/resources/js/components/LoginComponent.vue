@@ -37,12 +37,12 @@ export default {
             await this.$store.dispatch('auth/login', this.loginForm)
 
             if (this.apiStatus) {
-                this.$router.push('/upload');
+                await this.$router.push('/upload');
             }
         },
         async logout() {
             await this.$store.dispatch('auth/logout');
-            this.$router.push('/login')
+            await this.$router.push('/login')
         },
         reset() {
             console.log('reset done.');

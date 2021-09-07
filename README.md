@@ -1,6 +1,7 @@
 # Koyolympus
 
 [![CircleCI](https://circleci.com/gh/wadakatu/Koyolympus.svg?style=svg)](https://circleci.com/gh/wadakatu/Koyolympus)
+<a href="https://codeclimate.com/github/wadakatu/Koyolympus/maintainability"><img src="https://api.codeclimate.com/v1/badges/fc720307d06ed2712c78/maintainability" /></a>
 
 ## Brand new website about my Photography.
 

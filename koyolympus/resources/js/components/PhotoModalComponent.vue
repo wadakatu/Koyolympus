@@ -27,14 +27,32 @@ export default {
         };
     },
     methods: {
-        like(photoId) {
+        async like(photoId) {
             let self = this;
+            //ボタンの多重起動防止ON
             self.isProcessing = true;
-            this.$store.dispatch('photo/LikePhotoAction', photoId).then(function (result) {
-                self.isLiked = !!result;
-            });
+            await self.$store.dispatch('photo/searchLikedPhoto', photoId)
+                //LIKE済の場合
+                .then(async function (result) {
+                    await self.unlikePhoto(photoId);
+                    await self.$store.commit('photo/unsetLike', result);
+                    self.isLiked = false;
+                })
+                //未LIKEの場合
+                .catch(async function (error) {
+                    await self.likePhoto(photoId);
+                    await self.$store.commit('photo/setLike', photoId);
+                    self.isLiked = true;
+                });
+            //ボタンの多重起動防止OFF
             self.isProcessing = false;
         },
+        async likePhoto(photoId) {
+            await axios.post(`/api/like`, {id: photoId});
+        },
+        async unlikePhoto(photoId) {
+            await axios.post('/api/unlike', {id: photoId});
+        }
     },
     computed: {
         likeStatus: function () {

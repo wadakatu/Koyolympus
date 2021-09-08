@@ -31,34 +31,17 @@ const mutations = {
 }
 
 const actions = {
-    async LikePhotoAction(context, likePhotoId) {
-        let result = true;
+    async searchLikedPhoto(context, likePhotoId) {
         const likeArray = context.getters.like;
-
+        //Like済配列を検索
         for (let i = 0; i < likeArray.length; i++) {
+            //Like済であれば、インデックスを返却
             if (likeArray[i] === likePhotoId) {
-                await context.dispatch('unlikePhoto', likePhotoId).then(r => {
-                    context.commit('unsetLike', i);
-                });
-                result = false;
-                return new Promise((resolve, reject) => {
-                    resolve(result);
-                });
+                return i;
             }
         }
-
-        await context.dispatch('likePhoto', likePhotoId).then(r => {
-            context.commit('setLike', likePhotoId);
-            return new Promise((resolve, reject) => {
-                resolve(result);
-            });
-        });
-    },
-    async likePhoto(photoId) {
-        return await axios.post(`/api/like`, {id: photoId});
-    },
-    async unlikePhoto(photoId) {
-        return await axios.post(`/api/unlike`, {id: photoId});
+        //Likeされていなければエラー返却
+        throw new Error('Liked Photo Not Found.');
     },
 }
 

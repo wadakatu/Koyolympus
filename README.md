@@ -22,8 +22,13 @@ Therefore, this repository is for the website of my photographs.
 You can access the website down below.
 - https://koyolympus.gallery/
 
-You can buy my photography through EC site.
-- https://koyolympus.thebase.in/
+
+## :earth_asia: Supported Browsers
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white">
+</div>
+
 
 ## :hammer_and_wrench: Languages and Tools
 
@@ -39,13 +44,6 @@ You can buy my photography through EC site.
   <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
   <img src="https://img.shields.io/badge/CIRCLECI-%23161616.svg?style=for-the-badge&logo=circleci&logoColor=white">
 </div>
-
-## :earth_asia: Supported Browsers
-
-<div align="center">
-  <img src="https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white">
-</div>
-
 
 ## :pray: Request
 

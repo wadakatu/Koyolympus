@@ -25,7 +25,7 @@ jobs:
             - koyolympus/node_modules
       - run:
           name: npm build production
-          command: npm run production
+          command: npm run cross-env NODE_ENV=production koyolympus/node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=koyolympus/node_modules/laravel-mix/setup/webpack.config.js
       - run:
           name: cd public/js
           command: cd koyolympus/public/js ; ls

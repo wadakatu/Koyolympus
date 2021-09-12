@@ -17,6 +17,9 @@ jobs:
             - npm-cache-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-
       - run:
+          name: check if node_module exists.
+          command: ls
+      - run:
           name: npm install
           command: npm --prefix koyolympus install koyolympus
       - save_cache:

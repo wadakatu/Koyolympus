@@ -12,6 +12,13 @@ jobs:
         - run:
             name: check npm version.
             command: npm --version
+        - run:
+            name: where is it?
+            command: pwd
+        - run:
+            name: test
+            command: ls
+            
 
   test:
     docker:

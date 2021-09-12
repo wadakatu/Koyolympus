@@ -8,8 +8,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-cache-bb-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-bb-
+            - npm-cache-cc-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-cc-
       - run:
           name: check if node_modules exists.
           command: cd koyolympus ; ls
@@ -23,7 +23,7 @@ jobs:
                 npm --prefix koyolympus install koyolympus
             fi
       - save_cache:
-          key: npm-cache-bb-{{ checksum "koyolympus/package-lock.json"}}
+          key: npm-cache-cc-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
       - run:

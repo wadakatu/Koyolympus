@@ -14,7 +14,7 @@ jobs:
           command: npm --version
       - restore_cache:
           keys:
-            - npm-cache-{{ checkum "package-lock.json" }}
+            - npm-cache-{{ checksum "package-lock.json" }}
             - npm-cache-
       - run:
           name: npm install
@@ -27,7 +27,7 @@ jobs:
       - run:
           name: dir check
           command: |
-           if [ -d "koyolympus"];then echo "directory exists." fi
+            if [ -d "koyolympus"];then echo "directory exists." fi
 
   test:
     docker:

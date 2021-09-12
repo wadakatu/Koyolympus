@@ -84,10 +84,14 @@ jobs:
           name: run PHPUnit
           command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
       - run:
+          name: check if vendor exists.
+          command: cd koyolympus ; ls
+      - run:
           name: get test coverage
           command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
       - store_artifacts:
           path:  build/coverage-report
+
 
 workflows:
   version: 2

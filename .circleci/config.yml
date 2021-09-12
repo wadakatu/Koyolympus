@@ -14,8 +14,8 @@ jobs:
           command: npm --version
       - restore_cache:
           keys:
-            - npm-cache-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-
+            - npm-cache-aa-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-aa-
       - run:
           name: check if node_module exists.
           command: cd koyolympus ; ls
@@ -23,9 +23,9 @@ jobs:
           name: npm install
           command: npm --prefix koyolympus install koyolympus
       - save_cache:
-          key: npm-cache-{{ checksum "koyolympus/package-lock.json"}}
+          key: npm-cache-aa-{{ checksum "koyolympus/package-lock.json"}}
           paths:
-            - node_modules
+            - koyolympus/node_modules
           path:
       - run:
           name: check if node_module exists.
@@ -65,9 +65,9 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
             - v1-dependencies-
-      - run:
-          name: change directory
-          command: cd koyolympus
+    #   - run:
+    #       name: change directory
+    #       command: cd koyolympus
       - run:
           name: Install PHP libraries
           command: composer install -n --prefer-dist --working-dir=./koyolympus

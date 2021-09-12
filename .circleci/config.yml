@@ -25,10 +25,10 @@ jobs:
             - koyolympus/node_modules
       - run:
           name: npm build production
-          command: ls
-      - run:
-          name: cd public/js
-          command: cd koyolympus/public/js ; ls
+          command: cd koyolympus ; ls
+    #   - run:
+    #       name: cd public/js
+    #       command: cd koyolympus/public/js ; ls
 
   test:
     docker:

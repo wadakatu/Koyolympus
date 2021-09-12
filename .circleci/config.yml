@@ -28,6 +28,9 @@ jobs:
             - node_modules
           path:
       - run:
+          name: check if node_module exists.
+          command: cd koyolympus ; ls
+      - run:
           name: dir check
           command: |
             DIR='app'

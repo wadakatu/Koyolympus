@@ -25,6 +25,7 @@ jobs:
             - koyolympus/node_modules
       - run:
           name: npm run production
+          working_directory: koyolympus
           command: npm run circle-ci
 
   test:

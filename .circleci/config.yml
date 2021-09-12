@@ -85,7 +85,7 @@ jobs:
           command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
       - run:
           name: get test coverage
-          command: phpdbg -qrr koyolympus/vendor/bin/phpunit --coverage-html build/coverage-report
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
       - store_artifacts:
           path:  build/coverage-report
 

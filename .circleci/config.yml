@@ -15,9 +15,9 @@ jobs:
           command: cd koyolympus ; ls
       - run:
           name: npm install
-          command: |
+          command: cd koyolympus ; |
             DIR='node_modules'
-            if [ -d "koyolympus/${dir}"]; then 
+            if [ -d "${dir}"]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
                 npm --prefix koyolympus install koyolympus
@@ -29,6 +29,9 @@ jobs:
       - run:
           name: check if node_modules exists.
           command: cd koyolympus ; ls
+      - run:
+          name: check node_modules/webpack
+          command: cd koyolympus/node_moudles; ls
       - run:
           name: npm run production
           command: cd koyolympus ; npm run node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js

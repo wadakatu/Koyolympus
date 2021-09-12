@@ -27,8 +27,8 @@ jobs:
       - run:
           name: dir check
           command: |
-            dir = "koyolympus"
-            if [ -d "koyolympus"]; then 
+            dir = "app"
+            if [ -d ${dir}]; then 
                 echo "directory exists." 
             fi
 

@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/koyolympus/koyolympus/koyolympus
+    working_directory: ~/koyolympus
     docker:
       - image: cimg/node:16.5.0
     steps:
@@ -12,12 +12,20 @@ jobs:
       - run:
           name: check npm version.
           command: npm --version
+      - restore_cache:
+          keys:
+          - npm-cache-{{ checkum "package-lock.json" }}
+          - npm-cache-
       - run:
-          name: where is it?
-          command: pwd
+          name: npm install
+          command: npm install
+      - save_cache:
+          keys:
+          - npm-cache-{{ checksum "package-lock.json"}}
       - run:
-          name: test
-          command: ls
+          name: dir check
+          command: |
+           if [ -d "koyolympus"];then echo "directory exists." fi
 
   test:
     docker:

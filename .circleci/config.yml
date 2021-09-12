@@ -9,7 +9,9 @@ jobs:
       - run:
           name: change dir
           working_directory: koyolympus
-          command: pwd
+          command: |
+            pwd
+            ls
       - restore_cache:
           keys:
             - npm-cache-ee-{{ checksum "package-lock.json" }}

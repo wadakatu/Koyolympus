@@ -9,6 +9,9 @@ jobs:
         - run:
             name: check node version.
             command: node --version
+        - run:
+            name: check npm version.
+            command: npm --version
 
   test:
     docker:

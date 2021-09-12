@@ -85,7 +85,7 @@ jobs:
           command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
       - run:
           name: create test coverage dir
-          command: cd koyolympus ; mkdir build/coverage-report
+          command: cd koyolympus ; mkdir -p build/coverage-report
       - run:
           name: get test coverage
           working_directory: koyolympus

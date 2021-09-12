@@ -11,7 +11,7 @@ jobs:
             - npm-cache-bb-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-bb-
       - run:
-          name: npm build production
+          name: check if node_modules exists.
           command: cd koyolympus ; ls
       - run:
           name: npm install
@@ -27,8 +27,11 @@ jobs:
           paths:
             - koyolympus/node_modules
       - run:
-          name: npm build production
+          name: check if node_modules exists.
           command: cd koyolympus ; ls
+      - run:
+          name: npm run production
+          command: cd koyolympus ; npm run node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js
     #   - run:
     #       name: cd public/js
     #       command: cd koyolympus/public/js ; ls

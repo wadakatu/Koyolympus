@@ -8,15 +8,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-cache-cc-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-cc-
+            - npm-cache-dd-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-dd-
       - run:
           name: check if node_modules exists.
           command: cd koyolympus ; ls
       - run:
           name: npm install
           command: |
-            DIR='node_modules'
+            DIR='koyolympus/node_modules'
             if [ -d "${dir}"]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else

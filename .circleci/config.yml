@@ -15,14 +15,17 @@ jobs:
           command: cd koyolympus ; ls
       - run:
           name: npm install
-          command: npm --prefix koyolympus install koyolympus
+          command: |
+            DIR='node_modules'
+            if [ -d "${dir}"]; then 
+                echo "node_modules direcotry is already exist, so [npm install] does not run."
+            else
+                npm --prefix koyolympus install koyolympus
+            fi
       - save_cache:
           key: npm-cache-aa-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
-      - run:
-          name: check if node_module exists.
-          command: cd koyolympus ; ls
       - run:
           name: check if node_module exists.
           command: |

@@ -1,37 +1,31 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/koyolympus
+    working_directory: ~/koyolympus/koyolympus
     docker:
       - image: cimg/node:16.5.0
     steps:
       - checkout
       - restore_cache:
           keys:
-            - npm-cache-dd-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-dd-
-      - run:
-          name: check if node_modules exists.
-          command: cd koyolympus ; ls
+            - npm-cache-ee-{{ checksum "package-lock.json" }}
+            - npm-cache-ee-
       - run:
           name: npm install
           command: |
-            DIR='./koyolympus/node_modules'
+            DIR='./node_modules'
             if [ -d "${DIR}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
-                npm --prefix koyolympus install koyolympus
+                npm install
             fi
       - save_cache:
-          key: npm-cache-dd-{{ checksum "koyolympus/package-lock.json"}}
+          key: npm-cache-ee-{{ checksum "package-lock.json"}}
           paths:
-            - koyolympus/node_modules
+            - node_modules
       - run:
           name: npm run production
-          command: cd koyolympus ; npm run circle-ci
-    #   - run:
-    #       name: cd public/js
-    #       command: cd koyolympus/public/js ; ls
+          command: npm run circle-ci
 
   test:
     docker:

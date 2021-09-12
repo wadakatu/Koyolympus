@@ -16,7 +16,7 @@ jobs:
       - run:
           name: npm install
           command: |
-            DIR='./koyolympus/koyolympus/node_modules'
+            DIR='./koyolympus/node_modules'
             if [ -d "${DIR}"]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else

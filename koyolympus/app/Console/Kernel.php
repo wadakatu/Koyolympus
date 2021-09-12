@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Console\Commands\CheckConsistencyBetweenDBAndS3;
 use App\Console\Commands\CheckDatabase;
+use App\Console\Commands\ReplaceAllPhotoInfoToIncludeUuid;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +18,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CheckDatabase::class,
         CheckConsistencyBetweenDBAndS3::class,
+        ReplaceAllPhotoInfoToIncludeUuid::class,
     ];
 
     /**

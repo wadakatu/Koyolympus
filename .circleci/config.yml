@@ -6,29 +6,23 @@ jobs:
       - image: cimg/node:16.5.0
     steps:
       - checkout
-      - run:
-          name: change dir
-          working_directory: koyolympus
-          command: |
-            pwd
-            ls
       - restore_cache:
           keys:
-            - npm-cache-ee-{{ checksum "package-lock.json" }}
-            - npm-cache-ee-
+            - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-koyolympus-
       - run:
           name: npm install
           command: |
-            DIR='./node_modules'
+            DIR='./koyolympus/node_modules'
             if [ -d "${DIR}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
-                npm install
+                npm --prefix koyolympus install koyolympus
             fi
       - save_cache:
-          key: npm-cache-ee-{{ checksum "package-lock.json"}}
+          key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
           paths:
-            - node_modules
+            - koyolympus/node_modules
       - run:
           name: npm run production
           command: npm run circle-ci
@@ -86,8 +80,13 @@ jobs:
           command: php artisan migrate --env=testing
           working_directory: koyolympus
       - run:
-          name: Run PHPUnit
+          name: run PHPUnit
           command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
+      - run:
+          name: get test coverage
+          command: phpdbg -qrr koyolympus/vendor/bin/phpunit --coverage-html build/coverage-report
+      - store_artifacts:
+          path:  build/coverage-report
 
 workflows:
   version: 2

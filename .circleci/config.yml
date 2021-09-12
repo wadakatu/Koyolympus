@@ -1,24 +1,23 @@
 version: 2
 jobs:
-
   build:
+    working_directory: ~/koyolympus
     docker:
       - image: cimg/node:16.5.0
     steps:
-        - checkout
-        - run:
-            name: check node version.
-            command: node --version
-        - run:
-            name: check npm version.
-            command: npm --version
-        - run:
-            name: where is it?
-            command: pwd
-        - run:
-            name: test
-            command: ls
-            
+      - checkout
+      - run:
+          name: check node version.
+          command: node --version
+      - run:
+          name: check npm version.
+          command: npm --version
+      - run:
+          name: where is it?
+          command: pwd
+      - run:
+          name: test
+          command: ls
 
   test:
     docker:
@@ -39,7 +38,7 @@ jobs:
           command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg-dev libpng-dev
       - run:
           name: php-gd install
-          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include 
+          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
       - run:
           name: add install command
           command: sudo docker-php-ext-install gd
@@ -47,9 +46,9 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
             - v1-dependencies-
-      - run: 
+      - run:
           name: change directory
-          command: cd koyolympus       
+          command: cd koyolympus
       - run:
           name: Install PHP libraries
           command: composer install -n --prefer-dist --working-dir=./koyolympus
@@ -76,15 +75,14 @@ jobs:
           command: php artisan migrate --env=testing
           working_directory: koyolympus
       - run:
-          name: Run PHPUnit 
+          name: Run PHPUnit
           command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
 
 workflows:
-    version: 2
-    builad_and_test:
-      jobs:
-       - build
-       - test:
-           requires:
-             - build
-
+  version: 2
+  builad_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build

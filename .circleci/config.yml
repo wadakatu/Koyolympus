@@ -25,7 +25,7 @@ jobs:
             - koyolympus/node_modules
       - run:
           name: npm build production
-          command: cd node_modules ; ls
+          command: ls
       - run:
           name: cd public/js
           command: cd koyolympus/public/js ; ls

@@ -14,6 +14,9 @@ jobs:
           name: check if node_modules exists.
           command: cd koyolympus ; ls
       - run:
+          name: where am I?
+          command: pwd
+      - run:
           name: npm install
           command: |
             DIR='koyolympus/node_modules'

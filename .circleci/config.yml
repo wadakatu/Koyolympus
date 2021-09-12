@@ -34,7 +34,7 @@ jobs:
           command: cd koyolympus/node_modules/webpack/bin ; ls
       - run:
           name: npm run production
-          command: cd koyolympus ; npm run node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js
+          command: cd koyolympus ; npm run koyolympus/node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=koyolympus/node_modules/laravel-mix/setup/webpack.config.js
     #   - run:
     #       name: cd public/js
     #       command: cd koyolympus/public/js ; ls

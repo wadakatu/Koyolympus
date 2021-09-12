@@ -8,31 +8,27 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-cache-aa-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-aa-
-      - run:
-          name: check if node_module exists.
-          command: cd koyolympus ; ls
+            - npm-cache-v1-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-v1-
       - run:
           name: npm install
           command: |
             DIR='node_modules'
             if [ -d "${dir}"]; then 
-                echo "node_modules direcotry is already exist, so [npm install] does not run."
+                echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
                 npm --prefix koyolympus install koyolympus
             fi
       - save_cache:
-          key: npm-cache-aa-{{ checksum "koyolympus/package-lock.json"}}
+          key: npm-cache-v1-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
       - run:
-          name: check if node_module exists.
-          command: |
-            DIR='node_modules'
-            if [ -d "${dir}"]; then 
-                echo "directory exists." 
-            fi
+          name: npm build production
+          command: npm run production
+      - run:
+          name: cd public/js
+          command: cd koyolympus/public/js ; ls
 
   test:
     docker:

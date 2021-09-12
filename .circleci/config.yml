@@ -27,9 +27,6 @@ jobs:
           paths:
             - koyolympus/node_modules
       - run:
-          name: check if node_modules exists.
-          command: cd koyolympus/node_modules ; ls
-      - run:
           name: npm run production
           command: cd koyolympus ; npm run circle-ci
     #   - run:

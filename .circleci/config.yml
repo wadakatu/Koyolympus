@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/koyolympus/koyolympus
+    working_directory: ~/koyolympus/koyolympus/koyolympus
     docker:
       - image: cimg/node:16.5.0
     steps:

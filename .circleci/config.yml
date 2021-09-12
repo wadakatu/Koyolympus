@@ -26,14 +26,10 @@ jobs:
           key: npm-cache-aa-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
-          path:
       - run:
           name: check if node_module exists.
-          command: cd koyolympus ; pwd
-      - run:
-          name: dir check
           command: |
-            DIR='app'
+            DIR='node_modules'
             if [ -d "${dir}"]; then 
                 echo "directory exists." 
             fi
@@ -65,9 +61,6 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
             - v1-dependencies-
-    #   - run:
-    #       name: change directory
-    #       command: cd koyolympus
       - run:
           name: Install PHP libraries
           command: composer install -n --prefer-dist --working-dir=./koyolympus

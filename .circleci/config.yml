@@ -34,6 +34,7 @@ jobs:
       - image: circleci/mariadb:10.4
     environment:
       - DB_CONNECTION: circle_testing
+      - CC_TEST_REPORTER_ID: 
     steps:
       - checkout
       - run:
@@ -87,17 +88,18 @@ jobs:
             chmod +x ./cc-test-reporter
       - run:
           name: run PHPUnit
-          command: koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit/
+          command: |
+            sudo docker-php-ext-enable xdebug
+            ./cc-test-reporter before-build
+            sudo koyolympus/vendor/bin/phpunit --coverage-clover clover.xml
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - run:
           name: create test coverage dir
           command: cd koyolympus ; mkdir -p build/coverage-report
       - run:
           name: get test coverage
           working_directory: koyolympus
-          command: |
-            ./cc-test-reporter before-build
-            phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
-            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
       - store_artifacts:
           path: koyolympus/build/coverage-report
 

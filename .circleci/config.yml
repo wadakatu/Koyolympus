@@ -83,21 +83,21 @@ jobs:
       - run:
           name: Setup Code Climate test-reporter
           command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > koyolympus/cc-test-reporter
-            chmod +x koyolympus/cc-test-reporter
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
       - run:
           name: run PHPUnit
-          command: |
-            koyolympus/cc-test-reporter before-build
-            koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit/
-            koyolympus/cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+          command: koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit/
       - run:
           name: create test coverage dir
           command: cd koyolympus ; mkdir -p build/coverage-report
       - run:
           name: get test coverage
           working_directory: koyolympus
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
+          command: |
+            ./cc-test-reporter before-build
+            phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - store_artifacts:
           path: koyolympus/build/coverage-report
 

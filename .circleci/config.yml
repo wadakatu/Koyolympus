@@ -91,7 +91,7 @@ jobs:
           command: |
             sudo docker-php-ext-enable xdebug
             ./cc-test-reporter before-build
-            sudo koyolympus/vendor/bin/phpunit --coverage-clover clover.xml
+            sudo koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - run:
           name: create test coverage dir

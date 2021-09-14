@@ -34,7 +34,7 @@ jobs:
       - image: circleci/mariadb:10.4
     environment:
       - DB_CONNECTION: circle_testing
-      - CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
+      - CC_TEST_REPORTER_ID: 7f0fa985f28fdd9c839d363a3fe5654c4cad5f2602cef0ad99436d1849acc9ef
     steps:
       - checkout
       - run:
@@ -87,9 +87,11 @@ jobs:
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
       - run:
+          name: check cc-test-reporter
+          command: ls
+      - run:
           name: run PHPUnit
           command: |
-            sudo docker-php-ext-enable xdebug
             ./cc-test-reporter before-build
             koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?

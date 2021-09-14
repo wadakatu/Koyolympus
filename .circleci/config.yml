@@ -89,6 +89,7 @@ jobs:
       - run:
           name: run PHPUnit
           command: |
+            sudo docker-php-ext-enable xdebug
             ./cc-test-reporter before-build
             koyolympus/vendor/bin/phpunit --coverage-clover clover.xml koyolympus/tests/Unit
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?

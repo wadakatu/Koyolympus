@@ -34,7 +34,7 @@ jobs:
       - image: circleci/mariadb:10.4
     environment:
       - DB_CONNECTION: circle_testing
-      - CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
+      - CC_TEST_REPORTER_ID: 7f0fa985f28fdd9c839d363a3fe5654c4cad5f2602cef0ad99436d1849acc9ef
     steps:
       - checkout
       - run:

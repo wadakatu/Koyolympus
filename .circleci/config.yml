@@ -34,7 +34,6 @@ jobs:
       - image: circleci/mariadb:10.4
     environment:
       - DB_CONNECTION: circle_testing
-      - CC_TEST_REPORTER_ID: 7f0fa985f28fdd9c839d363a3fe5654c4cad5f2602cef0ad99436d1849acc9ef
     steps:
       - checkout
       - run:
@@ -67,8 +66,10 @@ jobs:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/
       - run:
-          name: echo .env.testing
-          command: echo "APP_KEY=" > .env.testing
+          name: prepare .env.testing
+          command: |
+            echo "APP_KEY=" > .env.testing
+            echo CC_TEST_REPORTER_ID=$CC_TEST_REPORTER_ID > .env.testing
       - run:
           name: generate app_key
           command: php artisan key:generate --env=testing
@@ -82,7 +83,7 @@ jobs:
           command: php artisan migrate --env=testing
           working_directory: koyolympus
       - run:
-          name: Setup Code Climate test-reporter
+          name: setup Code Climate test-reporter
           working_directory: koyolympus
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

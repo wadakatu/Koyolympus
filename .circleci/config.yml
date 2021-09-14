@@ -1,6 +1,34 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/koyolympus
+    docker:
+      - image: cimg/node:16.5.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-koyolympus-
+      - run:
+          name: npm install
+          command: |
+            DIR='./koyolympus/node_modules'
+            if [ -d "${DIR}" ]; then
+                echo "[node_modules] directory is already exist, so [npm install] does not run."
+            else
+                npm --prefix koyolympus install koyolympus
+            fi
+      - save_cache:
+          key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
+          paths:
+            - koyolympus/node_modules
+      - run:
+          name: npm run production
+          working_directory: koyolympus
+          command: npm run circle-ci
+
+  test:
     docker:
       - image: circleci/php:7.3.0-node-browsers
       - image: circleci/mariadb:10.4
@@ -19,7 +47,7 @@ jobs:
           command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg-dev libpng-dev
       - run:
           name: php-gd install
-          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include 
+          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
       - run:
           name: add install command
           command: sudo docker-php-ext-install gd
@@ -27,9 +55,6 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
             - v1-dependencies-
-      - run: 
-          name: change directory
-          command: cd koyolympus       
       - run:
           name: Install PHP libraries
           command: composer install -n --prefer-dist --working-dir=./koyolympus
@@ -41,8 +66,10 @@ jobs:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/
       - run:
-          name: echo .env.testing
-          command: echo "APP_KEY=" > .env.testing
+          name: prepare .env.testing
+          command: |
+            echo "APP_KEY=" > .env.testing
+            echo CC_TEST_REPORTER_ID=$CC_TEST_REPORTER_ID > .env.testing
       - run:
           name: generate app_key
           command: php artisan key:generate --env=testing
@@ -56,6 +83,24 @@ jobs:
           command: php artisan migrate --env=testing
           working_directory: koyolympus
       - run:
-          name: Run PHPUnit 
-          command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
+          name: setup Code Climate test-reporter
+          working_directory: koyolympus
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: run PHPUnit
+          working_directory: koyolympus
+          command: |
+            ./cc-test-reporter before-build
+            vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
 
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build

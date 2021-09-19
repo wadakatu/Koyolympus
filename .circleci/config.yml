@@ -10,19 +10,33 @@ jobs:
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-koyolympus-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
+            - v1-dependencies-
       - run:
           name: npm install
           command: |
-            DIR='./koyolympus/node_modules'
-            if [ -d "${DIR}" ]; then
+            DIR_NODE='./koyolympus/node_modules'
+            if [ -d "${DIR_NODE}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
                 npm --prefix koyolympus install koyolympus
             fi
+      - run:
+          name: composer install
+          command: |
+            DIR_COMPOSER='./koyolympus/'
+            composer install -n --prefer-dist --working-dir=./koyolympus
+            ls
       - save_cache:
           key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
+      - save_cache:
+          paths:
+            - ./vendor
+          key: v1-dependencies-{{ checksum "koyolympus/composer.json" }}
       - run:
           name: npm run production
           working_directory: koyolympus

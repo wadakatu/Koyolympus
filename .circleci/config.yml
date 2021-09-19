@@ -27,6 +27,10 @@ jobs:
           name: npm run production
           working_directory: koyolympus
           command: npm run circle-ci
+      - persist_to_workspace:
+          root: koyolympus
+          paths:
+            - node_modules/
 
   test:
     docker:

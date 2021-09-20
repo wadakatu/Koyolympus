@@ -86,6 +86,9 @@ jobs:
       - attach_workspace:
           at: koyolympus/vendor
       - run:
+          name: check vendor
+          command: ls koyolympus/vendor
+      - run:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/
       - run:

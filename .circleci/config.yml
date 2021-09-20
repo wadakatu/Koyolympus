@@ -8,11 +8,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          name: restore cache for node.
+          name: restore_cache_node
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-koyolympus-
       - restore_cache:
+          name: restore_cache_composer
           keys:
             - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
             - v1-dependencies-
@@ -28,15 +29,18 @@ jobs:
       - run:
           name: composer install
           command: |
+            cd koyolympus
             ls
             DIR_COMPOSER='./koyolympus/'
             composer install -n --prefer-dist --working-dir=./koyolympus
             ls
       - save_cache:
+          name: save_cache_node
           key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
       - save_cache:
+          name: restore_cache_composer
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "koyolympus/composer.json" }}

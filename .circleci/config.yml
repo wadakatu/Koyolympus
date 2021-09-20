@@ -51,14 +51,12 @@ jobs:
           command: npm run circle-ci
       - persist_to_workspace:
           name: path node_modules to other container.
-          root: koyolympus
           paths:
-            - node_modules/
+            - koyolympus/node_modules/
       - persist_to_workspace:
           name: path vendor to other container.
-          root: koyolympus
           paths:
-            - vendor/
+            - koyolympus/vendor/
 
   test:
     docker:

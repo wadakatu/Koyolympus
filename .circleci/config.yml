@@ -32,7 +32,7 @@ jobs:
             cd koyolympus
             ls
             DIR_COMPOSER='./koyolympus/'
-            composer install -n --prefer-dist --working-dir=./koyolympus
+            composer install -n --prefer-dist
             ls
       - save_cache:
           name: save_cache_node

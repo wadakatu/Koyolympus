@@ -29,11 +29,12 @@ jobs:
       - run:
           name: composer install
           command: |
-            cd koyolympus
-            ls
-            DIR_COMPOSER='./koyolympus/'
-            composer install -n --prefer-dist
-            ls
+            DIR_COMPOSER='./koyolympus/vendor'
+            if [ -d "${DIR_COMPOSER}" ]; then
+                echo "[vendor] directory is already exist, so [composer install] does not run."
+            else
+                composer install -n --prefer-dist
+            fi
       - save_cache:
           name: save_cache_node
           key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
@@ -49,9 +50,15 @@ jobs:
           working_directory: koyolympus
           command: npm run circle-ci
       - persist_to_workspace:
+          name: path node_modules to other container.
           root: koyolympus
           paths:
             - node_modules/
+      - persist_to_workspace:
+          name: path vendor to other container.
+          root: koyolympus
+          paths:
+            - vendor/
 
   test:
     docker:

@@ -83,17 +83,8 @@ jobs:
       - run:
           name: add install command
           command: sudo docker-php-ext-install gd
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
-            - v1-dependencies-
-      - run:
-          name: Install PHP libraries
-          command: composer install -n --prefer-dist --working-dir=./koyolympus
-      - save_cache:
-          paths:
-            - ./vendor
-          key: v1-dependencies-{{ checksum "koyolympus/composer.json" }}
+      - attach_workspace:
+          at: koyolympus/vendor
       - run:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/

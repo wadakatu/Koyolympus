@@ -33,7 +33,7 @@ jobs:
             if [ -d "${DIR_COMPOSER}" ]; then
                 echo "[vendor] directory is already exist, so [composer install] does not run."
             else
-                composer install -n --prefer-dist
+                composer install -n --prefer-dist --working-dir=./koyolympus
             fi
       - save_cache:
           name: save_cache_node

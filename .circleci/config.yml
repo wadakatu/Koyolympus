@@ -51,12 +51,10 @@ jobs:
           command: npm run circle-ci
       - persist_to_workspace:
           name: path node_modules to other container.
+          root: koyolympus/
           paths:
-            - koyolympus/node_modules/
-      - persist_to_workspace:
-          name: path vendor to other container.
-          paths:
-            - koyolympus/vendor/
+            - node_modules/
+            - vendor/
 
   test:
     docker:
@@ -82,10 +80,10 @@ jobs:
           name: add install command
           command: sudo docker-php-ext-install gd
       - attach_workspace:
-          at: koyolympus/vendor
+          at: koyolympus/
       - run:
           name: check vendor
-          command: ls koyolympus/vendor
+          command: ls koyolympus/
       - run:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/

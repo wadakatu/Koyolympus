@@ -8,6 +8,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: restore cache for node.
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-koyolympus-

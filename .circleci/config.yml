@@ -30,10 +30,10 @@ jobs:
           name: composer install
           command: |
             cd koyolympus
-            ls
+            ls vendor/
             DIR_COMPOSER='./koyolympus/'
             composer install -n --prefer-dist
-            ls
+            ls vendor/
       - save_cache:
           name: save_cache_node
           key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}

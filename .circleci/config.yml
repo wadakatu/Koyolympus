@@ -50,7 +50,7 @@ jobs:
           working_directory: koyolympus
           command: npm run circle-ci
       - persist_to_workspace:
-          name: path node_modules to other container.
+          name: prepare to pass folders.
           root: koyolympus/
           paths:
             - node_modules/

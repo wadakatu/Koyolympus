@@ -3,30 +3,58 @@ jobs:
   build:
     working_directory: ~/koyolympus
     docker:
+      - image: circleci/php:7.3.0-node-browsers
       - image: cimg/node:16.5.0
     steps:
       - checkout
       - restore_cache:
+          name: restore cache for node
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
             - npm-cache-koyolympus-
+      - restore_cache:
+          name: restore cache for composer
+          keys:
+            - composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
+            - composer-cache-koyolympus-
       - run:
           name: npm install
           command: |
-            DIR='./koyolympus/node_modules'
-            if [ -d "${DIR}" ]; then
+            DIR_NODE='./koyolympus/node_modules'
+            if [ -d "${DIR_NODE}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
                 npm --prefix koyolympus install koyolympus
             fi
+      - run:
+          name: composer install
+          command: |
+            DIR_COMPOSER='./koyolympus/vendor'
+            if [ -d "${DIR_COMPOSER}" ]; then
+                echo "[vendor] directory is already exist, so [composer install] does not run."
+            else
+                composer install -n --prefer-dist --working-dir=./koyolympus
+            fi
       - save_cache:
+          name: save_cache_node
           key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
+      - save_cache:
+          name: restore_cache_composer
+          paths:
+            - koyolympus/vendor
+          key: composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
       - run:
           name: npm run production
           working_directory: koyolympus
           command: npm run circle-ci
+      - persist_to_workspace:
+          name: prepare to pass folders.
+          root: koyolympus/
+          paths:
+            - node_modules/
+            - vendor/
 
   test:
     docker:
@@ -51,17 +79,8 @@ jobs:
       - run:
           name: add install command
           command: sudo docker-php-ext-install gd
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
-            - v1-dependencies-
-      - run:
-          name: Install PHP libraries
-          command: composer install -n --prefer-dist --working-dir=./koyolympus
-      - save_cache:
-          paths:
-            - ./vendor
-          key: v1-dependencies-{{ checksum "koyolympus/composer.json" }}
+      - attach_workspace:
+          at: koyolympus/
       - run:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/

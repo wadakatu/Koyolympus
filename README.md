@@ -11,6 +11,7 @@
   </div>
   <div align="center">
 <a href="https://codeclimate.com/github/wadakatu/Koyolympus/maintainability"><img src="https://api.codeclimate.com/v1/badges/fc720307d06ed2712c78/maintainability" /></a>
+  <a href="https://codeclimate.com/github/wadakatu/Koyolympus/test_coverage"><img src="https://api.codeclimate.com/v1/badges/fc720307d06ed2712c78/test_coverage" /></a>
   </div>
   
 ## :scroll: Overview

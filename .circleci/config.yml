@@ -4,7 +4,7 @@ orbs:
 jobs:
   notify:
     docker:
-      - image: 'cimg/base:stable'
+      - image: "cimg/base:stable"
     steps:
       - slack/notify:
           custom: |
@@ -23,7 +23,7 @@ jobs:
               ]
             }
           event: always
-jobs:
+
   build:
     working_directory: ~/koyolympus
     docker:

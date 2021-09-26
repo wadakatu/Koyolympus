@@ -144,7 +144,7 @@ workflows:
   build_and_test:
     jobs:
       - notify:
-          context: slack-secrets
+          context: koyolympus
       - build
       - test:
           requires:

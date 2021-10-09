@@ -6,6 +6,7 @@ commands:
   notify_slack_pass:
     steps:
       - slack/notify:
+          context: koyolympus
           event: pass
           custom: |
             {
@@ -48,6 +49,7 @@ commands:
   notify_slack_fail:
     steps:
       - slack/notify:
+          context: koyolympus
           event: fail
           custom: |
             {
@@ -144,7 +146,6 @@ jobs:
             - node_modules/
             - vendor/
       - notify_slack_fail
-          context: koyolympus
 
   test:
     docker:
@@ -205,9 +206,7 @@ jobs:
             vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - notify_slack_fail
-          context: koyolympus
       - notify_slack_pass
-          context: koyolympus
 
 workflows:
   version: 2

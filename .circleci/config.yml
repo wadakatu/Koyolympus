@@ -211,8 +211,10 @@ workflows:
   build_and_test:
     jobs:
       - build
-          context: koyolympus
+        context: 
+          - koyolympus
       - test:
-          context: koyolympus
+          context: 
+            - koyolympus
           requires:
             - build

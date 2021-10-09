@@ -62,7 +62,7 @@ jobs:
                 }
               ]
             }
-      -slack/notify:
+      - slack/notify:
           event: fail
           custom: |
             {

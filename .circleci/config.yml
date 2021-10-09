@@ -1,10 +1,9 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.4.4
-jobs:
-  notify:
-    docker:
-      - image: "cimg/base:stable"
+
+command:
+  notify_slack_pass:
     steps:
       - slack/notify:
           event: pass
@@ -41,27 +40,13 @@ jobs:
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
                     },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Tag:*\n${CIRCLE_TAG}"
-                    }
                   ]
                 },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
               ]
             }
+
+  notify_slack_fail:
+    steps:
       - slack/notify:
           event: fail
           custom: |
@@ -97,30 +82,12 @@ jobs:
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
                     },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Tag:*\n${CIRCLE_TAG}"
-                    }
                   ]
                 },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
               ]
             }
 
-        
-
+jobs:
   build:
     working_directory: ~/koyolympus
     docker:
@@ -176,6 +143,7 @@ jobs:
           paths:
             - node_modules/
             - vendor/
+      -notify_slack_fail
 
   test:
     docker:
@@ -235,13 +203,13 @@ jobs:
             ./cc-test-reporter before-build
             vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+      - notify_slack_fail
+      - notify_slack_pass
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - notify:
-          context: koyolympus
       - build
       - test:
           requires:

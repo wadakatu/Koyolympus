@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.4.4
 
-command:
+commands:
   notify_slack_pass:
     steps:
       - slack/notify:

@@ -12,17 +12,58 @@ jobs:
               "blocks": [
                 {
                   "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":tada::tada::tada: *Success!*"
+                  }
+                },
+                {
+                  "type": "section",
                   "fields": [
                     {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Job:*\n${CIRCLE_JOB}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${CIRCLE_USERNAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
                     }
                   ]
                 }
               ]
             }
           event: pass
+      -slack/notify:
+        
 
   build:
     working_directory: ~/koyolympus

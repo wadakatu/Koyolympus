@@ -4,9 +4,9 @@ orbs:
 
 commands:
   notify_slack_pass:
+    context: koyolympus
     steps:
       - slack/notify:
-          context: koyolympus
           event: pass
           custom: |
             {
@@ -47,9 +47,9 @@ commands:
             }
 
   notify_slack_fail:
+    context: koyolympus
     steps:
       - slack/notify:
-          context: koyolympus
           event: fail
           custom: |
             {

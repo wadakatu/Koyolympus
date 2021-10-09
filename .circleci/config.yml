@@ -22,7 +22,7 @@ jobs:
                 }
               ]
             }
-          event: fail
+          event: pass
 
   build:
     working_directory: ~/koyolympus

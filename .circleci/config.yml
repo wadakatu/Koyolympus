@@ -203,8 +203,8 @@ jobs:
             ./cc-test-reporter before-build
             vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
-      # - notify_slack_fail
-      - notify_slack_pass
+      - notify_slack_fail
+      # - notify_slack_pass
 
 workflows:
   version: 2

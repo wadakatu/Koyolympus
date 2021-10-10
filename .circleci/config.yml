@@ -94,7 +94,7 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
-                    },
+                    }
                   ]
                 },
               ]
@@ -224,6 +224,7 @@ workflows:
   build_and_test:
     jobs:
       - build
+        context: koyolympus
       - test:
           requires:
             - build

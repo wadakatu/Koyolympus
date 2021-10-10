@@ -168,7 +168,7 @@ jobs:
       - checkout
       - run:
           name: Update apt-get
-          command: sudo apt-get update
+          command: sudo apt-get updateaaaaa
       - run:
           name: Docker php extensiions install
           command: sudo docker-php-ext-install pdo_mysql

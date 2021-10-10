@@ -14,7 +14,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":tada::tada::tada: *Success!*"
+                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
                   }
                 },
                 {

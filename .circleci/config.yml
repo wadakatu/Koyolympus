@@ -96,7 +96,7 @@ commands:
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
                     }
                   ]
-                },
+                }
               ]
             }
 

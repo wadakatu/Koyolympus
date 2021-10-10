@@ -14,7 +14,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":tada::tada::tada: *Success!*"
+                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
                   }
                 },
                 {
@@ -27,6 +27,10 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Job:*\n${CIRCLE_JOB}"
                     },
                     {
                       "type": "mrkdwn",

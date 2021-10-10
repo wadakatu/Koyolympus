@@ -14,7 +14,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
+                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *pass* :bangbang:"
                   }
                 },
                 {

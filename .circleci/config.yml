@@ -14,7 +14,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
+                    "text": ":tada::tada::tada: *Success!*"
                   }
                 },
                 {
@@ -203,7 +203,7 @@ jobs:
             ./cc-test-reporter before-build
             vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
-      - notify_slack_fail
+      # - notify_slack_fail
       - notify_slack_pass
 
 workflows:

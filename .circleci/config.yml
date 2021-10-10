@@ -14,7 +14,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *pass* :bangbang:"
+                    "text": ":tada::tada::tada: *Success!*"
                   }
                 },
                 {
@@ -40,8 +40,25 @@ commands:
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
                     },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
+                    }
                   ]
                 },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
               ]
             }
 

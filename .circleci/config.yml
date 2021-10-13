@@ -41,19 +41,6 @@ commands:
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
                     }
                   ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
                 }
               ]
             }

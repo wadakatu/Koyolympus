@@ -6,6 +6,7 @@ commands:
   notify_slack_pass:
     steps:
       - slack/notify:
+          channel: D02FP5L229G
           event: pass
           custom: |
             {

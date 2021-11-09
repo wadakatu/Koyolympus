@@ -49,6 +49,7 @@ commands:
   notify_slack_fail:
     steps:
       - slack/notify:
+          channel: D02FP5L229G
           event: fail
           custom: |
             {

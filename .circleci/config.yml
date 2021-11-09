@@ -15,11 +15,6 @@ commands:
                   "text": {
                     "type": "mrkdwn",
                     "text": ":tada::tada::tada: *Success!*"
-                  },
-                  "accessory": {
-                    "type": "image",
-                    "image_url": "https://circleci.com/gh/wadakatu/Koyolympus.svg?style=svg",
-                    "alt_text": "circle ci success."
                   }
                 },
                 {

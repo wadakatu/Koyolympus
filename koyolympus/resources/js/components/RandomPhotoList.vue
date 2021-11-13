@@ -38,7 +38,7 @@ export default {
             photos: [],
             noPhoto: false,
             showContent: false,
-            postItem: '',
+            postItem: {},
         }
     },
     methods: {
@@ -69,7 +69,7 @@ export default {
         },
         closeModal: function () {
             this.showContent = false;
-        }
+        },
     },
     watch: {
         $route: {

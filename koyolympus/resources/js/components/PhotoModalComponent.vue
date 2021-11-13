@@ -6,10 +6,9 @@
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <button id="like-heart" v-bind:class="{ press: likeStatus(val.id) || isLiked }"
-                            @click.self="like(val.id)" :disabled="isProcessing"></button>
+                    <button id="like-heart" v-bind:class="{ press: like, static: like && isLiked }"
+                            @click.self="likeOrNot(val.id)" :disabled="isProcessing"></button>
                     <p id="like-count">いいね数：3</p>
-                    <span id="liked" v-bind:class="{ press: likeStatus(val.id) || isLiked }">liked!</span>
                 </div>
             </div>
         </div>
@@ -19,30 +18,35 @@
 <script>
 export default {
     name: "PhotoModalComponent.vue",
-    props: ['val'],
+    props: {
+        val: Object,
+    },
     data() {
         return {
+            isProcessing: false,
+            like: false,
             isLiked: false,
-            isProcessing: false
         };
     },
     methods: {
-        async like(photoId) {
+        async likeOrNot(photoId) {
             let self = this;
             //ボタンの多重起動防止ON
             self.isProcessing = true;
             await self.$store.dispatch('photo/searchLikedPhoto', photoId)
                 //LIKE済の場合
                 .then(async function (result) {
-                    await self.unlikePhoto(photoId);
-                    await self.$store.commit('photo/unsetLike', result);
-                    self.isLiked = false;
-                })
-                //未LIKEの場合
-                .catch(async function (error) {
-                    await self.likePhoto(photoId);
-                    await self.$store.commit('photo/setLike', photoId);
-                    self.isLiked = true;
+                    if (result === null) {
+                        //LIKE処理
+                        await self.likePhoto(photoId);
+                        await self.$store.commit('photo/setLike', photoId);
+                        self.like = true;
+                    } else {
+                        //LIKE解除処理
+                        await self.unlikePhoto(photoId);
+                        await self.$store.commit('photo/unsetLike', result);
+                        self.like = false;
+                    }
                 });
             //ボタンの多重起動防止OFF
             self.isProcessing = false;
@@ -52,17 +56,20 @@ export default {
         },
         async unlikePhoto(photoId) {
             await axios.post('/api/unlike', {id: photoId});
+        },
+        likeStatus: function (photoId) {
+            let self = this;
+            const likeObj = self.$store.state.photo.like;
+            return likeObj.includes(photoId);
         }
     },
-    computed: {
-        likeStatus: function () {
-            self = this;
-            return function (photoId) {
-                const likeObj = self.$store.state.photo.like;
-                return likeObj.includes(photoId);
-            };
+    watch: {
+        'val.id': function () {
+            const liked = this.likeStatus(this.val.id);
+            this.like = liked;
+            this.isLiked = liked;
         }
-    }
+    },
 }
 </script>
 
@@ -145,46 +152,19 @@ img {
     font-size: 25px;
 }
 
-#liked {
-    position: absolute;
-    bottom: 100px;
-    left: 0;
-    right: 0;
-    visibility: hidden;
-    transition: 1s;
-    z-index: -2;
-    font-size: 5px;
-    color: transparent;
-    font-weight: 400;
-}
-
 #like-heart.press {
-    animation: size, border .6s;
+    animation: bound-anim .6s, size, border .6s;
     color: #e23b3b;
     border: solid 3px #e23b3b;
 }
 
-#liked.press {
-    bottom: 180px;
-    font-size: 20px;
-    visibility: visible;
-    animation: fade 2s;
+#like-heart.static {
+    color: #e23b3b;
+    border: solid 3px #e23b3b;
 }
 
 #like-count {
     color: #fff;
-}
-
-@keyframes fade {
-    0% {
-        color: #transparent;
-    }
-    50% {
-        color: #e23b3b;
-    }
-    100% {
-        color: #transparent;
-    }
 }
 
 @keyframes size {
@@ -192,7 +172,7 @@ img {
         padding: 20px;
     }
     50% {
-        padding: 25px;
+        padding: 50px;
         margin-top: -10px;
     }
     100% {
@@ -209,6 +189,21 @@ img {
     }
     100% {
         border: solid 3px #e23b3b;
+    }
+}
+
+@keyframes bound-anim {
+    0%, 100% {
+        top: 0;
+        transform: scale(1);
+    }
+    30% {
+        top: -60%;
+        transform: scale(0.80, 1.20);
+    }
+    70% {
+        top: 0;
+        transform: scale(1.20, 0.80);
     }
 }
 

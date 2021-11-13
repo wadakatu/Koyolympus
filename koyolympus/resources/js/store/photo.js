@@ -32,16 +32,22 @@ const mutations = {
 
 const actions = {
     async searchLikedPhoto(context, likePhotoId) {
+        let index = null;
         const likeArray = context.getters.like;
-        //Like済配列を検索
-        for (let i = 0; i < likeArray.length; i++) {
-            //Like済であれば、インデックスを返却
-            if (likeArray[i] === likePhotoId) {
-                return i;
+        const result = likeArray.includes(likePhotoId)
+        if (result) {
+            //Like済配列を検索
+            for (let i = 0; i < likeArray.length; i++) {
+                //Like済であれば、インデックスを返却
+                if (likeArray[i] === likePhotoId) {
+                    index = i;
+                }
             }
+        } else {
+            //未LIKE時は、NULLを返却
+            index = null;
         }
-        //Likeされていなければエラー返却
-        throw new Error('Liked Photo Not Found.');
+        return index;
     },
 }
 

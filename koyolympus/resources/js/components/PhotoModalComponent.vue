@@ -8,7 +8,7 @@
                 <div id="modal-content-bottom">
                     <button id="like-heart" v-bind:class="{ press: like, static: like && isLiked }"
                             @click.self="likeOrNot(val.id)" :disabled="isProcessing"></button>
-                    <p id="like-count">いいね数：3</p>
+                    <p id="like-count">いいね数：{{ good }}</p>
                 </div>
             </div>
         </div>
@@ -26,6 +26,7 @@ export default {
             isProcessing: false,
             like: false,
             isLiked: false,
+            good: 0
         };
     },
     methods: {
@@ -38,13 +39,23 @@ export default {
                 .then(async function (result) {
                     if (result === null) {
                         //LIKE処理
-                        await self.likePhoto(photoId);
+                        await self.likePhoto(photoId).catch(
+                            e => {
+                                self.$store.commit('error/setCode', e.status);
+                            }
+                        );
                         await self.$store.commit('photo/setLike', photoId);
+                        self.good++;
                         self.like = true;
                     } else {
                         //LIKE解除処理
-                        await self.unlikePhoto(photoId);
+                        await self.unlikePhoto(photoId).catch(
+                            e => {
+                                self.$store.commit('error/setCode', e.status);
+                            }
+                        );
                         await self.$store.commit('photo/unsetLike', result);
+                        self.good--;
                         self.like = false;
                     }
                 });
@@ -57,6 +68,9 @@ export default {
         async unlikePhoto(photoId) {
             await axios.post('/api/unlike', {id: photoId});
         },
+        async getLike(photoId) {
+            return await axios.post('/api/get/like', {id: photoId});
+        },
         likeStatus: function (photoId) {
             let self = this;
             const likeObj = self.$store.state.photo.like;
@@ -65,9 +79,18 @@ export default {
     },
     watch: {
         'val.id': function () {
-            const liked = this.likeStatus(this.val.id);
-            this.like = liked;
-            this.isLiked = liked;
+            let self = this;
+            const photoId = self.val.id;
+            const liked = self.likeStatus(photoId);
+            this.getLike(photoId)
+                .then(res => {
+                    self.good = res.data.num;
+                })
+                .catch(e => {
+                    self.$store.commit('error/setCode', e.response.status);
+                });
+            self.like = liked;
+            self.isLiked = liked;
         }
     },
 }

@@ -39,7 +39,9 @@ Route::post('/bizinq/send', 'v1\BizInquiriesController@sendBizInquiries')->name(
 Route::get('/photos', 'v1\ImageController@getPhoto')->name('get.photo');
 //ランダム写真取得メソッド
 Route::get('/randomPhotos', 'v1\ImageController@getRandomPhoto')->name('get.randomPhoto');
-
+//いいね数取得メソッド
+Route::post('/get/like', 'v1\LikeController@getLikeSum')->name('get.like');
+//いいねメソッド
 Route::post('/like', 'v1\LikeController@likePhoto')->name('like.photo');
-
+//いいね解除メソッド
 Route::post('/unlike', 'v1\LikeController@unlikePhoto')->name('unlike.photo');

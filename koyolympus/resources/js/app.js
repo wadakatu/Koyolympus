@@ -7,7 +7,7 @@ import './bootstrap';
 import Vue from 'vue';
 import router from './router';
 import store from './store';
-import {INTERNAL_SERVER_ERROR} from "./util";
+import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./util";
 
 require('./bootstrap');
 
@@ -36,28 +36,25 @@ const createApp = async () => {
         el: '#app',
         router: router,
         store,
-    })
-}
-
-export default {
-    computed: {
-        errorCode() {
-            return this.$store.state.error.code;
-        }
-    },
-    watch: {
-        errorCode: {
-            handler(val) {
-                if (val === INTERNAL_SERVER_ERROR) {
-                    this.$router.push('/error');
-                }
-            },
-            immediate: true
+        computed: {
+            errorCode() {
+                return this.$store.state.error.code;
+            }
         },
-        $route() {
-            this.$store.commit('error/setCode', null);
+        watch: {
+            errorCode: {
+                handler(val) {
+                    if (val === INTERNAL_SERVER_ERROR || val === NOT_FOUND) {
+                        this.$router.push('/error');
+                    }
+                },
+                immediate: true
+            },
+            $route() {
+                this.$store.commit('error/setCode', null);
+            }
         }
-    }
+    })
 }
 
 

@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import {OK} from '../util';
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
@@ -46,16 +45,10 @@ export default {
             let self = this;
             let response;
             try {
-                response = await axios.get(`/api/randomPhotos`).catch(e => {
-                    throw 'getPhoto error' + e.message
-                });
+                response = await axios.get(`/api/randomPhotos`);
             } catch (err) {
                 self.$store.commit('error/setCode', err.status);
                 return;
-            }
-            if (response.status !== OK) {
-                self.$store.commit('error/setCode', response.status);
-                return false;
             }
             self.photos = response.data;
 

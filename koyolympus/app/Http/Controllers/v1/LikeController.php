@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Models\Like;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Str;
@@ -11,10 +12,11 @@ use Str;
 class LikeController extends Controller
 {
 
+    private $like;
 
-    public function __construct()
+    public function __construct(Like $like)
     {
-
+        $this->like = $like;
     }
 
     public function getLikeSum(Request $request): JsonResponse
@@ -25,7 +27,7 @@ class LikeController extends Controller
             return response()->json(['message' => 'sorry, it is invalid ID. GET_LIKE'], 404);
         }
 
-        return response()->json(['num' => 0]);
+        return response()->json(['num' => $this->like->getAllLike($id)]);
     }
 
     public function likePhoto(Request $request): JsonResponse

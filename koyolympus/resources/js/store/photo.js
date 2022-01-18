@@ -32,7 +32,6 @@ const mutations = {
 
 const actions = {
     async searchLikedPhoto(context, likePhotoId) {
-        let index = null;
         const likeArray = context.getters.like;
         const result = likeArray.includes(likePhotoId)
         if (result) {
@@ -40,14 +39,14 @@ const actions = {
             for (let i = 0; i < likeArray.length; i++) {
                 //Like済であれば、インデックスを返却
                 if (likeArray[i] === likePhotoId) {
-                    index = i;
+                    return true;
                 }
             }
         } else {
             //未LIKE時は、NULLを返却
-            index = null;
+            return false;
         }
-        return index;
+        return false;
     },
 }
 

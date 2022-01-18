@@ -37,7 +37,7 @@ export default {
             await self.$store.dispatch('photo/searchLikedPhoto', photoId)
                 //LIKE済の場合
                 .then(async function (result) {
-                    if (result === null) {
+                    if (!result) {
                         //LIKE処理
                         await self.likePhoto(photoId).catch(
                             e => {
@@ -55,7 +55,7 @@ export default {
                             }
                         );
                         await self.$store.commit('photo/unsetLike', result);
-                        self.good--;
+                        self.good < 0 ? self.good = 0 : self.good--;
                         self.like = false;
                     }
                 });
@@ -84,7 +84,7 @@ export default {
             const liked = self.likeStatus(photoId);
             this.getLike(photoId)
                 .then(res => {
-                    self.good = res.data.num;
+                    self.good = res.data.all_likes;
                 })
                 .catch(e => {
                     self.$store.commit('error/setCode', e.response.status);

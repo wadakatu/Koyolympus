@@ -5,9 +5,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Log;
 
-class BizInquiriesRequest extends FormRequest
+class LikeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,17 +27,14 @@ class BizInquiriesRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:20',
-            'email' => 'required|email|max:255',
-            'opinion' => 'required|string|max:1000',
+            'id' => 'string|uuid',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
-        $response['status'] = 400;
-        $response['statusText'] = 'Failed validation.';
-        $response['errors'] = $validator->errors();
-        throw new HttpResponseException(response()->json($response, 400));
+        $id = $this->get('id');
+        Log::info("[Requested ID: $id] " . __('messages.PHOTO.INVALID_UUID'));
+        abort(404);
     }
 }

@@ -5,13 +5,11 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Models\Like;
+use App\Http\Requests\LIkeRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Str;
 
 class LikeController extends Controller
 {
-
     private $like;
 
     public function __construct(Like $like)
@@ -19,36 +17,20 @@ class LikeController extends Controller
         $this->like = $like;
     }
 
-    public function getLikeSum(Request $request): JsonResponse
+    public function getLikeSum(LIkeRequest $request): JsonResponse
     {
-        $id = $request->get('id');
-
-        if (!Str::isUuid($id)) {
-            return response()->json(['message' => 'sorry, it is invalid ID. GET_LIKE'], 404);
-        }
-
-        return response()->json(['num' => $this->like->getAllLike($id)]);
+        return response()->json(['all_likes' => $this->like->getAllLike($request->get('id'))]);
     }
 
-    public function likePhoto(Request $request): JsonResponse
+    public function likePhoto(LIkeRequest $request): JsonResponse
     {
-        $id = $request->get('id');
-
-        if (!Str::isUuid($id)) {
-            return response()->json(['message' => 'sorry, it is invalid ID. LIKE'], 404);
-        }
-
-        return response()->json(['name' => 'hello, world']);
+        $this->like->addLike($request->get('id'));
+        return response()->json([]);
     }
 
-    public function unlikePhoto(Request $request): JsonResponse
+    public function unlikePhoto(LIkeRequest $request): JsonResponse
     {
-        $id = $request->get('id');
-
-        if (!Str::isUuid($id)) {
-            return response()->json(['message' => 'sorry, it is invalid ID. UNLIKE'], 404);
-        }
-
-        return response()->json(['name' => 'hello, hell']);
+        $this->like->subLike($request->get('id'));
+        return response()->json([]);
     }
 }

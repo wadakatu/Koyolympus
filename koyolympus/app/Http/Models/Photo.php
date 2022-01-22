@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Models;
 
@@ -38,7 +39,7 @@ class Photo extends Model
 
     public function getRandomId(): string
     {
-        return Str::uuid();
+        return Str::uuid()->toString();
     }
 
     public function getUrlAttribute(): string
@@ -55,6 +56,13 @@ class Photo extends Model
         }
         return $query
             ->orderBy('created_at', 'desc')->paginate();
+    }
+
+    public function getAllPhotoRandomly(): Collection
+    {
+        $query = Photo::query();
+
+        return $query->inRandomOrder()->get();
     }
 
     public function createPhotoInfo(string $fileName, string $filePath, int $genre): string

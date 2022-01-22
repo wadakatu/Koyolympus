@@ -28,6 +28,7 @@ img {
 
 footer {
     position: fixed;
+    padding-top: 20px;
     bottom: 20px;
     left: 0;
     width: 100%;

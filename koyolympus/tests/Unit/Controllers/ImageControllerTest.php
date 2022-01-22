@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
@@ -50,6 +51,20 @@ class ImageControllerTest extends TestCase
             ->andReturn(new LengthAwarePaginator([], 1, 1));
 
         $this->imageController->getPhoto($request);
+    }
+
+    /**
+     * @test
+     */
+    public function getRandomPhoto()
+    {
+        $this->photoService
+            ->shouldReceive('getAllPhotoRandomly')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(Collect([]));
+
+        $this->imageController->getRandomPhoto();
     }
 
     /**

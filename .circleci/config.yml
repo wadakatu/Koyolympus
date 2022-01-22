@@ -1,6 +1,153 @@
-version: 2
+version: 2.1
+orbs:
+  slack: circleci/slack@4.4.4
+
+commands:
+  notify_slack_pass:
+    steps:
+      - slack/notify:
+          channel: D02FP5L229G
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":tada::tada::tada: *Success!*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Job:*\n${CIRCLE_JOB}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${CIRCLE_USERNAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  notify_slack_fail:
+    steps:
+      - slack/notify:
+          channel: D02FP5L229G
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Job:*\n${CIRCLE_JOB}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${CIRCLE_USERNAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    }
+                  ]
+                }
+              ]
+            }
+
 jobs:
   build:
+    working_directory: ~/koyolympus
+    docker:
+      - image: circleci/php:7.3.0-node-browsers
+      - image: cimg/node:16.5.0
+    steps:
+      - checkout
+      - restore_cache:
+          name: restore cache for node
+          keys:
+            - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-koyolympus-
+      - restore_cache:
+          name: restore cache for composer
+          keys:
+            - composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
+            - composer-cache-koyolympus-
+      - run:
+          name: npm install
+          command: |
+            DIR_NODE='./koyolympus/node_modules'
+            if [ -d "${DIR_NODE}" ]; then
+                echo "[node_modules] directory is already exist, so [npm install] does not run."
+            else
+                npm --prefix koyolympus install koyolympus
+            fi
+      - run:
+          name: composer install
+          command: |
+            DIR_COMPOSER='./koyolympus/vendor'
+            if [ -d "${DIR_COMPOSER}" ]; then
+                echo "[vendor] directory is already exist, so [composer install] does not run."
+            else
+                composer install -n --prefer-dist --working-dir=./koyolympus
+            fi
+      - save_cache:
+          name: save_cache_node
+          key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
+          paths:
+            - koyolympus/node_modules
+      - save_cache:
+          name: restore_cache_composer
+          paths:
+            - koyolympus/vendor
+          key: composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
+      - run:
+          name: npm run production
+          working_directory: koyolympus
+          command: npm run circle-ci
+      - persist_to_workspace:
+          name: prepare to pass folders.
+          root: koyolympus/
+          paths:
+            - node_modules/
+            - vendor/
+      - notify_slack_fail
+
+  test:
     docker:
       - image: circleci/php:7.3.0-node-browsers
       - image: circleci/mariadb:10.4
@@ -19,30 +166,20 @@ jobs:
           command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg-dev libpng-dev
       - run:
           name: php-gd install
-          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include 
+          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
       - run:
           name: add install command
           command: sudo docker-php-ext-install gd
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "koyolympus/composer.json" }}
-            - v1-dependencies-
-      - run: 
-          name: change directory
-          command: cd koyolympus       
-      - run:
-          name: Install PHP libraries
-          command: composer install -n --prefer-dist --working-dir=./koyolympus
-      - save_cache:
-          paths:
-            - ./vendor
-          key: v1-dependencies-{{ checksum "koyolympus/composer.json" }}
+      - attach_workspace:
+          at: koyolympus/
       - run:
           name: Show PHPUnit Test List
           command: koyolympus/vendor/bin/phpunit --list-tests koyolympus/tests/Unit/
       - run:
-          name: echo .env.testing
-          command: echo "APP_KEY=" > .env.testing
+          name: prepare .env.testing
+          command: |
+            echo "APP_KEY=" > .env.testing
+            echo CC_TEST_REPORTER_ID=$CC_TEST_REPORTER_ID > .env.testing
       - run:
           name: generate app_key
           command: php artisan key:generate --env=testing
@@ -56,6 +193,28 @@ jobs:
           command: php artisan migrate --env=testing
           working_directory: koyolympus
       - run:
-          name: Run PHPUnit 
-          command: koyolympus/vendor/bin/phpunit koyolympus/tests/Unit/
+          name: setup Code Climate test-reporter
+          working_directory: koyolympus
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: run PHPUnit
+          working_directory: koyolympus
+          command: |
+            ./cc-test-reporter before-build
+            vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+      - notify_slack_fail
+      - notify_slack_pass
 
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          context: koyolympus
+      - test:
+          context: koyolympus
+          requires:
+            - build

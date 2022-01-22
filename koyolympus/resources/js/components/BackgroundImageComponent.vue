@@ -22,9 +22,6 @@ export default {
 .container {
     width: 100%;
     height: 100vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/images/PC280455.jpeg");
-    background-position: center;
-    background-size: cover;
     padding: 0 8vw 0 8vw;
     box-sizing: border-box;
 }

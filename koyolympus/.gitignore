@@ -7,7 +7,6 @@
 /public/image/portrait.jpeg
 /storage/*.key
 /vendor/*
-!/vendor/bin/
 /vendor/bin/carbon
 /vendor/bin/commonmark
 /vendor/bin/composer

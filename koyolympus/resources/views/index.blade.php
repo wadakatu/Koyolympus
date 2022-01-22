@@ -40,6 +40,7 @@
         gtag('js', new Date());
         gtag('config', 'G-M1ZF3820H9');
     </script>
+    <script src="https://kit.fontawesome.com/ead0100fa8.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="app">

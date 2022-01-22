@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Models;
 
@@ -6,6 +7,7 @@ use App\Http\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Str;
 use Tests\TestCase;
 
 class PhotoTest extends TestCase
@@ -50,6 +52,7 @@ class PhotoTest extends TestCase
     public function getRandomId()
     {
         $uuid = $this->photo->getRandomId();
+        $this->assertTrue(Str::isUuid($uuid));
         $this->assertIsString($uuid);
     }
 
@@ -166,5 +169,32 @@ class PhotoTest extends TestCase
         $this->assertSame('test1.jpeg', $photoList[1]->file_name);
         $this->assertSame('test3.jpeg', $photoList[2]->file_name);
 
+    }
+
+    /**
+     * @test
+     */
+    public function getAllPhotoRandomly()
+    {
+        factory(Photo::class)->create([
+            'file_name' => 'test_1'
+        ]);
+        factory(Photo::class)->create([
+            'file_name' => 'test_2'
+        ]);
+        factory(Photo::class)->create([
+            'file_name' => 'test_3'
+        ]);
+        factory(Photo::class)->create([
+            'file_name' => 'test_4'
+        ]);
+        factory(Photo::class)->create([
+            'file_name' => 'test_5'
+        ]);
+
+        $result1 = $this->photo->getAllPhotoRandomly();
+        $result2 = $this->photo->getAllPhotoRandomly();
+
+        $this->assertNotSame($result1, $result2);
     }
 }

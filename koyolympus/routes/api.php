@@ -38,4 +38,6 @@ Route::post('/bizinq/send', 'v1\BizInquiriesController@sendBizInquiries')->name(
 //写真取得メソッド
 Route::get('/photos', 'v1\ImageController@getPhoto')->name('get.photo');
 
+Route::get('/randomPhotos', 'v1\ImageController@getRandomPhoto')->name('get.randomPhoto');
+
 

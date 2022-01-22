@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
@@ -6,8 +7,9 @@ use App\Http\Models\Photo;
 use App\Http\Services\PhotoService;
 use Config;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Tests\TestCase;
@@ -44,9 +46,7 @@ class PhotoServiceTest extends TestCase
             ->with($genre)
             ->andReturn(Mockery::mock(LengthAwarePaginator::class));
 
-        $actual = $this->photoService->getAllPhoto($genre);
-
-        $this->assertInstanceOf(LengthAwarePaginator::class, $actual);
+        $this->photoService->getAllPhoto($genre);
     }
 
     public function providerGetAllPhoto(): array
@@ -64,16 +64,31 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
+    public function getAllPhotoRandomly()
+    {
+        $this->photo
+            ->shouldReceive('getAllPhotoRandomly')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(Collect([]));
+
+        $this->photoService->getAllPhotoRandomly();
+    }
+
+    /**
+     * @test
+     */
     public function uploadPhotoToS3()
     {
-        Storage::fake('s3');
-
         $genre = 1;
         $fileName = 'fake.jpeg';
         $filePath = '/photo/testUpload';
         $expectedUniqueFileName = 'testUnique.jpeg';
         $file = UploadedFile::fake()->image($fileName);
         Config::set("const.PHOTO.GENRE_FILE_URL.$genre", $filePath);
+
+        Storage::shouldReceive('disk')->once()->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+        $s3Disk->shouldReceive('putFileAs')->once()->with($filePath, $file, $expectedUniqueFileName, 'public');
 
         $this->photo
             ->shouldReceive('createPhotoInfo')
@@ -84,7 +99,6 @@ class PhotoServiceTest extends TestCase
         $uniqueFileName = $this->photoService->uploadPhotoToS3($file, $fileName, $genre);
 
         $this->assertSame($expectedUniqueFileName, $uniqueFileName);
-        Storage::disk('s3')->assertExists("$filePath/$expectedUniqueFileName");
     }
 
     /**
@@ -92,25 +106,20 @@ class PhotoServiceTest extends TestCase
      */
     public function deletePhotoFromS3()
     {
-        Storage::fake('s3');
-
         $genre = 1;
-        $fileName = 'fake.jpeg';
         $filePath = '/photo/testDelete';
-        $expectedUniqueFileName = 'testUnique.jpeg';
+        $fileName = 'test.jpeg';
         Config::set("const.PHOTO.GENRE_FILE_URL.$genre", $filePath);
-        $file = UploadedFile::fake()->image($fileName);
 
-        Storage::disk('s3')->putFileAs($filePath, $file, $expectedUniqueFileName, 'public');
+        Storage::shouldReceive('disk')->once()->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+        $s3Disk->shouldReceive('delete')->once()->with($filePath . '/' . $fileName);
 
         $this->photo
             ->shouldReceive('deletePhotoInfo')
             ->once()
-            ->with($expectedUniqueFileName);
+            ->with($fileName);
 
-        $this->photoService->deletePhotoFromS3($expectedUniqueFileName, $genre);
-
-        Storage::disk('s3')->assertMissing("$filePath/$expectedUniqueFileName");
+        $this->photoService->deletePhotoFromS3($fileName, $genre);
     }
 
     /**
@@ -215,7 +224,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード１つ２件()
+    public function searchMultipleDuplicatePhotos_duplicateTwoRecordsAboutOnePhoto()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -256,7 +265,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード１つ３件()
+    public function searchMultipleDuplicatePhotos_duplicateOneRecordAboutOnePhoto()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -307,7 +316,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード2つ２件()
+    public function searchMultipleDuplicatePhotos_duplicateTwoEachRecordsAboutTwoPhotos()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -358,7 +367,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchMultipleDuplicatePhotos_重複レコード２つ３件()
+    public function searchMultipleDuplicatePhotos_duplicateThreeEachRecordsAboutTwoPhotos()
     {
         $this->photo->shouldReceive('getAllPhotos')
             ->once()
@@ -707,7 +716,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_重複レコード１つ２件()
+    public function searchDuplicatePhoto_duplicateTwoRecords()
     {
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection([
@@ -745,7 +754,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_重複レコード１つ3件()
+    public function searchDuplicatePhoto_duplicateThreeRecords()
     {
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection([
@@ -793,7 +802,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_コレクション内１件のみ()
+    public function searchDuplicatePhoto_oneElementInCollection()
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('There is no duplicate file in the database.');
@@ -821,7 +830,7 @@ class PhotoServiceTest extends TestCase
     /**
      * @test
      */
-    public function searchDuplicatePhoto_コレクション空()
+    public function searchDuplicatePhoto_emptyCollection()
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('There is no duplicate file in the database.');

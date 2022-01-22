@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Services;
 
@@ -19,11 +20,32 @@ class PhotoService
         $this->photo = $photo;
     }
 
+    /**
+     * DBから写真のパスを全て取得
+     * @param int|null $genre
+     * @return LengthAwarePaginator
+     */
     public function getAllPhoto(?int $genre): LengthAwarePaginator
     {
         return $this->photo->getAllPhoto($genre);
     }
 
+    /**
+     * DBから写真のパスをランダムで全て取得
+     * @return Collection
+     */
+    public function getAllPhotoRandomly(): Collection
+    {
+        return $this->photo->getAllPhotoRandomly();
+    }
+
+    /**
+     * 写真をS3バケットにアップロード
+     * @param UploadedFile $file
+     * @param string $fileName
+     * @param int $genre
+     * @return string
+     */
     public function uploadPhotoToS3(UploadedFile $file, string $fileName, int $genre): string
     {
         //保存するS3のファイルパスを取得
@@ -36,6 +58,11 @@ class PhotoService
         return $uniqueFileName;
     }
 
+    /**
+     * S3から写真のデータを削除
+     * @param string $fileName
+     * @param int $genre
+     */
     public function deletePhotoFromS3(string $fileName, int $genre): void
     {
         //ジャンルからファイルパスを取得
@@ -46,6 +73,10 @@ class PhotoService
         Storage::disk('s3')->delete($filePath . '/' . $fileName);
     }
 
+    /**
+     * DB内に重複している写真があれば、DBとS3から削除
+     * @return Collection
+     */
     public function deleteMultiplePhotosIfDuplicate(): Collection
     {
         //重複しているファイル一覧を取得
@@ -60,6 +91,10 @@ class PhotoService
         return $duplicatePhotoList;
     }
 
+    /**
+     * 写真一覧から重複している写真データを探索（複数写真が対象）
+     * @return Collection
+     */
     public function searchMultipleDuplicatePhotos(): Collection
     {
         //写真一覧レコードを取得
@@ -97,6 +132,12 @@ class PhotoService
         return $photoList->values();
     }
 
+    /**
+     * 重複した写真をDBとS3から削除する
+     *
+     * @param string $fileName
+     * @return array
+     */
     public function deletePhotoIfDuplicate(string $fileName): array
     {
         //入力されたファイル名と一致する重複レコードを取得
@@ -113,6 +154,13 @@ class PhotoService
         return ['deleteFile' => $fileName, 'count' => $duplicatePhotoFiles->count()];
     }
 
+    /**
+     * 重複する写真を検索（１つの写真が対象）
+     *
+     * @param Collection $fileList
+     * @param string $fileName
+     * @return Collection
+     */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection
     {
         //取得した写真レコードから、入力されたファイル名と一致するレコードのみ残す
@@ -130,11 +178,10 @@ class PhotoService
             throw new \Error('There is no duplicate file in the database.');
         }
 
-        //一番直近でアップロードされた写真は削除対象にしないので削除
+        //一番直近でアップロードされた写真は削除対象にしない
         $indexFileList = $fileList->values();
         unset($indexFileList[0]);
 
         return $indexFileList;
     }
-
 }

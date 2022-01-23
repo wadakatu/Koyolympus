@@ -108,12 +108,9 @@ jobs:
           name: npm install
           command: |
             DIR_NODE='./koyolympus/node_modules'
-            rm -rf "${DIR_NODE}"
             if [ -d "${DIR_NODE}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else
-                node -v
-                which node
                 npm --prefix koyolympus install koyolympus
             fi
       - run:
@@ -150,7 +147,6 @@ jobs:
   test:
     docker:
       - image: circleci/php:7.3.0-node-browsers
-      - image: circleci/mariadb:10.4
     environment:
       - DB_CONNECTION: circle_testing
     steps:

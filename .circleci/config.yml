@@ -128,7 +128,7 @@ jobs:
           paths:
             - koyolympus/node_modules
       - save_cache:
-          name: restore_cache_composer
+          name: save_cache_composer
           paths:
             - koyolympus/vendor
           key: composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}

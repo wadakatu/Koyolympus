@@ -94,19 +94,17 @@ jobs:
     working_directory: ~/koyolympus
     docker:
       - image: circleci/php:7.3.0-node-browsers
-      - image: cimg/node:16.5.0
+      - image: cimg/node:16.13.2
     steps:
       - checkout
       - restore_cache:
           name: restore cache for node
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-koyolympus-
       - restore_cache:
           name: restore cache for composer
           keys:
             - composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
-            - composer-cache-koyolympus-
       - run:
           name: npm install
           command: |
@@ -138,7 +136,7 @@ jobs:
       - run:
           name: npm run production
           working_directory: koyolympus
-          command: npm run circle-ci
+          command: npm run prod
       - persist_to_workspace:
           name: prepare to pass folders.
           root: koyolympus/

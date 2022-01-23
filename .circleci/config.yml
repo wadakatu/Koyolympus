@@ -100,10 +100,12 @@ jobs:
           name: restore cache for node
           keys:
             - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
+            - npm-cache-koyolympus-
       - restore_cache:
           name: restore cache for composer
           keys:
             - composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
+            - composer-cache-koyolympus-
       - run:
           name: npm install
           command: |

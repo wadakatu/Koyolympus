@@ -93,8 +93,7 @@ jobs:
   build:
     working_directory: ~/koyolympus
     docker:
-      - image: circleci/php:7.3.0-node-browsers
-      - image: cimg/node:16.13.2
+      - image: cimg/php7.3.27-node
     steps:
       - checkout
       - restore_cache:

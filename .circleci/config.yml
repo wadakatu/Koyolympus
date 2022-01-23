@@ -109,9 +109,7 @@ jobs:
           name: npm install
           command: |
             DIR_NODE='./koyolympus/node_modules'
-            cd koyolympus/ 
-            rm -rf node_modules/
-            ls
+            rm -rf "${DIR_NODE}"
             if [ -d "${DIR_NODE}" ]; then
                 echo "[node_modules] directory is already exist, so [npm install] does not run."
             else

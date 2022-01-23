@@ -16,8 +16,8 @@
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
-const loadImage = require('/public/images/Spin-0.7s-154px.png')
-const errorImage = require('/public/images/20200501_noimage.png')
+const loadImage = require('/images/Spin-0.7s-154px.png');
+const errorImage = require('/images/20200501_noimage.png');
 
 Vue.use(VueLazyload, {
     preLoad: 1.1,

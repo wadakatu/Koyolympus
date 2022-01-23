@@ -93,7 +93,7 @@ jobs:
   build:
     working_directory: ~/koyolympus
     docker:
-      - image: cimg/php7.3.27-node
+      - image: cimg/php:7.3.27-node
     steps:
       - checkout
       - restore_cache:

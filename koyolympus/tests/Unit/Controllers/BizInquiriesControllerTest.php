@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
-use App\Http\Controllers\v1\BizInquiriesController;
-use App\Http\Requests\BizInquiriesRequest;
+use Tests\TestCase;
 use App\Mail\BizInquiriesMail;
 use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
+use App\Http\Requests\BizInquiriesRequest;
+use App\Http\Controllers\v1\BizInquiriesController;
 
 class BizInquiriesControllerTest extends TestCase
 {
@@ -30,7 +30,7 @@ class BizInquiriesControllerTest extends TestCase
      */
     public function sendBizInquiries()
     {
-        $request = new BizInquiriesRequest;
+        $request = new BizInquiriesRequest();
         $request->merge([
             'name' => 'test',
             'email' => 'test@gmail.com',

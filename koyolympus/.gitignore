@@ -34,3 +34,4 @@ public/*.js
 public/js/app.js
 public/*.js.gz
 public/.gz
+.DS_Store

@@ -148,7 +148,7 @@ class PhotoTest extends TestCase
     /**
      * @test
      */
-    public function getAllPhotos()
+    public function getAllPhotoOrderByCreatedAtDesc()
     {
         factory(Photo::class)->create([
             'file_name' => 'test3.jpeg',
@@ -163,7 +163,7 @@ class PhotoTest extends TestCase
             'created_at' => '2021-01-01 00:00:01'
         ]);
 
-        $photoList = $this->photo->getAllPhotos();
+        $photoList = $this->photo->getAllPhotoOrderByCreatedAtDesc();
 
         $this->assertSame('test2.jpeg', $photoList[0]->file_name);
         $this->assertSame('test1.jpeg', $photoList[1]->file_name);

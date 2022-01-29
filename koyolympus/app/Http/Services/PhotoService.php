@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Services;
 
+use Exception;
 use App\Http\Models\Photo;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
@@ -76,6 +77,7 @@ class PhotoService
     /**
      * DB内に重複している写真があれば、DBとS3から削除
      * @return Collection
+     * @throws Exception
      */
     public function deleteMultiplePhotosIfDuplicate(): Collection
     {
@@ -94,11 +96,12 @@ class PhotoService
     /**
      * 写真一覧から重複している写真データを探索（複数写真が対象）
      * @return Collection
+     * @throws Exception
      */
     public function searchMultipleDuplicatePhotos(): Collection
     {
         //写真一覧レコードを取得
-        $photoList = $this->photo->getAllPhotos();
+        $photoList = $this->photo->getAllPhotoOrderByCreatedAtDesc();
 
         $photoNameList = [];
 
@@ -126,7 +129,7 @@ class PhotoService
 
         //コレクションが空の場合は、エラーを投げる
         if ($photoList->isEmpty()) {
-            throw new \Error('There is no duplicate file in the database.');
+            throw new Exception('There is no duplicate file in the database.');
         }
 
         return $photoList->values();
@@ -137,11 +140,12 @@ class PhotoService
      *
      * @param string $fileName
      * @return array
+     * @throws Exception
      */
     public function deletePhotoIfDuplicate(string $fileName): array
     {
         //入力されたファイル名と一致する重複レコードを取得
-        $duplicatePhotoFiles = $this->searchDuplicatePhoto($this->photo->getAllPhotos(), $fileName);
+        $duplicatePhotoFiles = $this->searchDuplicatePhoto($this->photo->getAllPhotoOrderByCreatedAtDesc(), $fileName);
         $fileName = null;
 
         //重複レコードをDBとS3から削除
@@ -160,6 +164,7 @@ class PhotoService
      * @param Collection $fileList
      * @param string $fileName
      * @return Collection
+     * @throws Exception
      */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection
     {
@@ -175,7 +180,7 @@ class PhotoService
         //検索の結果レコードが見つからない
         //またはレコードの検索結果１件のみの場合は重複なしでエラーを投げる。
         if ($fileList->isEmpty() || $fileList->count() === 1) {
-            throw new \Error('There is no duplicate file in the database.');
+            throw new Exception('There is no duplicate file in the database.');
         }
 
         //一番直近でアップロードされた写真は削除対象にしない

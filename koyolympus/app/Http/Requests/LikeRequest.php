@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Log;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class LikeRequest extends FormRequest
 {
@@ -27,7 +27,7 @@ class LikeRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'string|uuid',
+            'id' => 'required|string|uuid',
         ];
     }
 

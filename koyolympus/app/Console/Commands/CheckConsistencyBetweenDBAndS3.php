@@ -78,7 +78,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
                 }
                 return;
             }
-        } catch (\Error $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             $this->error($e->getMessage());
             return;

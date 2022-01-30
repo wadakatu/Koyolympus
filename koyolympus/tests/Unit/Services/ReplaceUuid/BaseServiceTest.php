@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\ReplaceUuid;
 
-use App\Exceptions\Model\ModelUpdateFailedException;
-use App\Exceptions\S3\S3MoveFailedException;
-use App\Http\Models\Photo;
-use App\Http\Services\ReplaceUuid\BaseService;
+use Str;
 use Config;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Http\UploadedFile;
 use Mockery;
 use Storage;
-use Str;
 use Tests\TestCase;
+use App\Http\Models\Photo;
+use Illuminate\Http\UploadedFile;
+use App\Exceptions\S3\S3MoveFailedException;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Filesystem\FilesystemAdapter;
+use App\Http\Services\ReplaceUuid\BaseService;
+use App\Exceptions\Model\ModelUpdateFailedException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class BaseServiceTest extends TestCase
 {
@@ -210,6 +210,7 @@ class BaseServiceTest extends TestCase
      * @dataProvider providerIncludeUuidInRecord_withException
      * @param $params
      * @param $expected
+     * @throws ModelUpdateFailedException|S3MoveFailedException|FileNotFoundException
      */
     public function includeUuidInRecord_withException($params, $expected)
     {

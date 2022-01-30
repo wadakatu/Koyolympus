@@ -13,12 +13,11 @@
 </template>
 
 <script>
-import {OK} from '../util';
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
-const loadImage = require('/public/images/Spin-0.7s-154px.png')
-const errorImage = require('/public/images/20200501_noimage.png')
+const loadImage = require('/images/Spin-0.7s-154px.png');
+const errorImage = require('/images/20200501_noimage.png');
 
 Vue.use(VueLazyload, {
     preLoad: 1.1,
@@ -38,7 +37,7 @@ export default {
             photos: [],
             noPhoto: false,
             showContent: false,
-            postItem: '',
+            postItem: {},
         }
     },
     methods: {
@@ -46,16 +45,10 @@ export default {
             let self = this;
             let response;
             try {
-                response = await axios.get(`/api/randomPhotos`).catch(e => {
-                    throw 'getPhoto error' + e.message
-                });
+                response = await axios.get(`/api/randomPhotos`);
             } catch (err) {
                 self.$store.commit('error/setCode', err.status);
                 return;
-            }
-            if (response.status !== OK) {
-                self.$store.commit('error/setCode', response.status);
-                return false;
             }
             self.photos = response.data;
 
@@ -69,7 +62,7 @@ export default {
         },
         closeModal: function () {
             this.showContent = false;
-        }
+        },
     },
     watch: {
         $route: {

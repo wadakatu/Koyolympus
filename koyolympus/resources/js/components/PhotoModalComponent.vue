@@ -6,10 +6,9 @@
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <i id="like-heart" v-bind:class="{ press: likeStatus(val.id) }"
-                       @click.self="like(val.id)"></i>
-                    <p id="like-count">いいね数：3</p>
-                    <span id="liked" v-bind:class="{ press: likeStatus(val.id) }">liked!</span>
+                    <button id="like-heart" v-bind:class="{ press: like, static: like && isLiked }"
+                            @click.self="likeOrNot(val.id)" :disabled="isProcessing"></button>
+                    <p id="like-count">いいね数：{{ good }}</p>
                 </div>
             </div>
         </div>
@@ -19,24 +18,81 @@
 <script>
 export default {
     name: "PhotoModalComponent.vue",
-    props: ['val'],
-    methods: {
-        like(photoId) {
-            if (!this.likeStatus(photoId)) {
-                this.$store.commit('photo/setLike', photoId);
-                $("#like-heart,#liked").toggleClass("press", 500);
-            }
-        },
+    props: {
+        val: Object,
     },
-    computed: {
-        likeStatus: function () {
-            self = this;
-            return function (photoId) {
-                const likeObj = self.$store.state.photo.like;
-                return likeObj.includes(photoId);
-            };
+    data() {
+        return {
+            isProcessing: false,
+            like: false,
+            isLiked: false,
+            good: 0
+        };
+    },
+    methods: {
+        async likeOrNot(photoId) {
+            let self = this;
+            //ボタンの多重起動防止ON
+            self.isProcessing = true;
+            await self.$store.dispatch('photo/searchLikedPhoto', photoId)
+                //LIKE済の場合
+                .then(async function (result) {
+                    if (!result) {
+                        //LIKE処理
+                        await self.likePhoto(photoId).catch(
+                            e => {
+                                self.$store.commit('error/setCode', e.status);
+                            }
+                        );
+                        await self.$store.commit('photo/setLike', photoId);
+                        self.good++;
+                        self.like = true;
+                    } else {
+                        //LIKE解除処理
+                        await self.unlikePhoto(photoId).catch(
+                            e => {
+                                self.$store.commit('error/setCode', e.status);
+                            }
+                        );
+                        await self.$store.commit('photo/unsetLike', result);
+                        self.good < 0 ? self.good = 0 : self.good--;
+                        self.like = false;
+                    }
+                });
+            //ボタンの多重起動防止OFF
+            self.isProcessing = false;
+        },
+        async likePhoto(photoId) {
+            await axios.post(`/api/like`, {id: photoId});
+        },
+        async unlikePhoto(photoId) {
+            await axios.post('/api/unlike', {id: photoId});
+        },
+        async getLike(photoId) {
+            return await axios.post('/api/get/like', {id: photoId});
+        },
+        likeStatus: function (photoId) {
+            let self = this;
+            const likeObj = self.$store.state.photo.like;
+            return likeObj.includes(photoId);
         }
-    }
+    },
+    watch: {
+        'val.id': function () {
+            let self = this;
+            const photoId = self.val.id;
+            const liked = self.likeStatus(photoId);
+            this.getLike(photoId)
+                .then(res => {
+                    self.good = res.data.all_likes;
+                })
+                .catch(e => {
+                    self.$store.commit('error/setCode', e.response.status);
+                });
+            self.like = liked;
+            self.isLiked = liked;
+        }
+    },
 }
 </script>
 
@@ -98,13 +154,14 @@ img {
 
 #like-heart {
     cursor: pointer;
-    padding: 10px 12px 8px;
+    padding: 20px;
     background: #fff;
-    border-radius: 50%;
+    border-radius: 80%;
     display: inline-block;
     margin: 0 0 15px;
     color: #aaa;
     transition: .2s;
+    border: solid 3px #aaa;
 }
 
 #like-heart:hover {
@@ -115,59 +172,61 @@ img {
     font-family: fontawesome;
     content: '\f004';
     font-style: normal;
-}
-
-#liked {
-    position: absolute;
-    bottom: 100px;
-    left: 0;
-    right: 0;
-    visibility: hidden;
-    transition: 1s;
-    z-index: -2;
-    font-size: 5px;
-    color: transparent;
-    font-weight: 400;
+    font-size: 25px;
 }
 
 #like-heart.press {
-    animation: size .6s;
+    animation: bound-anim .6s, size, border .6s;
     color: #e23b3b;
+    border: solid 3px #e23b3b;
 }
 
-#liked.press {
-    bottom: 180px;
-    font-size: 20px;
-    visibility: visible;
-    animation: fade 2s;
+#like-heart.static {
+    color: #e23b3b;
+    border: solid 3px #e23b3b;
 }
 
 #like-count {
     color: #fff;
 }
 
-@keyframes fade {
+@keyframes size {
     0% {
-        color: #transparent;
+        padding: 20px;
     }
     50% {
-        color: #e23b3b;
+        padding: 50px;
+        margin-top: -10px;
     }
     100% {
-        color: #transparent;
+        padding: 20px;
     }
 }
 
-@keyframes size {
+@keyframes border {
     0% {
-        padding: 10px 12px 8px;
+        border: solid 3px #aaaaaa;
     }
     50% {
-        padding: 14px 16px 12px;
-        margin-top: -4px;
+        border: solid 3px #d36561;
     }
     100% {
-        padding: 10px 12px 8px;
+        border: solid 3px #e23b3b;
+    }
+}
+
+@keyframes bound-anim {
+    0%, 100% {
+        top: 0;
+        transform: scale(1);
+    }
+    30% {
+        top: -60%;
+        transform: scale(0.80, 1.20);
+    }
+    70% {
+        top: 0;
+        transform: scale(1.20, 0.80);
     }
 }
 

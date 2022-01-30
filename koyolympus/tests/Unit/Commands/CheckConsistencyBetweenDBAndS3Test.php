@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
+use Mockery;
+use Exception;
+use Tests\TestCase;
 use App\Http\Models\Photo;
-use App\Http\Services\PhotoService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Mockery;
-use Tests\TestCase;
+use App\Http\Services\PhotoService;
 
 class CheckConsistencyBetweenDBAndS3Test extends TestCase
 {
@@ -77,7 +78,7 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
             $mock->shouldReceive('deletePhotoIfDuplicate')
                 ->once()
                 ->with('test.jpeg')
-                ->andThrow(new \Error('例外発生！'));
+                ->andThrow(new Exception('例外発生！'));
             $mock->shouldReceive('deleteMultiplePhotosIfDuplicate')
                 ->never()
                 ->andReturn(null);

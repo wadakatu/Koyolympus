@@ -3,22 +3,22 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Models\Photo;
-use App\Http\Requests\GetPhotoRequest;
-use App\Http\Services\PhotoService;
 use Exception;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\JsonResponse;
+use App\Http\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Http\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\GetPhotoRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImageController extends Controller
 {
@@ -58,12 +58,14 @@ class ImageController extends Controller
      */
     public function downloadPhoto(Photo $photo)
     {
-        if (!Storage::disk('s3')->exists($photo->file_path)) {
+        $storage = Storage::disk('s3');
+
+        if (!$storage->exists($photo->file_path)) {
             Log::debug('画像が見つかりませんでした。');
             return response(['error' => 'no image found'], 404);
         }
 
-        return response(Storage::disk('s3')->get($photo->file_path), 200);
+        return response($storage->get($photo->file_path), 200);
     }
 
     /**
@@ -78,7 +80,6 @@ class ImageController extends Controller
         $fileName = $file->getClientOriginalName();
         $genre = $request->input('genre');
 
-        $uniqueFileName = null;
         DB::beginTransaction();
 
         try {
@@ -87,7 +88,7 @@ class ImageController extends Controller
             DB::commit();
             Log::debug('ファイルのアップロード終了');
         } catch (Exception $e) {
-            Log::debug('ファイルのアップロードに失敗しました。');
+            Log::error('ファイルのアップロードに失敗しました。');
             DB::rollBack();
             $this->removePhoto($request);
             Log::error($e->getMessage());

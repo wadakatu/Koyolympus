@@ -93,7 +93,7 @@ class Photo extends Model
             ->delete();
     }
 
-    public function getAllPhotos(): Collection
+    public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {
         return self::query()->orderBy('created_at', 'desc')->get();
     }

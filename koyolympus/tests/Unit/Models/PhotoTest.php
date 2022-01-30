@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models;
 
+use Str;
+use Mockery;
+use Tests\TestCase;
 use App\Http\Models\Photo;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Str;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PhotoTest extends TestCase
 {
@@ -34,7 +35,7 @@ class PhotoTest extends TestCase
      */
     public function setId()
     {
-        $this->photo = \Mockery::mock(Photo::class)->makePartial();
+        $this->photo = Mockery::mock(Photo::class)->makePartial();
 
         $this->photo->shouldReceive('getRandomId')
             ->once()
@@ -176,25 +177,12 @@ class PhotoTest extends TestCase
      */
     public function getAllPhotoRandomly()
     {
-        factory(Photo::class)->create([
-            'file_name' => 'test_1'
-        ]);
-        factory(Photo::class)->create([
-            'file_name' => 'test_2'
-        ]);
-        factory(Photo::class)->create([
-            'file_name' => 'test_3'
-        ]);
-        factory(Photo::class)->create([
-            'file_name' => 'test_4'
-        ]);
-        factory(Photo::class)->create([
-            'file_name' => 'test_5'
-        ]);
+        factory(Photo::class, 5)->create();
 
         $result1 = $this->photo->getAllPhotoRandomly();
         $result2 = $this->photo->getAllPhotoRandomly();
 
         $this->assertNotSame($result1, $result2);
+        $this->assertSame(5, $result1->count());
     }
 }

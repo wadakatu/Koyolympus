@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Models;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Like extends Model
@@ -16,16 +17,21 @@ class Like extends Model
 
     public function addLike(string $uuid): void
     {
-        Like::query()->where('photo_id', $uuid)->first()->increment('all_likes');
+        Like::query()->where('photo_id', $uuid)->first()->update([
+            'likes' => DB::raw('likes + 1'),
+            'all_likes' => DB::raw('all_likes + 1'),
+        ]);
     }
 
     public function subLike(string $uuid): void
     {
         $target = Like::query()->where('photo_id', $uuid)->first();
-        $likes = $target->decrement('all_likes');
 
-        if ($likes < 0) {
-            $target->save(['all_likes' => 0]);
+        $target->decrement('likes');
+        $target->decrement('all_likes');
+
+        if ($target->likes < 0) {
+            $target->fill(['likes' => 0])->save();
         }
     }
 }

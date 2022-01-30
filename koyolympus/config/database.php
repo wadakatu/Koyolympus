@@ -78,6 +78,22 @@ return [
             'engine' => null,
         ],
 
+        //テスト用DB
+        'koyolympus_testing' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', 'mysql'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => 'koyolympus_test',
+            'username' => env('DB_USERNAME', 'koyo'),
+            'password' => env('DB_PASSWORD', 'olympus'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

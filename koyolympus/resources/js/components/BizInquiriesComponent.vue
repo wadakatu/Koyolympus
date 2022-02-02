@@ -96,7 +96,6 @@ export default {
 .contact {
     flex-basis: 50%;
     position: relative;
-    min-height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,7 +103,6 @@ export default {
 }
 
 .container {
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -112,11 +110,8 @@ export default {
 
 .contactForm {
     width: 100%;
-    height: 65vh;
     padding: 30px;
     background: transparent;
-    margin-right: 30px;
-    margin-left: 40px;
 }
 
 .biz_title {
@@ -130,7 +125,8 @@ export default {
 .inputBox {
     position: relative;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 15px;
+    text-align: center;
 }
 
 .params_input, .params_textarea, .sub_inq, .mov_home {
@@ -147,7 +143,7 @@ export default {
 
 .params_textarea {
     resize: none;
-    height: 22vh;
+    height: 20vh;
 }
 
 .params_name {
@@ -177,9 +173,7 @@ export default {
     font-weight: bold;
     line-height: 20px;
     width: 9vw;
-    position: fixed;
-    left: 18vw;
-    justify-content: space-evenly;
+    margin-right: 10px;
     text-decoration: none;
     text-transform: uppercase;
     border: 1px solid transparent;
@@ -197,8 +191,7 @@ export default {
     font-weight: bold;
     line-height: 20px;
     width: 9vw;
-    position: fixed;
-    right: 60vw;
+    margin-left: 10px;
     text-decoration: none;
     text-transform: uppercase;
     border: 1px solid transparent;
@@ -255,7 +248,7 @@ export default {
     }
 
     .params_name {
-        left: 12vw;
+        left: 15vw;
     }
 
     .sub_inq {

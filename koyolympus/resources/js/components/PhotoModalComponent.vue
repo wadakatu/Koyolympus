@@ -130,20 +130,20 @@ export default {
 }
 
 #modal-content-bottom {
-    margin-top: 5vh;
+    margin-top: 3vh;
     text-align: center;
 }
 
 img {
     object-fit: contain;
-    height: 550px;
+    height: 50vh;
     pointer-events: none;
     border: 1px solid white;
 }
 
 #like-heart {
     cursor: pointer;
-    padding: 35px;
+    padding: 20px;
     background: #fff;
     border-radius: 80%;
     display: inline-block;
@@ -161,7 +161,7 @@ img {
     font-family: fontawesome;
     content: '\f004';
     font-style: normal;
-    font-size: 30px;
+    font-size: 25px;
 }
 
 #like-heart.press {

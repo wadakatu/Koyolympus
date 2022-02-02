@@ -30,6 +30,7 @@ export default {
     display: flex;
     height: 75%;
     align-items: center;
+    justify-content: center;
 }
 
 @media screen and (max-width: 950px) {

@@ -77,13 +77,13 @@ class PhotoTest extends TestCase
     public function getAllPhoto()
     {
         factory(Photo::class)->create([
-            'genre' => 1,
+            'genre' => '1',
         ]);
         factory(Photo::class, 2)->create([
-            'genre' => 2,
+            'genre' => '2',
         ]);
         factory(Photo::class, 3)->create([
-            'genre' => 3,
+            'genre' => '3',
         ]);
 
         //ジャンルなし
@@ -91,15 +91,15 @@ class PhotoTest extends TestCase
         $this->assertSame(6, count($records->items()));
 
         //ジャンル１
-        $recordsOfGenre1 = $this->photo->getAllPhoto(1);
+        $recordsOfGenre1 = $this->photo->getAllPhoto('1');
         $this->assertSame(1, count($recordsOfGenre1->items()));
 
         //ジャンル２
-        $recordsOfGenre2 = $this->photo->getAllPhoto(2);
+        $recordsOfGenre2 = $this->photo->getAllPhoto('2');
         $this->assertSame(2, count($recordsOfGenre2->items()));
 
         //ジャンル３
-        $recordsOfGenre3 = $this->photo->getAllPhoto(3);
+        $recordsOfGenre3 = $this->photo->getAllPhoto('3');
         $this->assertSame(3, count($recordsOfGenre3->items()));
     }
 

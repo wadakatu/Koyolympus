@@ -53,10 +53,9 @@ export default {
 <style scoped>
 
 .navbar {
-    height: 12%;
+    padding: 3vh 8vw 3vh 8vw;
     display: flex;
     align-items: center;
-    padding-top: 20px;
     z-index: 999;
 }
 
@@ -113,11 +112,7 @@ nav ul li a {
 
 @media screen and (max-width: 480px) {
     .navbar {
-        height: 12%;
-        display: flex;
-        align-items: center;
-        padding-top: 20px;
-        z-index: 999;
+        padding: 3vh 8vw 0 8vw;
     }
 
     .logo {

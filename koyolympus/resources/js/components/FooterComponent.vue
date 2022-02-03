@@ -27,11 +27,10 @@ img {
 }
 
 footer {
-    position: fixed;
-    padding-top: 20px;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
+    /*position: fixed;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
+    padding: 1em;
     text-align: center;
 }
 

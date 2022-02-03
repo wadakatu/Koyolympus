@@ -109,8 +109,6 @@ export default {
 }
 
 .contactForm {
-    width: 100%;
-    padding: 30px;
     background: transparent;
 }
 
@@ -239,12 +237,11 @@ export default {
 
     .contactForm {
         width: 100vw;
-        height: 75vh;
         text-align: center;
     }
 
     .params_input, .params_textarea, .sub_inq, .mov_home {
-        width: 60vw;
+        width: 70vw;
     }
 
     .params_name {
@@ -270,10 +267,7 @@ export default {
     .contactForm {
         width: 100vw;
         height: 100%;
-    }
-
-    .biz_title {
-        margin-bottom: 2vh;
+        padding: 2em;
     }
 
     .params_input, .params_textarea, .sub_inq, .mov_home {
@@ -322,9 +316,6 @@ export default {
 }
 
 @media screen and (min-height: 910px) and (max-width: 950px) {
-    .params_input, .params_textarea, .sub_inq, .mov_home {
-        width: 50vw;
-    }
 
     .sub_inq {
         width: 12vw;

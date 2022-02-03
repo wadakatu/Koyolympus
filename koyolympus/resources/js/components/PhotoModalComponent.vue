@@ -8,7 +8,7 @@
                 <div id="modal-content-bottom">
                     <button id="like-heart" v-bind:class=" like && isLiked ? 'static' : like ? 'press' : ''"
                             @click.self="likeOrNot(val.id)" :disabled="isProcessing"></button>
-                    <p id="like-count">いいね数：{{ good }}</p>
+                    <p id="like-count">Like：{{ good }}</p>
                 </div>
             </div>
         </div>
@@ -178,6 +178,44 @@ img {
 #like-count {
     color: #fff;
     font-size: 20px;
+}
+
+@media screen and (max-width: 1350px) {
+    #modal-content {
+        height: 45vh;
+    }
+
+    img {
+        height: 45vh;
+    }
+
+    #like-heart {
+        padding: 25px;
+    }
+
+    #like-heart:before {
+        font-size: 25px;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    img {
+        height: 35vh;
+    }
+
+    #like-heart {
+        padding: 20px;
+    }
+
+    #like-heart:before {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    img {
+        height: 30vh;
+    }
 }
 
 @keyframes size {

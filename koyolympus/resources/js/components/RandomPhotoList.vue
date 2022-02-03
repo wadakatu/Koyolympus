@@ -80,8 +80,8 @@ export default {
 
 .photo-list {
     text-align: center;
-    height: 50vh;
-    margin-bottom: 5vh;
+    height: 70vh;
+    overflow: auto;
 }
 
 h2 {
@@ -93,8 +93,8 @@ h2 {
 }
 
 img {
-    width: 10vw;
-    height: 15vh;
+    width: 15vw;
+    height: 20vh;
     object-fit: cover;
     cursor: zoom-in;
     padding: 0 5px;
@@ -105,17 +105,9 @@ img {
 }
 
 @media screen and (max-width: 1350px) {
-    .photo-list {
-        margin-bottom: 10px;
-    }
 
     h2 {
         font-size: 35px;
-    }
-
-    img {
-        width: 14vw;
-        height: 22vh;
     }
 }
 
@@ -133,20 +125,8 @@ img {
         left: 25vw;
     }
 
-    .images {
-        margin-top: 10vh;
-    }
-}
-
-@media screen and (max-width: 900px) {
     img {
-        height: 20vh;
-    }
-}
-
-@media screen and (max-width: 710px) {
-    img {
-        width: 12vw;
+        width: 25vw;
     }
 }
 
@@ -158,12 +138,6 @@ img {
     h2 {
         left: 20vw;
         font-size: 25px;
-    }
-}
-
-@media screen and (max-width: 515px) {
-    img {
-        width: 12vw;
     }
 }
 

@@ -53,7 +53,7 @@ export default {
 <style scoped>
 
 .navbar {
-    padding: 3vh 8vw 3vh 8vw;
+    padding: 3vh 8vw 0 8vw;
     display: flex;
     align-items: center;
     z-index: 999;

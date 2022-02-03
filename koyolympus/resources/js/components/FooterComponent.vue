@@ -27,10 +27,7 @@ img {
 }
 
 footer {
-    /*position: fixed;*/
-    /*bottom: 0;*/
-    /*width: 100%;*/
-    padding: 1em;
+    padding: 0 8vw 3vh 8vw;
     text-align: center;
 }
 
@@ -43,7 +40,6 @@ footer {
 @media screen and (max-width: 950px) {
     footer {
         display: inline-block;
-        width: 100%;
     }
 }
 

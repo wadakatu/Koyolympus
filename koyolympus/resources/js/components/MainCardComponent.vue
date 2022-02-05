@@ -188,14 +188,9 @@ export default {
 }
 
 @media screen and (max-width: 480px) {
-    .card {
-        margin-top: 3vh;
-    }
-
     .card_detail {
-        height: 8vh;
         width: 40vh;
-        margin-top: 2vh;
+        margin-top: 3vh;
     }
 
     .card_description {

@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Http\Models;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class Photo extends Model
 {
@@ -47,7 +47,7 @@ class Photo extends Model
         return Storage::disk('s3')->url($this->attributes['file_path']);
     }
 
-    public function getAllPhoto(?int $genre): LengthAwarePaginator
+    public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
         $query = Photo::query();
 

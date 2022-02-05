@@ -77,15 +77,10 @@ export default {
 
 .photo-list {
     text-align: center;
-    height: 50vh;
-    margin-bottom: 5vh;
 }
 
 h2 {
     color: #fff;
-    position: fixed;
-    top: 50vh;
-    left: 30vw;
     font-size: 40px;
 }
 

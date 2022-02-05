@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Http\Services;
 
+use Storage;
 use Exception;
 use App\Http\Models\Photo;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Storage;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 
 class PhotoService
@@ -23,10 +23,10 @@ class PhotoService
 
     /**
      * DBから写真のパスを全て取得
-     * @param int|null $genre
+     * @param string|null $genre
      * @return LengthAwarePaginator
      */
-    public function getAllPhoto(?int $genre): LengthAwarePaginator
+    public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
         return $this->photo->getAllPhoto($genre);
     }

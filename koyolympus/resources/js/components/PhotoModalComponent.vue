@@ -6,9 +6,9 @@
                     <img :src="val.url" alt="This photo taken by Koyo Isono.">
                 </div>
                 <div id="modal-content-bottom">
-                    <button id="like-heart" v-bind:class="{ press: like, static: like && isLiked }"
+                    <button id="like-heart" v-bind:class=" like && isLiked ? 'static' : like ? 'press' : ''"
                             @click.self="likeOrNot(val.id)" :disabled="isProcessing"></button>
-                    <p id="like-count">いいね数：{{ good }}</p>
+                    <p id="like-count">Like：{{ good }}</p>
                 </div>
             </div>
         </div>
@@ -54,8 +54,9 @@ export default {
                                 self.$store.commit('error/setCode', e.status);
                             }
                         );
-                        await self.$store.commit('photo/unsetLike', result);
+                        await self.$store.commit('photo/unsetLike', photoId);
                         self.good < 0 ? self.good = 0 : self.good--;
+                        self.isLiked = false;
                         self.like = false;
                     }
                 });
@@ -118,36 +119,24 @@ export default {
 
 #modal-content {
     z-index: 2;
-    width: 80vw;
-    height: 55vh;
-    padding: 1em;
+    width: 100vw;
+    height: 60vh;
+    padding: 3em;
     background-color: rgba(0, 0, 0, 0.5);
 }
 
 #modal-content-top {
-    width: 80vw;
     text-align: center;
 }
 
 #modal-content-bottom {
-    width: 80vw;
     margin-top: 3vh;
     text-align: center;
 }
 
-.component-fade-enter-active,
-.component-fade-leave-active {
-    transition: opacity .4s ease;
-}
-
-.component-fade-enter,
-.component-fade-leave-to {
-    opacity: 0;
-}
-
 img {
     object-fit: contain;
-    height: 400px;
+    height: 50vh;
     pointer-events: none;
     border: 1px solid white;
 }
@@ -188,6 +177,45 @@ img {
 
 #like-count {
     color: #fff;
+    font-size: 20px;
+}
+
+@media screen and (max-width: 1350px) {
+    #modal-content {
+        height: 45vh;
+    }
+
+    img {
+        height: 45vh;
+    }
+
+    #like-heart {
+        padding: 25px;
+    }
+
+    #like-heart:before {
+        font-size: 25px;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    img {
+        height: 35vh;
+    }
+
+    #like-heart {
+        padding: 20px;
+    }
+
+    #like-heart:before {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    img {
+        height: 30vh;
+    }
 }
 
 @keyframes size {

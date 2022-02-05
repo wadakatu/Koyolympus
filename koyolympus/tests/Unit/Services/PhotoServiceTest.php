@@ -56,7 +56,7 @@ class PhotoServiceTest extends TestCase
                 'genre' => null,
             ],
             'ジャンルあり' => [
-                'genre' => 1
+                'genre' => '1'
             ],
         ];
     }

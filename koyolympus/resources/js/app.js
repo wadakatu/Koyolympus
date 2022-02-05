@@ -20,6 +20,8 @@ require('./bootstrap');
  */
 
 Vue.component('background-image-component', () => import('./components/BackgroundImageComponent'))
+Vue.component('header-component', () => import('./components/HeaderComponent'))
+Vue.component('footer-component', () => import('./components/FooterComponent'))
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -52,7 +54,7 @@ const createApp = async () => {
                 this.$store.commit('error/setCode', null);
             }
         }
-    })
+    });
 }
 
 

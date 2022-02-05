@@ -36,7 +36,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1ZF3820H9"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'G-M1ZF3820H9');
     </script>
@@ -44,7 +48,9 @@
 </head>
 <body>
 <div id="app">
+    <header-component></header-component>
     <background-image-component></background-image-component>
+    <footer-component></footer-component>
 </div>
 <!-- Script -->
 <script type="application/javascript" src="{{ mix('/js/app.js') }}" defer></script>

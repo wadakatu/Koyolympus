@@ -42,7 +42,7 @@ class ImageControllerTest extends TestCase
      */
     public function getPhoto()
     {
-        $genre = 1;
+        $genre = '1';
         $request = Mockery::mock(GetPhotoRequest::class);
         $request->shouldReceive('input')
             ->once()

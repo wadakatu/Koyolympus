@@ -18,10 +18,11 @@
                     <div class="dropdown">
                         <a class="dropbtn">More<i class="fa fa-caret-down"></i></a>
                         <div class="dropdown-content">
-                            <a href="#">E-Commerce</a>
-                            <a href="#">Facebook</a>
-                            <a href="#">GitHub</a>
-                            <a href="#">Instagram</a>
+                            <a href="https://koyolympus.thebase.in/" target="_blank" rel="noopener noreferrer">E-Commerce</a>
+                            <a href="https://www.facebook.com/koyolympus/" target="_blank" rel="noopener noreferrer">Facebook</a>
+                            <a href="https://github.com/wadakatu/koyolympus" target="_blank" rel="noopener noreferrer">GitHub</a>
+                            <a href="https://www.instagram.com/wadakatu1234/?hl=ja" target="_blank"
+                               rel="noopener noreferrer">Instagram</a>
                         </div>
                     </div>
                 </li>

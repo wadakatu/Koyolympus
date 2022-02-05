@@ -9,12 +9,35 @@
         <div class="menu menuEffects">
             <label for="menuToggle"></label>
             <div class="menuContent">
-                <ul>
-                    <li><a href="#">MENU 1</a></li>
-                    <li><a href="#">MENU 2</a></li>
-                    <li><a href="#">MENU 3</a></li>
-                    <li><a href="#">MENU 4</a></li>
-                    <li><a href="#">MENU 5</a></li>
+                <ul @click="close">
+                    <li>
+                        <router-link v-bind:to="{name: 'about.me'}">About Me</router-link>
+                    </li>
+                    <li @click="this.photo">
+                        <router-link v-bind:to="{}">Photography</router-link>
+                    </li>
+                    <li>
+                        <router-link v-bind:to="{name: 'main.biz'}">Biz Inquiries</router-link>
+                    </li>
+                    <li>
+                        <a href="https://koyolympus.thebase.in/" target="_blank"
+                           rel="noopener noreferrer">E-Commerce
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.facebook.com/koyolympus/" target="_blank" rel="noopener noreferrer">
+                            Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/wadakatu/koyolympus" target="_blank" rel="noopener noreferrer">GitHub
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/wadakatu1234/?hl=ja" target="_blank"
+                           rel="noopener noreferrer">Instagram
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -23,13 +46,40 @@
 
 <script>
 export default {
-    name: "HamburgerMenuComponent.vue"
+    name: "HamburgerMenuComponent.vue",
+    methods: {
+        photo() {
+            let url = '/photo/random';
+            this.$store.commit('photo/setUrl', url);
+            this.$store.commit('photo/setGenre', null);
+            this.$router.push({name: 'photo.random'}).catch(err => {
+            });
+            this.close();
+        },
+        close() {
+            const target = document.getElementById('menuToggle');
+            const menus = document.querySelectorAll('.menuContent ul li');
+            menus.forEach(function (menu) {
+                menu.addEventListener('click', function () {
+                    target.checked = false;
+                });
+            });
+        }
+    },
 }
 </script>
 
 <style scoped>
 input {
     display: none;
+}
+
+.menuContent ul li router-link {
+    display: block;
+}
+
+.menuContent ul li a {
+    display: block;
 }
 
 .open {
@@ -92,7 +142,7 @@ input {
     height: 100vh;
     top: 0;
     left: 0;
-    background: rgba(32, 50, 58, 0.9);
+    background: rgba(32, 50, 58, 0.95);
 }
 
 .menu label {
@@ -108,9 +158,10 @@ input {
 .menu .menuContent {
     position: relative;
     top: 30%;
-    font-size: 40px;
+    font-size: 30px;
     text-align: center;
     padding-bottom: 20px;
+    overflow: auto;
 }
 
 .menu ul {
@@ -183,7 +234,7 @@ input {
 }
 
 #menuToggle:not(:checked) ~ .menuEffects ul {
-    transform: translateY(-30%);
+    transform: translateY(-5%);
 }
 
 </style>

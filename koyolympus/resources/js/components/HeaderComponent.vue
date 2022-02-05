@@ -27,7 +27,7 @@
                 </li>
             </ul>
         </nav>
-
+        <hamburger-menu-component class="hamburger"></hamburger-menu-component>
     </div>
 </template>
 
@@ -36,7 +36,7 @@
 export default {
     name: "HeaderComponent.vue",
     components: {
-        'sidebar-menu-component': () => import('./SidebarMenuComponent'),
+        'hamburger-menu-component': () => import('./HamburgerMenuComponent'),
     },
     data: () => {
         return {
@@ -129,6 +129,10 @@ nav ul li a {
     display: block;
 }
 
+.hamburger {
+    display: none;
+}
+
 @media screen and (max-width: 810px) {
     .logo {
         text-align: center;
@@ -137,12 +141,10 @@ nav ul li a {
     nav {
         display: none;
     }
-}
 
-@media screen and (max-width: 480px) {
-    .navbar {
-        padding: 3vh 8vw 0 8vw;
+    .hamburger {
+        display: block;
+        margin-left: auto;
     }
 }
-
 </style>

@@ -1,24 +1,18 @@
 <template>
     <div class="col" v-if="this.card && cardStatus">
         <div class="card" v-model="genre">
-            <div class="card_detail landscape" @click="searchLandscape">
-                <h5 class="card_title">Landscape</h5>
-                <p class="card_description">The landscape are there, and I just take them.</p>
-            </div>
-            <div class="card_detail animal" @click="searchAnimal">
-                <h5 class="card_title">Animal</h5>
-                <p class="card_description">If you want to be a better animal photographer, stand in front of more
-                    animals.</p>
-            </div>
-            <div class="card_detail portrait" @click="searchPortrait">
-                <h5 class="card_title">Portrait</h5>
-                <p class="card_description">The whole point of taking portraits is so that I can see how far people have
-                    come.</p>
-            </div>
-            <div class="card_detail others" @click="showOthers">
-                <h5 class="card_title">Others</h5>
-                <p class="card_description">The Earth is art, The photographer is only a witness.</p>
-            </div>
+            <card-component data-image="/images/yellow.jpeg" title="Landscape"
+                            msg="The landscape are there, and I just take them thoroughly."
+                            @click.native="searchLandscape"></card-component>
+            <card-component data-image="/images/cat.jpeg" title="Animal"
+                            msg="If you want to be a better animal photographer, stand in front of more animals."
+                            @click.native="searchAnimal"></card-component>
+            <card-component data-image="/images/portrait.jpeg" title="Portrait"
+                            msg="The whole point of taking portraits is so that I can see how far people have come."
+                            @click.native="searchPortrait"></card-component>
+            <card-component data-image="/images/wine.jpeg" title="Others"
+                            msg="The Earth is art, The photographer is only a witness."
+                            @click.native="showOthers"></card-component>
         </div>
     </div>
     <other-card-component v-else-if="!this.card && cardStatus"></other-card-component>
@@ -28,6 +22,7 @@
 export default {
     components: {
         OtherCardComponent: () => import('./OtherCardComponent'),
+        'card-component': () => import('./CardComponent2')
     },
     data() {
         return {
@@ -110,91 +105,10 @@ export default {
     flex-wrap: wrap;
 }
 
-.card_detail {
-    position: relative;
-    width: 30vh;
-    height: 32vh;
-    border-radius: 10px;
-    padding: 15px 25px;
-    box-sizing: border-box;
-    cursor: pointer;
-    background-position: center;
-    background-size: cover;
-    vertical-align: bottom;
-    transition: transform 0.5s;
-}
-
-.landscape {
-    background-image: url('/images/yellow.jpeg');
-}
-
-.animal {
-    background-image: url('/images/cat.jpeg');
-}
-
-.portrait {
-    background-image: url('/images/portrait.jpeg');
-}
-
-.others {
-    background-image: url('/images/wine.jpeg');
-}
-
-.card_detail:hover {
-    transform: translateY(-10px);
-}
-
-.card_title {
-    color: #fff;
-    text-shadow: 0 0 5px #999;
-}
-
-.card_description {
-    color: #fff;
-    font-size: 11px;
-    text-shadow: 0 0 15px #000;
-}
-
-@media screen and (max-width: 1245px) {
-    .card {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card_detail {
-        height: 15vh;
-        width: 35vw;
-    }
-}
-
 @media screen and (max-width: 950px) {
 
     .card {
         padding-bottom: 25px;
-    }
-
-    .card_detail {
-        height: 10vh;
-        width: 60vh;
-        margin-top: 10px;
-    }
-}
-
-@media screen and (min-height: 910px) and (max-width: 1310px) {
-    .card_detail {
-        height: 15vh;
-        width: 30vw;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .card_detail {
-        width: 40vh;
-        margin-top: 3vh;
-    }
-
-    .card_description {
-        display: none;
     }
 }
 

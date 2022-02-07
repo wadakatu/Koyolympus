@@ -2,31 +2,15 @@
     <main-card-component v-if="this.card"></main-card-component>
     <div class="col" v-else-if="!this.card">
         <div class="card" v-model="genre">
-            <!--            <div class="card_detail snapshot" @click="searchSnapshot">-->
-            <!--                <h5 class="card_other_tittle">SnapShot</h5>-->
-            <!--                <p class="card_other_description">It is more important to click with people than to click the-->
-            <!--                    shutter.</p>-->
-            <!--            </div>-->
             <card-component data-image="/images/snapshot.jpeg" title="SnapShot"
                             msg="It is more important to click with people than to click the shutter."
                             @click.native="searchSnapshot"></card-component>
-            <!--            <div class="card_detail livecomp" @click="searchLivecomp">-->
-            <!--                <h5 class="card_other_tittle">Live Composite</h5>-->
-            <!--                <p class="card_other_description">Since I’m inarticulate, I express myself with images.</p>-->
-            <!--            </div>-->
             <card-component data-image="/images/livecomp.jpeg" title="Live Composite"
                             msg="Since I’m inarticulate, I express myself with images."
                             @click.native="searchLivecomp"></card-component>
-            <!--            <div class="card_detail pinfilm" @click="searchPinfilm">-->
-            <!--                <h5 class="card_other_tittle">Pinhole/Film</h5>-->
-            <!--                <p class="card_other_description">Seeing is not enough, you have to feel what you photograph</p>-->
-            <!--            </div>-->
             <card-component data-image="/images/film.jpeg" title="Pinhole/Film"
                             msg="Seeing is not enough, you have to feel what you photograph"
                             @click.native="searchPinfilm"></card-component>
-            <!--            <div class="card_detail back" @click="showMain">-->
-            <!--                <h5 class="back_title">->Back</h5>-->
-            <!--            </div>-->
             <card-component data-image="" title="->Back"
                             msg="What you see is what you get."
                             @click.native="showMain"></card-component>

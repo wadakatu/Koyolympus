@@ -2,22 +2,34 @@
     <main-card-component v-if="this.card"></main-card-component>
     <div class="col" v-else-if="!this.card">
         <div class="card" v-model="genre">
-            <div class="card_detail snapshot" @click="searchSnapshot">
-                <h5 class="card_other_tittle">SnapShot</h5>
-                <p class="card_other_description">It is more important to click with people than to click the
-                    shutter.</p>
-            </div>
-            <div class="card_detail livecomp" @click="searchLivecomp">
-                <h5 class="card_other_tittle">Live Composite</h5>
-                <p class="card_other_description">Since I’m inarticulate, I express myself with images.</p>
-            </div>
-            <div class="card_detail pinfilm" @click="searchPinfilm">
-                <h5 class="card_other_tittle">Pinhole/Film</h5>
-                <p class="card_other_description">Seeing is not enough; you have to feel what you photograph</p>
-            </div>
-            <div class="card_detail back" @click="showMain">
-                <h5 class="back_title">->Back</h5>
-            </div>
+            <!--            <div class="card_detail snapshot" @click="searchSnapshot">-->
+            <!--                <h5 class="card_other_tittle">SnapShot</h5>-->
+            <!--                <p class="card_other_description">It is more important to click with people than to click the-->
+            <!--                    shutter.</p>-->
+            <!--            </div>-->
+            <card-component data-image="/images/snapshot.jpeg" title="SnapShot"
+                            msg="It is more important to click with people than to click the shutter."
+                            @click.native="searchSnapshot"></card-component>
+            <!--            <div class="card_detail livecomp" @click="searchLivecomp">-->
+            <!--                <h5 class="card_other_tittle">Live Composite</h5>-->
+            <!--                <p class="card_other_description">Since I’m inarticulate, I express myself with images.</p>-->
+            <!--            </div>-->
+            <card-component data-image="/images/livecomp.jpeg" title="Live Composite"
+                            msg="Since I’m inarticulate, I express myself with images."
+                            @click.native="searchLivecomp"></card-component>
+            <!--            <div class="card_detail pinfilm" @click="searchPinfilm">-->
+            <!--                <h5 class="card_other_tittle">Pinhole/Film</h5>-->
+            <!--                <p class="card_other_description">Seeing is not enough, you have to feel what you photograph</p>-->
+            <!--            </div>-->
+            <card-component data-image="/images/film.jpeg" title="Pinhole/Film"
+                            msg="Seeing is not enough, you have to feel what you photograph"
+                            @click.native="searchPinfilm"></card-component>
+            <!--            <div class="card_detail back" @click="showMain">-->
+            <!--                <h5 class="back_title">->Back</h5>-->
+            <!--            </div>-->
+            <card-component data-image="" title="->Back"
+                            msg="What you see is what you get."
+                            @click.native="showMain"></card-component>
         </div>
     </div>
 </template>
@@ -27,6 +39,7 @@ export default {
     name: "OtherCardComponent.vue",
     components: {
         MainCardComponent: () => import('./MainCardComponent'),
+        'card-component': () => import('./CardComponent2')
     },
     data() {
         return {
@@ -70,74 +83,14 @@ export default {
 
 <style scoped>
 
+.col {
+    flex-basis: 50%;
+}
+
 .card {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-}
-
-.card_detail {
-    position: relative;
-    width: 30vh;
-    height: 32vh;
-    border-radius: 10px;
-    padding: 15px 25px;
-    box-sizing: border-box;
-    cursor: pointer;
-    background-position: center;
-    background-size: cover;
-    vertical-align: bottom;
-    transition: transform 0.5s;
-}
-
-.snapshot {
-    background-image: url("/images/snapshot.jpeg");
-}
-
-.livecomp {
-    background-image: url("/images/livecomp.jpeg");
-}
-
-.pinfilm {
-    background-image: url("/images/film.jpeg");
-}
-
-.back {
-    background-color: #000;
-    opacity: 0.7;
-}
-
-.card_detail:hover {
-    transform: translateY(-10px);
-}
-
-.card_other_tittle {
-    color: #fff;
-    text-shadow: 0 0 5px #999;
-}
-
-.card_other_description {
-    color: #fff;
-    font-size: 11px;
-    text-shadow: 0 0 15px #000;
-}
-
-.back_title {
-    font-size: 25px;
-    color: #fff;
-    position: relative;
-}
-
-@media screen and (max-width: 1170px) {
-    .card {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card_detail {
-        height: 15vh;
-        width: 30vw;
-    }
 }
 
 @media screen and (max-width: 950px) {
@@ -145,35 +98,6 @@ export default {
     .card {
         padding-bottom: 25px;
     }
-
-    .card_detail {
-        height: 10vh;
-        width: 60vh;
-    }
 }
-
-@media screen and (min-height: 910px) and (max-width: 1310px) {
-    .card_detail {
-        height: 15vh;
-        width: 30vw;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .card {
-        margin-top: 3vh;
-    }
-
-    .card_detail {
-        height: 8vh;
-        width: 40vh;
-        margin-top: 2vh;
-    }
-
-    .card_other_description {
-        display: none;
-    }
-}
-
 
 </style>

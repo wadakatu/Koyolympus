@@ -84,12 +84,10 @@ class Photo extends Model
         return $uniqueFileName;
     }
 
-    public function deletePhotoInfo(string $fileName)
+    public function deletePhotoInfo(string $id)
     {
-        $fileIdAndName = explode('.', $fileName);
-
         self::query()
-            ->where('id', $fileIdAndName[0])
+            ->where('id', $id)
             ->delete();
     }
 

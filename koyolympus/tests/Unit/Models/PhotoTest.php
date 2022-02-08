@@ -124,23 +124,22 @@ class PhotoTest extends TestCase
     public function deletePhotoInfo()
     {
         $id = 'abcdefghiasw';
-        $fileName = 'abcdefghiasw.test.jpeg';
+        $fakeId = 'abcdefghijkl';
         factory(Photo::class)->create([
             'id' => $id,
             'file_name' => 'test.jpeg',
             'genre' => 1,
         ]);
         factory(Photo::class)->create([
-            'id' => 'abcdefghijkl',
+            'id' => $fakeId,
             'file_name' => 'test2.jpeg',
             'genre' => 2,
         ]);
 
-        $this->photo->deletePhotoInfo($fileName);
+        $this->photo->deletePhotoInfo($id);
 
         $recordNull = Photo::query()->where('id', $id)->get();
-
-        $record = Photo::query()->where('id', 'abcdefghijkl')->get();
+        $record = Photo::query()->where('id', $fakeId)->get();
 
         $this->assertSame(0, count($recordNull));
         $this->assertSame(1, count($record));

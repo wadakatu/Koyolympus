@@ -98,7 +98,7 @@ class PhotoService
 
         //それぞれのファイルをデータベース・S3から削除
         foreach ($duplicatePhotoList as $duplicateFile) {
-            $id = explode('.', $duplicateFile)[0];
+            $id = explode('.', $duplicateFile->file_name)[0];
             $this->deletePhotoFromS3($duplicateFile->file_name, $duplicateFile->genre);
             $this->deletePhotoFromDB($id);
         }
@@ -163,7 +163,7 @@ class PhotoService
 
         //重複レコードをDBとS3から削除
         foreach ($duplicatePhotoFiles as $duplicateFile) {
-            $id = explode('.', $duplicateFile)[0];
+            $id = explode('.', $duplicateFile->file_name)[0];
             $this->deletePhotoFromS3($duplicateFile->file_name, $duplicateFile->genre);
             $this->deletePhotoFromDB($id);
             $fileName = $duplicateFile->file_name;

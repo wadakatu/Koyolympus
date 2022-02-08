@@ -7,6 +7,7 @@ use Config;
 use Mockery;
 use Exception;
 use Tests\TestCase;
+use App\Http\Models\Like;
 use App\Http\Models\Photo;
 use Illuminate\Http\UploadedFile;
 use App\Http\Services\PhotoService;
@@ -20,13 +21,15 @@ class PhotoServiceTest extends TestCase
 
     private $photoService;
     private $photo;
+    private $like;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->photo = Mockery::mock(Photo::class);
-        $this->photoService = Mockery::mock(PhotoService::class, [$this->photo])->makePartial();
+        $this->like = Mockery::mock(Like::class);
+        $this->photoService = Mockery::mock(PhotoService::class, [$this->photo, $this->like])->makePartial();
     }
 
     protected function tearDown(): void
@@ -114,12 +117,26 @@ class PhotoServiceTest extends TestCase
         Storage::shouldReceive('disk')->once()->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
         $s3Disk->shouldReceive('delete')->once()->with($filePath . '/' . $fileName);
 
+        $this->photoService->deletePhotoFromS3($fileName, $genre);
+    }
+
+    /**
+     * @test
+     */
+    public function deletePhotoFromDB()
+    {
+        $id = '1';
         $this->photo
             ->shouldReceive('deletePhotoInfo')
             ->once()
-            ->with($fileName);
+            ->with($id);
 
-        $this->photoService->deletePhotoFromS3($fileName, $genre);
+        $this->like
+            ->shouldReceive('deleteByPhotoId')
+            ->once()
+            ->with($id);
+
+        $this->photoService->deletePhotoFromDB($id);
     }
 
     /**
@@ -127,7 +144,7 @@ class PhotoServiceTest extends TestCase
      */
     public function deleteMultiplePhotosIfDuplicate_oneDuplicateFile()
     {
-        $fileName = 'fake.jpeg';
+        $fileName = 'id1.fake.jpeg';
         $genre = 1;
         $expected = new Collection([
             factory(Photo::class)->make([
@@ -136,17 +153,20 @@ class PhotoServiceTest extends TestCase
             ]),
         ]);
 
-        $this->photoService->shouldReceive('searchMultipleDuplicatePhotos')
+        $this->photoService
+            ->shouldReceive('searchMultipleDuplicatePhotos')
             ->once()
             ->andReturn($expected);
 
-        $this->photoService->shouldReceive('deletePhotoFromS3')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromS3')
             ->once()
             ->with($fileName, $genre);
 
-        $this->photo->shouldReceive('deletePhotoInfo')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromDB')
             ->once()
-            ->with($fileName);
+            ->with('id1');
 
         $actual = $this->photoService->deleteMultiplePhotosIfDuplicate();
 
@@ -158,7 +178,7 @@ class PhotoServiceTest extends TestCase
      */
     public function deleteMultiplePhotosIfDuplicate_multipleDuplicateFile()
     {
-        $fileName = 'fake.jpeg';
+        $fileName = 'id1.fake.jpeg';
         $genre = 1;
         $expected = factory(Photo::class, 2)->make([
             'file_name' => $fileName,
@@ -173,9 +193,10 @@ class PhotoServiceTest extends TestCase
             ->twice()
             ->with($fileName, $genre);
 
-        $this->photo->shouldReceive('deletePhotoInfo')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromDB')
             ->twice()
-            ->with($fileName);
+            ->with('id1');
 
         $actual = $this->photoService->deleteMultiplePhotosIfDuplicate();
 
@@ -401,40 +422,44 @@ class PhotoServiceTest extends TestCase
      */
     public function deletePhotoIfDuplicate_withOneDuplicate()
     {
-        $fileName = 'fake.jpeg';
+        $fileName = 'id1.fake.jpeg';
         $genre = 1;
         $allPhotos = new Collection([
             $duplicateTarget = factory(Photo::class)->make([
                 'id' => 'id01',
-                'file_name' => 'fake.jpeg',
+                'file_name' => $fileName,
                 'genre' => $genre
             ]),
             factory(Photo::class)->make([
                 'id' => 'id02',
-                'file_name' => 'fake2.jpeg',
+                'file_name' => 'id2.fake2.jpeg',
                 'genre' => 2
             ]),
         ]);
         $duplicateList = new Collection([$duplicateTarget]);
 
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
+        $this->photo
+            ->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
             ->once()
             ->andReturn($allPhotos);
 
-        $this->photoService->shouldReceive('searchDuplicatePhoto')
+        $this->photoService
+            ->shouldReceive('searchDuplicatePhoto')
             ->once()
             ->with(
                 $allPhotos,
                 $fileName,
             )->andReturn($duplicateList);
 
-        $this->photoService->shouldReceive('deletePhotoFromS3')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromS3')
             ->once()
             ->with($fileName, $genre);
 
-        $this->photo->shouldReceive('deletePhotoInfo')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromDB')
             ->once()
-            ->with($fileName);
+            ->with('id1');
 
         $actual = $this->photoService->deletePhotoIfDuplicate($fileName);
 
@@ -446,7 +471,7 @@ class PhotoServiceTest extends TestCase
      */
     public function deletePhotoIfDuplicate_withThreeDuplicates()
     {
-        $fileName = 'fake.jpeg';
+        $fileName = 'id1.fake.jpeg';
         $genre = 1;
         $allPhotos = new Collection([
             $duplicateTarget1 = factory(Photo::class)->make([
@@ -487,9 +512,10 @@ class PhotoServiceTest extends TestCase
             ->times(3)
             ->with($fileName, $genre);
 
-        $this->photo->shouldReceive('deletePhotoInfo')
+        $this->photoService
+            ->shouldReceive('deletePhotoFromDB')
             ->times(3)
-            ->with($fileName);
+            ->with('id1');
 
         $actual = $this->photoService->deletePhotoIfDuplicate($fileName);
 

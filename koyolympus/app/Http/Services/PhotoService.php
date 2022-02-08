@@ -5,6 +5,7 @@ namespace App\Http\Services;
 
 use Storage;
 use Exception;
+use App\Http\Models\Like;
 use App\Http\Models\Photo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -15,10 +16,12 @@ class PhotoService
 {
 
     private $photo;
+    private $like;
 
-    public function __construct(Photo $photo)
+    public function __construct(Photo $photo, Like $like)
     {
         $this->photo = $photo;
+        $this->like = $like;
     }
 
     /**
@@ -68,10 +71,19 @@ class PhotoService
     {
         //ジャンルからファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
-        //DBから写真のレコードを削除
-        $this->photo->deletePhotoInfo($fileName);
         //S3から写真データを削除
         Storage::disk('s3')->delete($filePath . '/' . $fileName);
+    }
+
+    /**
+     * DBから写真レコードを削除
+     * @param string $id
+     */
+    public function deletePhotoFromDB(string $id)
+    {
+        //DBから写真のレコードを削除
+        $this->photo->deletePhotoInfo($id);
+        $this->like->deleteByPhotoId($id);
     }
 
     /**
@@ -86,8 +98,9 @@ class PhotoService
 
         //それぞれのファイルをデータベース・S3から削除
         foreach ($duplicatePhotoList as $duplicateFile) {
+            $id = explode('.', $duplicateFile->file_name)[0];
             $this->deletePhotoFromS3($duplicateFile->file_name, $duplicateFile->genre);
-            $this->photo->deletePhotoInfo($duplicateFile->file_name);
+            $this->deletePhotoFromDB($id);
         }
 
         return $duplicatePhotoList;
@@ -150,8 +163,9 @@ class PhotoService
 
         //重複レコードをDBとS3から削除
         foreach ($duplicatePhotoFiles as $duplicateFile) {
+            $id = explode('.', $duplicateFile->file_name)[0];
             $this->deletePhotoFromS3($duplicateFile->file_name, $duplicateFile->genre);
-            $this->photo->deletePhotoInfo($duplicateFile->file_name);
+            $this->deletePhotoFromDB($id);
             $fileName = $duplicateFile->file_name;
         }
 

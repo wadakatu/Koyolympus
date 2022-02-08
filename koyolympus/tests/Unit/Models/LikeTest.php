@@ -172,4 +172,33 @@ class LikeTest extends TestCase
             ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
+
+    /**
+     * @test
+     */
+    public function deleteByPhotoId()
+    {
+        $delete = [
+            'photo_id' => 'test_001',
+            'likes' => 100,
+            'all_likes' => 150
+        ];
+
+        $notDelete = [
+            'photo_id' => 'test_002',
+            'likes' => 200,
+            'all_likes' => 250
+        ];
+
+        factory(Like::class)->create($delete);
+        factory(Like::class)->create($notDelete);
+
+        $this->assertDatabaseHas('likes', $delete);
+        $this->assertDatabaseHas('likes', $notDelete);
+
+        $this->like->deleteByPhotoId('test_001');
+
+        $this->assertDatabaseMissing('likes', $delete);
+        $this->assertDatabaseHas('likes', $notDelete);
+    }
 }

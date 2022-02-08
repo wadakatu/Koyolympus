@@ -34,4 +34,11 @@ class Like extends Model
             $target->fill(['likes' => 0])->save();
         }
     }
+
+    public function deleteByPhotoId(string $photoId)
+    {
+        self::query()
+            ->where('photo_id', $photoId)
+            ->delete();
+    }
 }

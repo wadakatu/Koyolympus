@@ -18,5 +18,12 @@ return [
             5 => 'photo/others/livecomposite',
             6 => 'photo/others/pinfilm',
         ]
+    ],
+    'PHOTO_AGGREGATION' => [
+        'TYPE' => [
+            'DAILY' => 1,
+            'WEEKLY' => 2,
+            'MONTH' => 3,
+        ]
     ]
 ];

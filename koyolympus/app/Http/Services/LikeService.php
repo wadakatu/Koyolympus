@@ -36,14 +36,17 @@ class LikeService
         DB::beginTransaction();
         foreach ($targetRecords as $record) {
             try {
+                $this->likeAggregate->deleteByPhotoIdAndPeriod($record->photo_id, $this->startAt, $this->startAt);
                 $this->likeAggregate->registerAggregatedLike($record, $this->startAt, $this->startAt, $type);
-                DB::commit();
+                $record->fill(['likes' => 0])->save();
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error("[いいね集計バッチ] 例外発生　対象：$record->photo_id");
                 throw $e;
             }
         }
+
+        DB::commit();
         Log::info('[いいね集計バッチ] 日毎いいね集計 END');
     }
 

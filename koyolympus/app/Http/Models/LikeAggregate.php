@@ -20,4 +20,13 @@ class LikeAggregate extends Model
             'end_at' => $endAt
         ]);
     }
+
+    public function deleteByPhotoIdAndPeriod(string $photoId, Carbon $startAt, Carbon $endAt)
+    {
+        self::query()
+            ->where('photo_id', $photoId)
+            ->where('start_at', '<=', $startAt)
+            ->where('end_at', '>=', $endAt)
+            ->delete();
+    }
 }

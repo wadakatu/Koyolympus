@@ -47,7 +47,7 @@ class Like extends Model
         return self::query()
             ->join('photos', 'photos.id', '=', 'likes.photo_id')
             ->where('likes', '>', 0)
-            ->select(['likes.photo_id', 'likes.likes'])
+            ->select(['likes.id', 'likes.photo_id', 'likes'])
             ->get();
     }
 }

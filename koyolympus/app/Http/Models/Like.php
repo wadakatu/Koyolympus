@@ -48,6 +48,7 @@ class Like extends Model
             ->join('photos', 'photos.id', '=', 'likes.photo_id')
             ->where('likes', '>', 0)
             ->select(['likes.id', 'likes.photo_id', 'likes'])
+            ->groupBy('likes.id', 'photo_id')
             ->get();
     }
 }

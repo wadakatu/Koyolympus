@@ -49,6 +49,7 @@ class LikeAggregation extends Command
         try {
             $this->likeService->setCommandStartAt();
             $this->likeService->aggregateLikeDaily();
+            $this->likeService->aggregateLikeWeekly();
         } catch (Exception $e) {
             Log::error('[いいね集計バッチ] ' . $e->getMessage());
             return 1;

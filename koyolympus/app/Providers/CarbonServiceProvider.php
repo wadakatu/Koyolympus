@@ -27,11 +27,23 @@ class CarbonServiceProvider extends ServiceProvider
     public function boot()
     {
         Carbon::macro('startOfLastWeek', function (CarbonImmutable $now) {
-            return $now->subDays(7)->startOfWeek(0);
+            return $now->subWeek()->startOfWeek(0);
         });
 
         Carbon::macro('endOfLastWeek', function (CarbonImmutable $now) {
-            return $now->subDays(7)->endOfWeek(6);
+            return $now->subWeek()->endOfWeek(6);
+        });
+
+        Carbon::macro('startOfLastMonth', function (CarbonImmutable $now) {
+            return $now->subMonth()->startOfMonth();
+        });
+
+        Carbon::macro('endOfLastMonth', function (CarbonImmutable $now) {
+            return $now->subMonth()->endOfMonth();
+        });
+
+        Carbon::macro('isFirstDayOfMonth', function (CarbonImmutable $now) {
+            return $now->day === 1;
         });
     }
 }

@@ -12,12 +12,11 @@ class LikeAggregate extends Model
 {
     protected $guarded = ['id'];
 
-    public function getForWeeklyAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt)
+    public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type)
     {
-        $dailyType = config('const.PHOTO_AGGREGATION.TYPE.DAILY');
         return self::query()
             ->join('likes', 'likes.photo_id', '=', 'like_aggregates.photo_id')
-            ->where('aggregate_type', $dailyType)
+            ->where('aggregate_type', $type)
             ->whereBetween('start_at', [$startAt, $endAt])
             ->whereBetween('end_at', [$startAt, $endAt])
             ->select([

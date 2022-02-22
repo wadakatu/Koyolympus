@@ -23,7 +23,7 @@ return [
         'TYPE' => [
             'DAILY' => 1,
             'WEEKLY' => 2,
-            'MONTH' => 3,
+            'MONTHLY' => 3,
         ]
     ]
 ];

@@ -35,6 +35,11 @@ class Like extends Model
         }
     }
 
+    public function saveById(int $id, array $value)
+    {
+        self::query()->find($id)->fill($value)->save();
+    }
+
     public function deleteByPhotoId(string $photoId)
     {
         self::query()

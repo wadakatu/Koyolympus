@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Http\Models;
 
 use DB;
-use Exception;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,10 +20,11 @@ class LikeAggregate extends Model
             ->whereBetween('end_at', [$startAt, $endAt])
             ->select([
                 'likes.id',
+                'like_aggregates.id as like_aggregate_id',
                 'like_aggregates.photo_id',
                 DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
             ])
-            ->groupBy('likes.id', 'like_aggregates.photo_id')
+            ->groupBy('likes.id', 'like_aggregates.id', 'like_aggregates.photo_id')
             ->get();
     }
 
@@ -39,20 +39,8 @@ class LikeAggregate extends Model
         ]);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function deleteByPhotoIdAndPeriod(
-        string $photoId,
-        CarbonImmutable $startAt,
-        CarbonImmutable $endAt,
-        int $type
-    ) {
-        self::query()
-            ->where('photo_id', $photoId)
-            ->where('aggregate_type', $type)
-            ->whereDate('start_at', $startAt)
-            ->whereDate('end_at', $endAt)
-            ->delete();
+    public function saveById(int $id, array $value)
+    {
+        self::query()->find($id)->fill($value)->save();
     }
 }

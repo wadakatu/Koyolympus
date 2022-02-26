@@ -40,9 +40,9 @@ class LikeService
     }
 
 
-    public function setCommandStartAt(): void
+    public function setCommandStartAt(CarbonImmutable $carbon): void
     {
-        $this->startAt = CarbonImmutable::now();
+        $this->startAt = $carbon;
     }
 
     /**
@@ -62,10 +62,9 @@ class LikeService
         foreach ($targetRecords->toArray() as $record) {
             $photoId = $record['photo_id'];
             try {
-                $this->likeAggregate->deleteByPhotoIdAndPeriod($photoId, $this->startAt, $this->startAt,
-                    $this->dailyType);
                 $this->likeAggregate->registerAggregatedLike($record, $this->startAt, $this->startAt, $this->dailyType);
-                $this->like->find($record['id'])->fill(['likes' => 0])->save();
+                $this->like->saveById($record['id'], ['likes' => 0]);
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error("[いいね集計・日次] 例外発生　対象：$photoId]");
@@ -73,7 +72,6 @@ class LikeService
             }
         }
 
-        DB::commit();
         Log::info('[いいね集計・日次] 日次いいね集計 END');
     }
 
@@ -99,11 +97,14 @@ class LikeService
         foreach ($targetRecords->toArray() as $record) {
             $photoId = $record['photo_id'];
             try {
-                $this->likeAggregate->deleteByPhotoIdAndPeriod($photoId, $startOfLastWeek, $endOfLastWeek,
-                    $this->weeklyType);
                 $this->likeAggregate->registerAggregatedLike($record, $startOfLastWeek, $endOfLastWeek,
                     $this->weeklyType);
-                $this->like->find($record['id'])->fill(['week_likes' => $record['likes']])->save();
+                $this->like->find($record['id'], ['week_likes' => $record['likes']]);
+                $this->likeAggregate->saveById(
+                    $record['like_aggregate_id'],
+                    ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
+                );
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error("[いいね集計・週次] 例外発生　対象：$photoId]");
@@ -111,7 +112,6 @@ class LikeService
             }
         }
 
-        DB::commit();
         Log::info('[いいね集計・週次] 週次いいね集計 END');
     }
 
@@ -136,11 +136,14 @@ class LikeService
         foreach ($targetRecords->toArray() as $record) {
             $photoId = $record['photo_id'];
             try {
-                $this->likeAggregate->deleteByPhotoIdAndPeriod($photoId, $startOfLastMonth, $endOfLastMonth,
-                    $this->monthlyType);
                 $this->likeAggregate->registerAggregatedLike($record, $startOfLastMonth, $endOfLastMonth,
                     $this->monthlyType);
-                $this->like->find($record['id'])->fill(['month_likes' => $record['likes']])->save();
+                $this->like->saveById($record['id'], ['month_likes' => $record['likes']]);
+                $this->likeAggregate->saveById(
+                    $record['like_aggregate_id'],
+                    ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
+                );
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error("[いいね集計・月次] 例外発生　対象：$photoId]");
@@ -148,7 +151,6 @@ class LikeService
             }
         }
 
-        DB::commit();
         Log::info('[いいね集計・月次] 月次いいね集計 END');
     }
 }

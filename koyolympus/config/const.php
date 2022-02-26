@@ -24,6 +24,10 @@ return [
             'DAILY' => 1,
             'WEEKLY' => 2,
             'MONTHLY' => 3,
-        ]
+        ],
+        'STATUS' => [
+            'INCOMPLETE' => 0,
+            'COMPLETE' => 1
+        ],
     ]
 ];

@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use Log;
-use Exception;
+use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use App\Http\Services\LikeService;
+use App\Jobs\AggregateDailyLikeJob;
+use App\Jobs\AggregateWeeklyLikeJob;
+use App\Jobs\AggregateMonthlyLikeJob;
 
 class LikeAggregation extends Command
 {
@@ -24,7 +26,11 @@ class LikeAggregation extends Command
      */
     protected $description = 'Command description';
 
+    /* @var LikeService */
     private $likeService;
+
+    /* @var CarbonImmutable */
+    private $startAt;
 
     /**
      * Create a new command instance.
@@ -36,27 +42,21 @@ class LikeAggregation extends Command
         parent::__construct();
 
         $this->likeService = $likeService;
+        $this->startAt = CarbonImmutable::now();
     }
 
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
-        Log::info('[いいね集計バッチ] START');
-        try {
-            $this->likeService->setCommandStartAt();
-            $this->likeService->aggregateLikeDaily();
-            $this->likeService->aggregateLikeWeekly();
-            $this->likeService->aggregateLikeMonthly();
-        } catch (Exception $e) {
-            Log::error('[いいね集計バッチ] ' . $e->getMessage());
-            return 1;
-        }
+        AggregateDailyLikeJob::withChain([
+            new AggregateWeeklyLikeJob($this->likeService, $this->startAt),
+            new AggregateMonthlyLikeJob($this->likeService, $this->startAt),
+        ])->dispatch($this->likeService, $this->startAt);
 
-        Log::info('[いいね集計バッチ] FINISH');
         return 0;
     }
 }

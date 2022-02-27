@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Jobs;
 
@@ -55,11 +56,16 @@ class AggregateWeeklyLikeJob implements ShouldQueue
     /**
      * 失敗したジョブの処理
      *
-     * @param Throwable $exception
+     * @param Throwable $throwable
      * @return void
      */
-    public function failed(Throwable $exception)
+    public function failed(Throwable $throwable)
     {
+        $this->likeService->outputThrowableLog('[いいね集計・週次]', $throwable->getMessage());
 
+        $this->likeService->sendThrowableMail(
+            '[Koyolympus/週次いいね集計] 例外発生のお知らせ',
+            $throwable->getMessage(),
+        );
     }
 }

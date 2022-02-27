@@ -29,5 +29,6 @@ return [
             'INCOMPLETE' => 0,
             'COMPLETE' => 1
         ],
-    ]
+    ],
+    'MAIL' => env('MY_EMAIL', 'wadakatukoyo330@gmail.com'),
 ];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Jobs;
 
@@ -48,6 +49,7 @@ class AggregateDailyLikeJob implements ShouldQueue
      */
     public function handle()
     {
+        throw new Exception('エラーです！　原因は自分で投げたからでしょ！');
         $this->likeService->setCommandStartAt($this->startAt);
         $this->likeService->aggregateLikeDaily();
     }
@@ -55,11 +57,16 @@ class AggregateDailyLikeJob implements ShouldQueue
     /**
      * 失敗したジョブの処理
      *
-     * @param Throwable $exception
+     * @param Throwable $throwable
      * @return void
      */
-    public function failed(Throwable $exception)
+    public function failed(Throwable $throwable)
     {
+        $this->likeService->outputThrowableLog('[いいね集計・日次]', $throwable->getMessage());
 
+        $this->likeService->sendThrowableMail(
+            '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
+            $throwable->getMessage(),
+        );
     }
 }

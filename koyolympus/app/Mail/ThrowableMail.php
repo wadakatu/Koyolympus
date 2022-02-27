@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 
-class BizInquiriesMail extends Mailable
+class ThrowableMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,8 +30,8 @@ class BizInquiriesMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('お問い合わせがありました。')
+        return $this->subject($this->_params['subject'])
             ->with('params', $this->_params)
-            ->view('mail.contact');
+            ->view('mail.exception');
     }
 }

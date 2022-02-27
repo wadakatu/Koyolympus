@@ -4,15 +4,20 @@ declare(strict_types=1);
 namespace App\Http\Services;
 
 use DB;
-use Log;
 use Exception;
 use Carbon\Carbon;
+use ExceptionMail;
+use App\Traits\LogTrait;
 use App\Http\Models\Like;
 use Carbon\CarbonImmutable;
+use App\Mail\ThrowableMail;
 use App\Http\Models\LikeAggregate;
+use Illuminate\Support\Facades\Mail;
 
 class LikeService
 {
+    use LogTrait;
+
     private $like;
 
     private $likeAggregate;
@@ -53,13 +58,13 @@ class LikeService
         $targetRecords = $this->like->getForDailyAggregation();
 
         if ($targetRecords->isEmpty()) {
-            Log::info('[いいね集計・日次] 集計対象０件のためスキップ');
+            $this->outputLog('[いいね集計・日次]', '集計対象０件のためスキップ');
             return;
         }
 
-        Log::info('[いいね集計・日次] 日次いいね集計 START');
-        DB::beginTransaction();
+        $this->outputLog('[いいね集計・日次]', '日次いいね集計 START');
         foreach ($targetRecords->toArray() as $record) {
+            DB::beginTransaction();
             $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerAggregatedLike($record, $this->startAt, $this->startAt, $this->dailyType);
@@ -67,12 +72,12 @@ class LikeService
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
-                Log::error("[いいね集計・日次] 例外発生　対象：$photoId]");
+                $this->outputErrorLog('[いいね集計・日次]', "例外発生　対象：$photoId");
                 throw $e;
             }
         }
 
-        Log::info('[いいね集計・日次] 日次いいね集計 END');
+        $this->outputLog('[いいね集計・日次]', '日次いいね集計 END');
     }
 
     /**
@@ -83,7 +88,7 @@ class LikeService
         if (!$this->startAt->isSunday()) {
             Carbon::setLocale('ja');
             $dayOfWeek = $this->startAt->isoFormat('dddd');
-            Log::info("[いいね集計・週次] 本日 $dayOfWeek なのでスキップ");
+            $this->outputLog('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
             return;
         }
 
@@ -92,9 +97,9 @@ class LikeService
 
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastWeek, $endOfLastWeek, $this->dailyType);
 
-        Log::info('[いいね集計・週次] 週次いいね集計 START');
-        DB::beginTransaction();
+        $this->outputLog('[いいね集計・週次]', '週次いいね集計 START');
         foreach ($targetRecords->toArray() as $record) {
+            DB::beginTransaction();
             $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerAggregatedLike($record, $startOfLastWeek, $endOfLastWeek,
@@ -107,12 +112,12 @@ class LikeService
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
-                Log::error("[いいね集計・週次] 例外発生　対象：$photoId]");
+                $this->outputErrorLog('[いいね集計・週次]', "対象：$photoId");
                 throw $e;
             }
         }
 
-        Log::info('[いいね集計・週次] 週次いいね集計 END');
+        $this->outputLog('[いいね集計・週次]', '週次いいね集計 END');
     }
 
     /**
@@ -122,7 +127,7 @@ class LikeService
     {
         if (!Carbon::isFirstDayOfMonth($this->startAt)) {
             $day = $this->startAt->day;
-            Log::info("[いいね集計・月次] 本日 $day 日なのでスキップ");
+            $this->outputLog('[いいね集計・月次]', "本日 $day 日なのでスキップ");
             return;
         }
 
@@ -131,9 +136,9 @@ class LikeService
 
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastMonth, $endOfLastMonth, $this->weeklyType);
 
-        Log::info('[いいね集計・月次] 月次いいね集計 START');
-        DB::beginTransaction();
+        $this->outputLog('[いいね集計・月次]', '月次いいね集計 START');
         foreach ($targetRecords->toArray() as $record) {
+            DB::beginTransaction();
             $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerAggregatedLike($record, $startOfLastMonth, $endOfLastMonth,
@@ -146,11 +151,23 @@ class LikeService
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
-                Log::error("[いいね集計・月次] 例外発生　対象：$photoId]");
+                $this->outputErrorLog('[いいね集計・月次]', "例外発生　対象：$photoId");
                 throw $e;
             }
         }
 
-        Log::info('[いいね集計・月次] 月次いいね集計 END');
+        $this->outputLog('[いいね集計・月次]', '月次いいね集計 END');
     }
+
+    public function sendThrowableMail(string $subject, string $message)
+    {
+        $params = [
+            'subject' => $subject,
+            'message' => $message,
+            'startAt' => Carbon::now()->toDateTimeString()
+        ];
+
+        Mail::to(config('const.MAIL'))->send(new ThrowableMail($params));
+    }
+
 }

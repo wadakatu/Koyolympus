@@ -49,7 +49,6 @@ class AggregateDailyLikeJob implements ShouldQueue
      */
     public function handle()
     {
-        throw new Exception('エラーです！　原因は自分で投げたからでしょ！');
         $this->likeService->setCommandStartAt($this->startAt);
         $this->likeService->aggregateLikeDaily();
     }

@@ -64,9 +64,9 @@ class LikeService
             return;
         }
 
-        foreach ($targetRecords as $record) {
+        foreach ($targetRecords->toArray() as $record) {
             DB::beginTransaction();
-            $photoId = $record->photo_id;
+            $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerForAggregation($record, $this->startAt, $this->startAt, $this->dailyType);
                 $this->like->saveByPhotoId($photoId, ['likes' => 0]);
@@ -102,7 +102,7 @@ class LikeService
         foreach ($targetRecords->groupBy('photo_id') as $photoId => $records) {
             DB::beginTransaction();
             try {
-                $this->registerForWeeklyAggregation($records, $startOfLastWeek, $endOfLastWeek);
+                $this->registerForWeeklyAggregation($records->toArray(), $startOfLastWeek, $endOfLastWeek);
                 $this->like->saveByPhotoId(
                     $photoId,
                     ['weekly_likes' => $records->sum('likes')]
@@ -137,13 +137,13 @@ class LikeService
 
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastMonth, $endOfLastMonth, $this->weeklyType);
 
-        foreach ($targetRecords as $record) {
+        foreach ($targetRecords->toArray() as $record) {
             DB::beginTransaction();
-            $photoId = $record->photo_id;
+            $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerForAggregation($record, $startOfLastMonth, $endOfLastMonth,
                     $this->monthlyType);
-                $this->like->saveByPhotoId($photoId, ['month_likes' => $record->likes]);
+                $this->like->saveByPhotoId($photoId, ['month_likes' => $record['likes']]);
                 $this->likeAggregate->updateForAggregation(
                     $photoId,
                     $startOfLastMonth,
@@ -163,18 +163,18 @@ class LikeService
     }
 
     public function registerForWeeklyAggregation(
-        Collection $records,
+        array $records,
         CarbonImmutable $startAt,
         CarbonImmutable $endAt
     ): void {
         foreach ($records as $record) {
             //StartAtとEndAtの月が異なる場合
-            if (isset($record->carry_over)) {
-                if ($record->carry_over === $startAt->month) {
+            if (isset($record['carry_over'])) {
+                if ($record['carry_over'] === $startAt->month) {
                     //startAtの月の集計結果の場合
                     $this->likeAggregate->registerForAggregation($record, $startAt, $startAt->endOfMonth(),
                         $this->weeklyType);
-                } elseif ($record->carry_over === $endAt->month) {
+                } elseif ($record['carry_over'] === $endAt->month) {
                     //endAtの月の集計結果の場合
                     $this->likeAggregate->registerForAggregation($record, $endAt->startOfMonth(), $endAt,
                         $this->weeklyType);

@@ -23,6 +23,7 @@ class Photo extends Model
     ];
     protected $perPage = 10;
     protected $keyType = 'string';
+    public $incrementing = false;
 
     public function __construct(array $attributes = [])
     {

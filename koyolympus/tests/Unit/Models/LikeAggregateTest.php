@@ -647,7 +647,7 @@ class LikeAggregateTest extends TestCase
         $this->assertDatabaseMissing('like_aggregates', $params);
 
         $this->likeAggregate->registerForAggregation(
-            new LikeAggregate(['photo_id' => $photoId, 'likes' => $likes]),
+            ['photo_id' => $photoId, 'likes' => $likes],
             CarbonImmutable::parse($startAt),
             CarbonImmutable::parse($endAt),
             $type

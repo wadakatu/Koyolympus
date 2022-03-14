@@ -46,15 +46,15 @@ class LikeAggregate extends Model
     }
 
     public function registerForAggregation(
-        LikeAggregate $likeInfo,
+        array $likeInfo,
         CarbonImmutable $startAt,
         CarbonImmutable $endAt,
         int $type
     ): void {
         self::query()->create([
-            'photo_id' => $likeInfo->photo_id,
+            'photo_id' => $likeInfo['photo_id'],
             'aggregate_type' => $type,
-            'likes' => $likeInfo->likes,
+            'likes' => $likeInfo['likes'],
             'start_at' => $startAt,
             'end_at' => $endAt
         ]);

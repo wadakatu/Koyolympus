@@ -35,11 +35,11 @@ class CarbonServiceProvider extends ServiceProvider
         });
 
         Carbon::macro('startOfLastMonth', function (CarbonImmutable $now) {
-            return $now->subMonth()->startOfMonth();
+            return $now->subMonthNoOverflow()->startOfMonth();
         });
 
         Carbon::macro('endOfLastMonth', function (CarbonImmutable $now) {
-            return $now->subMonth()->endOfMonth();
+            return $now->subMonthNoOverflow()->endOfMonth();
         });
 
         Carbon::macro('isFirstDayOfMonth', function (CarbonImmutable $now) {

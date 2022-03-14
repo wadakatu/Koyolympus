@@ -9,7 +9,7 @@ trait LogTrait
 {
     public function outputLog(string $title, $message)
     {
-        Log::error("$title $message");
+        Log::info("$title $message");
     }
 
     public function outputErrorLog(string $title, string $message)

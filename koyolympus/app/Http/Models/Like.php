@@ -5,6 +5,7 @@ namespace App\Http\Models;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 class Like extends Model
 {
@@ -35,25 +36,25 @@ class Like extends Model
         }
     }
 
-    public function saveById(int $id, array $value)
+    public function saveByPhotoId(string $photoId, array $value): void
     {
-        self::query()->find($id)->fill($value)->save();
+        self::query()->where('photo_id', $photoId)->first()->fill($value)->save();
     }
 
-    public function deleteByPhotoId(string $photoId)
+    public function deleteByPhotoId(string $photoId): void
     {
         self::query()
             ->where('photo_id', $photoId)
             ->delete();
     }
 
-    public function getForDailyAggregation()
+    public function getForDailyAggregation(): Collection
     {
         return self::query()
             ->join('photos', 'photos.id', '=', 'likes.photo_id')
             ->where('likes', '>', 0)
-            ->select(['likes.id', 'likes.photo_id', 'likes'])
-            ->groupBy('likes.id', 'photo_id')
+            ->select(['likes.photo_id', 'likes'])
+            ->groupBy('photo_id', 'likes')
             ->get();
     }
 }

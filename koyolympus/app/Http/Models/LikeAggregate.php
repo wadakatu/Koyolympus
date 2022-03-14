@@ -6,41 +6,70 @@ namespace App\Http\Models;
 use DB;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class LikeAggregate extends Model
 {
     protected $guarded = ['id'];
 
-    public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type)
+    public function scopeForAggregation(
+        Builder $query,
+        CarbonImmutable $startAt,
+        CarbonImmutable $endAt,
+        int $type
+    ): Builder {
+        return $query
+            ->where('status', config('const.PHOTO_AGGREGATION.STATUS.INCOMPLETE'))
+            ->where('aggregate_type', $type)
+            ->whereDate('start_at', '>=', $startAt)
+            ->whereDate('end_at', '<=', $endAt);
+    }
+
+    public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type): Collection
     {
         return self::query()
             ->join('likes', 'likes.photo_id', '=', 'like_aggregates.photo_id')
-            ->where('aggregate_type', $type)
-            ->whereBetween('start_at', [$startAt, $endAt])
-            ->whereBetween('end_at', [$startAt, $endAt])
+            ->forAggregation($startAt, $endAt, $type)
             ->select([
-                'likes.id',
-                'like_aggregates.id as like_aggregate_id',
                 'like_aggregates.photo_id',
                 DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
             ])
-            ->groupBy('likes.id', 'like_aggregates.id', 'like_aggregates.photo_id')
+            ->when(
+                $type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
+                && $startAt->month !== $endAt->month,
+                function (Builder $query) {
+                    return $query->addSelect(DB::raw('month(start_at) as carry_over'));
+                })
+            ->groupBy('like_aggregates.photo_id', DB::raw("month(start_at)"))
             ->get();
     }
 
-    public function registerAggregatedLike(array $likeInfo, CarbonImmutable $startAt, CarbonImmutable $endAt, int $type)
-    {
+    public function registerForAggregation(
+        LikeAggregate $likeInfo,
+        CarbonImmutable $startAt,
+        CarbonImmutable $endAt,
+        int $type
+    ): void {
         self::query()->create([
-            'photo_id' => $likeInfo['photo_id'],
+            'photo_id' => $likeInfo->photo_id,
             'aggregate_type' => $type,
-            'likes' => $likeInfo['likes'],
+            'likes' => $likeInfo->likes,
             'start_at' => $startAt,
             'end_at' => $endAt
         ]);
     }
 
-    public function saveById(int $id, array $value)
-    {
-        self::query()->find($id)->fill($value)->save();
+    public function updateForAggregation(
+        string $photoId,
+        CarbonImmutable $startAt,
+        CarbonImmutable $endAt,
+        int $type,
+        array $value
+    ): void {
+        self::query()
+            ->where('photo_id', $photoId)
+            ->forAggregation($startAt, $endAt, $type)
+            ->update($value);
     }
 }

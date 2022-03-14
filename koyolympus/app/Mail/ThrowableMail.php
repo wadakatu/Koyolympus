@@ -16,9 +16,9 @@ class ThrowableMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param $params
+     * @param array $params
      */
-    public function __construct($params)
+    public function __construct(array $params)
     {
         $this->_params = $params;
     }

@@ -5,6 +5,7 @@ namespace Tests\Unit\Models;
 
 use Tests\TestCase;
 use App\Http\Models\Like;
+use App\Http\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeTest extends TestCase
@@ -175,6 +176,53 @@ class LikeTest extends TestCase
 
     /**
      * @test
+     * @dataProvider providerSaveById
+     */
+    public function saveByPhotoId($column, $result)
+    {
+        $target = factory(Like::class)->create([
+            'likes' => 10,
+            'all_likes' => 100,
+        ]);
+        factory(Like::class)->create([
+            'likes' => 20,
+            'all_likes' => 200,
+        ]);
+
+        $this->like->saveByPhotoId($target->photo_id, $column);
+
+        $this->assertDatabaseMissing('likes', ['likes' => 10, 'all_likes' => 100]);
+        $this->assertDatabaseHas('likes', $result);
+        $this->assertDatabaseHas('likes', ['likes' => 20, 'all_likes' => 200]);
+    }
+
+    public function providerSaveById(): array
+    {
+        return [
+            'singleColumn' => [
+                'column' => [
+                    'likes' => 100,
+                ],
+                'result' => [
+                    'likes' => 100,
+                    'all_likes' => 100,
+                ]
+            ],
+            'multipleColumn' => [
+                'column' => [
+                    'likes' => 100,
+                    'all_likes' => 1000,
+                ],
+                'result' => [
+                    'likes' => 100,
+                    'all_likes' => 1000,
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
      */
     public function deleteByPhotoId()
     {
@@ -200,5 +248,31 @@ class LikeTest extends TestCase
 
         $this->assertDatabaseMissing('likes', $delete);
         $this->assertDatabaseHas('likes', $notDelete);
+    }
+
+    /**
+     * @test
+     */
+    public function getForDailyAggregation()
+    {
+        $photoId = 'test_photo_id_1';
+        $photoId2 = 'test_photo_id_2';
+
+        factory(Photo::class)->create(['id' => $photoId]);
+        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 0]);
+        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 1]);
+        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 1]);
+        factory(Like::class)->create(['photo_id' => 'abc', 'likes' => 1]);
+
+        factory(Photo::class)->create(['id' => $photoId2]);
+        factory(Like::class)->create(['photo_id' => $photoId2, 'likes' => 10]);
+
+        $result = $this->like->getForDailyAggregation();
+
+        $this->assertSame(2, $result->count());
+        $this->assertSame(['photo_id' => $photoId, 'likes' => 1],
+            $result->where('photo_id', $photoId)->first()->toArray());
+        $this->assertSame(['photo_id' => $photoId2, 'likes' => 10],
+            $result->where('photo_id', $photoId2)->first()->toArray());
     }
 }

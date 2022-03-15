@@ -1,4 +1,5 @@
 from_owner:
   - wadakatu
+  - dependabot[bot]
 required_labels: []
 apply_labels: []

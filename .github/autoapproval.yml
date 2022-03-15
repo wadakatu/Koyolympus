@@ -1,5 +1,4 @@
 from_owner:
   - wadakatu
-required_labels:
-  - enhancement
+required_labels: []
 apply_labels: []

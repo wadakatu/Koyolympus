@@ -29,7 +29,7 @@
         <env name="DB_CONNECTION" value="circle_testing"/>
         <env name="DB_CONNECTION" value="koyolympus_testing"/>
         <env name="MAIL_DRIVER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="QUEUE_CONNECTION" value="database"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="APP_CONFIG_CACHE" value="bootstrap/cache/config.phpunit.php"/>
         <env name="APP_SERVICES_CACHE" value="bootstrap/cache/services.phpunit.php"/>

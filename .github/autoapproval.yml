@@ -1,8 +1,5 @@
 from_owner:
   - wadakatu
-
 required_labels:
   - enhancement
-
-blacklisted_labels:
-  - wontfix
+apply_labels: []

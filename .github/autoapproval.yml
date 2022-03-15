@@ -2,22 +2,7 @@ from_owner:
   - wadakatu
 
 required_labels:
-  - one_of
   - enhancement
-  - bug
-  - Circle Ci
-  - CSS
-  - dependencies
-  - documentation
-  - help wanted
-  - javascript
-  - Laravel
-  - php
-  - security
-  - upgrade
 
-  blacklisted_labels:
-   - wontfix
-
-  
-
+blacklisted_labels:
+  - wontfix

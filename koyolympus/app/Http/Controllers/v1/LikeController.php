@@ -8,7 +8,7 @@ use Log;
 use Exception;
 use App\Http\Models\Like;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\LIkeRequest;
+use App\Http\Requests\LikeRequest;
 use App\Http\Controllers\Controller;
 
 class LikeController extends Controller
@@ -23,10 +23,10 @@ class LikeController extends Controller
     /**
      * いいね数を取得
      *
-     * @param LIkeRequest $request
+     * @param LikeRequest $request
      * @return JsonResponse
      */
-    public function getLikeSum(LIkeRequest $request): JsonResponse
+    public function getLikeSum(LikeRequest $request): JsonResponse
     {
         return response()->json(['all_likes' => $this->like->getAllLike($request->get('id'))]);
     }
@@ -34,11 +34,11 @@ class LikeController extends Controller
     /**
      * いいね数を+1する。
      *
-     * @param LIkeRequest $request
+     * @param LikeRequest $request
      * @return JsonResponse
      * @throws Exception
      */
-    public function likePhoto(LIkeRequest $request): JsonResponse
+    public function likePhoto(LikeRequest $request): JsonResponse
     {
         DB::beginTransaction();
         try {
@@ -55,11 +55,11 @@ class LikeController extends Controller
     /**
      * いいね数を-1する。
      *
-     * @param LIkeRequest $request
+     * @param LikeRequest $request
      * @return JsonResponse
      * @throws Exception
      */
-    public function unlikePhoto(LIkeRequest $request): JsonResponse
+    public function unlikePhoto(LikeRequest $request): JsonResponse
     {
         DB::beginTransaction();
         try{

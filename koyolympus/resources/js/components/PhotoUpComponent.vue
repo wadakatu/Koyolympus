@@ -45,6 +45,7 @@ export default {
                 maxFiles: 10,
                 acceptedFiles: '.jpg, .jpeg',
                 thumbnailWidth: 150,
+                //TODO: jQuery使わない様にする。
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             },
             genre: '',

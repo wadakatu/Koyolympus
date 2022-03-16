@@ -7,7 +7,6 @@
 /public/image/portrait.jpeg
 /storage/*.key
 /vendor/*
-!/vendor/bin/
 /vendor/bin/carbon
 /vendor/bin/commonmark
 /vendor/bin/composer
@@ -35,3 +34,5 @@ public/*.js
 public/js/app.js
 public/*.js.gz
 public/.gz
+.DS_Store
+.phpstorm.meta.php

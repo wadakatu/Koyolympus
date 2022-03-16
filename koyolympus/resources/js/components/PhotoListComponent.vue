@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import {OK} from '../util';
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
@@ -44,16 +43,10 @@ export default {
             let self = this;
             let response;
             try {
-                response = await axios.get(`/api/photos/?page=${self.page}`, {params: {genre: self.genre}}).catch(e => {
-                    throw 'getPhoto error' + e.message
-                });
+                response = await axios.get(`/api/photos/?page=${self.page}`, {params: {genre: self.genre}});
             } catch (err) {
                 self.$store.commit('error/setCode', err.status);
                 return;
-            }
-            if (response.status !== OK) {
-                self.$store.commit('error/setCode', response.status);
-                return false;
             }
             self.photos = response.data.data;
             self.currentPage = response.data.current_page;
@@ -84,15 +77,10 @@ export default {
 
 .photo-list {
     text-align: center;
-    height: 50vh;
-    margin-bottom: 5vh;
 }
 
 h2 {
     color: #fff;
-    position: fixed;
-    top: 50vh;
-    left: 30vw;
     font-size: 40px;
 }
 

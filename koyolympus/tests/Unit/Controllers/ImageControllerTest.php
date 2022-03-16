@@ -1,20 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
-use App\Http\Controllers\v1\ImageController;
-use App\Http\Models\Photo;
-use App\Http\Requests\GetPhotoRequest;
-use App\Http\Services\PhotoService;
+use Mockery;
 use Exception;
+use Tests\TestCase;
+use App\Http\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use App\Http\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\GetPhotoRequest;
 use Illuminate\Support\Facades\Storage;
-use Mockery;
-use Tests\TestCase;
+use App\Http\Controllers\v1\ImageController;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ImageControllerTest extends TestCase
 {
@@ -40,52 +42,98 @@ class ImageControllerTest extends TestCase
      */
     public function getPhoto()
     {
-        $request = new GetPhotoRequest;
-        $request->merge(['genre' => 1]);
+        $genre = '1';
+        $request = Mockery::mock(GetPhotoRequest::class);
+        $request->shouldReceive('input')
+            ->once()
+            ->with('genre')
+            ->andReturn($genre);
 
         $this->photoService
             ->shouldReceive('getAllPhoto')
             ->once()
-            ->with(1)
-            ->andReturn(new LengthAwarePaginator([], 1, 1));
+            ->with($genre)
+            ->andReturn(new LengthAwarePaginator([], 2, 10));
 
-        $this->imageController->getPhoto($request);
+        $result = $this->imageController->getPhoto($request);
+
+        $this->assertSame(10, $result->perPage());
+        $this->assertSame(2, $result->total());
     }
 
     /**
      * @test
-     * @dataProvider providerDownloadPhoto
-     * @param $path
-     * @param $expectedStatus
      */
-    public function downloadPhoto($path, $expectedStatus)
+    public function getRandomPhoto()
     {
-        $fakePhoto = UploadedFile::fake()->image('fake.jpg');
-        Storage::fake('s3')->putFile('/photo/landscape', $fakePhoto);
+        $this->photoService
+            ->shouldReceive('getAllPhotoRandomly')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(Collect([]));
 
-        $photo = new Photo(['file_path' => $path]);
+        $this->imageController->getRandomPhoto();
+    }
+
+    /**
+     * @test
+     */
+    public function downloadPhoto_success()
+    {
+        $filePath = '/photo/landscape';
+        $photo = new Photo(['file_path' => $filePath]);
+        $fileSystemAdapter = Mockery::mock(FilesystemAdapter::class);
+
+        Storage::shouldReceive('disk')
+            ->once()
+            ->with('s3')
+            ->andReturn($fileSystemAdapter);
+
+        $fileSystemAdapter
+            ->shouldReceive('exists')
+            ->with('/photo/landscape')
+            ->andReturnTrue();
+
+        $fileSystemAdapter
+            ->shouldReceive('get')
+            ->once()
+            ->with($filePath)
+            ->andReturn('success');
+
+        Log::shouldReceive('debug')->never();
 
         $response = $this->imageController->downloadPhoto($photo);
 
-        $this->assertSame($expectedStatus, $response->getStatusCode());
-
-        if ($expectedStatus === 404) {
-            $this->assertSame('{"error":"no image found"}', $response->getContent());
-        }
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('success', $response->getContent());
     }
 
-    public function providerDownloadPhoto(): array
+    /**
+     * @test
+     */
+    public function downloadPhoto_error()
     {
-        return [
-            '200' => [
-                'params' => '/photo/landscape',
-                'status' => 200,
-            ],
-            '404' => [
-                'params' => '/',
-                'status' => 404,
-            ],
-        ];
+        $photo = new Photo(['file_path' => '/photo/landscape']);
+        $fileSystemAdapter = Mockery::mock(FilesystemAdapter::class);
+
+        Storage::shouldReceive('disk')
+            ->once()
+            ->with('s3')
+            ->andReturn($fileSystemAdapter);
+
+        $fileSystemAdapter
+            ->shouldReceive('exists')
+            ->with('/photo/landscape')
+            ->andReturnFalse();
+
+        Log::shouldReceive('debug')
+            ->once()
+            ->with('画像が見つかりませんでした。');
+
+        $response = $this->imageController->downloadPhoto($photo);
+
+        $this->assertSame(404, $response->getStatusCode());
+        $this->assertSame(json_encode(['error' => 'no image found']), $response->getContent());
     }
 
     /**
@@ -99,17 +147,20 @@ class ImageControllerTest extends TestCase
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;
 
-        DB::shouldReceive('beginTransaction')
-            ->once()
-            ->with();
+        DB::shouldReceive('beginTransaction')->once();
+        DB::shouldReceive('commit')->once();
+        DB::shouldReceive('rollBack')->never();
 
         Log::shouldReceive('debug')
             ->once()
             ->with('ファイルのアップロード開始');
-
         Log::shouldReceive('debug')
             ->once()
             ->with('ファイルのアップロード終了');
+        Log::shouldReceive('error')
+            ->never()
+            ->with('ファイルのアップロードに失敗しました。');
+        Log::shouldReceive('error')->never();
 
         $this->photoService
             ->shouldReceive('uploadPhotoToS3')
@@ -117,25 +168,9 @@ class ImageControllerTest extends TestCase
             ->with($file, $fileName, 1)
             ->andReturn('noError.jpeg');
 
-        DB::shouldReceive('commit')
-            ->once()
-            ->with();
-
-        DB::shouldReceive('rollBack')
-            ->never()
-            ->with();
-
         $this->partialMock(ImageController::class, function ($mock) use ($request) {
             $mock->shouldReceive('removePhoto')->never()->with($request)->andReturn(response()->json([]));
         });
-
-        Log::shouldReceive('debug')
-            ->never()
-            ->with('ファイルのアップロードに失敗しました。');
-
-        Log::shouldReceive('error')
-            ->never()
-            ->with('noError');
 
         $response = $this->imageController->uploadPhoto($request);
 
@@ -154,42 +189,31 @@ class ImageControllerTest extends TestCase
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;
 
-        DB::shouldReceive('beginTransaction')
-            ->once()
-            ->with();
+        DB::shouldReceive('beginTransaction')->once();
+        DB::shouldReceive('commit')->never();
+        DB::shouldReceive('rollBack')->once();
 
         Log::shouldReceive('debug')
             ->once()
             ->with('ファイルのアップロード開始');
+        Log::shouldReceive('debug')
+            ->never()
+            ->with('ファイルのアップロード終了');
+        Log::shouldReceive('error')
+            ->once()
+            ->with('ファイルのアップロードに失敗しました。');
+        Log::shouldReceive('error')
+            ->once()
+            ->with("");
 
         $this->photoService
             ->shouldReceive('uploadPhotoToS3')
             ->once()
             ->andThrow(Exception::class);
 
-        Log::shouldReceive('debug')
-            ->never()
-            ->with('ファイルのアップロード終了');
-
-        DB::shouldReceive('commit')
-            ->never()
-            ->with();
-
-        DB::shouldReceive('rollBack')
-            ->once()
-            ->with();
-
         $this->imageController
             ->shouldReceive('removePhoto')
             ->with($request);
-
-        Log::shouldReceive('debug')
-            ->once()
-            ->with('ファイルのアップロードに失敗しました。');
-
-        Log::shouldReceive('error')
-            ->once()
-            ->with("");
 
         $response = $this->imageController->uploadPhoto($request);
 

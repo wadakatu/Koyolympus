@@ -18,5 +18,17 @@ return [
             5 => 'photo/others/livecomposite',
             6 => 'photo/others/pinfilm',
         ]
-    ]
+    ],
+    'PHOTO_AGGREGATION' => [
+        'TYPE' => [
+            'DAILY' => 1,
+            'WEEKLY' => 2,
+            'MONTHLY' => 3,
+        ],
+        'STATUS' => [
+            'INCOMPLETE' => 0,
+            'COMPLETE' => 1
+        ],
+    ],
+    'MAIL' => env('MY_EMAIL', 'wadakatukoyo330@gmail.com'),
 ];

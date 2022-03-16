@@ -2,10 +2,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CheckConsistencyBetweenDBAndS3;
 use App\Console\Commands\CheckDatabase;
+use App\Console\Commands\LikeAggregation;
 use Illuminate\Console\Scheduling\Schedule;
+use App\Console\Commands\CheckConsistencyBetweenDBAndS3;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\ReplaceAllPhotoInfoToIncludeUuid;
 
 class Kernel extends ConsoleKernel
 {
@@ -17,6 +19,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CheckDatabase::class,
         CheckConsistencyBetweenDBAndS3::class,
+        ReplaceAllPhotoInfoToIncludeUuid::class,
+        LikeAggregation::class
     ];
 
     /**
@@ -27,8 +31,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command(LikeAggregation::class)->dailyAt('00:05');
     }
 
     /**

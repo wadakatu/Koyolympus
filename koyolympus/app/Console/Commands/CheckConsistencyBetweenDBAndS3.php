@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Http\Services\PhotoService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Http\Services\PhotoService;
 
 class CheckConsistencyBetweenDBAndS3 extends Command
 {
@@ -40,45 +42,45 @@ class CheckConsistencyBetweenDBAndS3 extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws Exception
      */
-    public function handle(): void
+    public function handle()
     {
         $fileName = $this->argument('fileName');
         $shouldSearchAll = $this->option('all');
 
         if (isset($fileName) && $shouldSearchAll) {
             $this->error("You cannot select specific file name when you put '--all' option.");
-            return;
+            return 1;
         }
 
         if (!isset($fileName) && !$shouldSearchAll) {
             $this->error("You have to choose either putting 'fileName' or '--all' option in the command.");
-            return;
+            return 1;
         }
 
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             if (isset($fileName) && !$shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
-                DB::commit();
                 $this->info("The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\nThe number of deleted files is $deletedFileInfo[count].");
-                return;
             }
 
             if (!isset($fileName) && $shouldSearchAll) {
                 $deletedFile = $this->photoService->deleteMultiplePhotosIfDuplicate();
                 $deletedFileNum = $deletedFile->count();
-                DB::commit();
                 $this->info("The $deletedFileNum files are completely deleted from S3 and DB because of duplication.");
                 foreach ($deletedFile as $photoInfo) {
                     $this->info("The duplicate file $photoInfo->file_name is successfully deleted.");
                 }
-                return;
             }
-        } catch (\Error $e) {
+
+            DB::commit();
+            return 0;
+        } catch (Exception $e) {
             DB::rollBack();
             $this->error($e->getMessage());
-            return;
+            return 1;
         }
     }
 }

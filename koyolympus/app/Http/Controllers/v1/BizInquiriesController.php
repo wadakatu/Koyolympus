@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\BizInquiriesRequest;
 use App\Mail\BizInquiriesMail;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\BizInquiriesRequest;
 
 class BizInquiriesController extends Controller
 {
@@ -24,6 +25,6 @@ class BizInquiriesController extends Controller
             'opinion' => $request->input('opinion'),
         ];
 
-        Mail::to('wadakatukoyo330@gmail.com')->send(new BizInquiriesMail($params));
+        Mail::to(config('const.MAIL'))->send(new BizInquiriesMail($params));
     }
 }

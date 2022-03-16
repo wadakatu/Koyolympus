@@ -1,54 +1,82 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
 
-use App\Http\Requests\BizInquiriesRequest;
-use Tests\TestCase;
 use Validator;
+use Tests\TestCase;
+use BadMethodCallException;
+use App\Http\Requests\BizInquiriesRequest;
+use Illuminate\Validation\ValidationException;
 
 class BizInquiriesRequestTest extends TestCase
 {
+    private $request;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->request = new BizInquiriesRequest();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
     /**
      * @test
-     * @dataProvider providerValidation
-     * @param $data
-     * @param $expect
      */
-    public function validation($data, $expect)
+    public function authorize()
     {
-        $dataList = $data;
+        $this->assertTrue($this->request->authorize());
+    }
 
-        $request = new BizInquiriesRequest();
+    /**
+     * @test
+     */
+    public function validation_success()
+    {
+        $dataList = [
+            'name' => 'test',
+            'email' => 'test@test.com',
+            'opinion' => 'hello',
+        ];
 
-        $rules = $request->rules();
+        $rules = $this->request->rules();
 
         $validator = Validator::make($dataList, $rules);
 
         $result = $validator->passes();
         $messages = $validator->messages();
 
-        $this->assertSame($expect['result'], $result);
-
-        if ($result === false) {
-            $this->assertSame($expect['message'], $messages->get($expect['messageKey'])[0]);
-        }
+        $this->assertTrue($result);
+        $this->assertEmpty($messages->messages());
     }
 
-    public function providerValidation()
+    /**
+     * @test
+     * @dataProvider providerValidation_error
+     * @param $data
+     * @param $expected
+     */
+    public function validation_error($data, $expected)
+    {
+        $rules = $this->request->rules();
+
+        $validator = Validator::make($data, $rules);
+
+        $result = $validator->passes();
+        $messages = $validator->messages();
+
+        $this->assertFalse($result);
+        $this->assertSame($expected['message'], $messages->get($expected['messageKey'])[0]);
+    }
+
+    public function providerValidation_error(): array
     {
         return [
-            '正常' => [
-                'data' => [
-                    'name' => 'test',
-                    'email' => 'test@test.com',
-                    'opinion' => 'hello',
-                ],
-                'expect' => [
-                    'result' => true,
-                    'messageKey' => null,
-                    'message' => null,
-                ],
-            ],
             '名前が未入力' => [
                 'data' => [
                     'name' => '',
@@ -56,7 +84,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'name',
                     'message' => "The name field is required.",
                 ],
@@ -68,7 +95,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'email',
                     'message' => "The email field is required.",
                 ],
@@ -80,7 +106,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => '',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'opinion',
                     'message' => "The opinion field is required.",
                 ],
@@ -92,7 +117,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'name',
                     'message' => "The name must be a string.",
                 ],
@@ -104,7 +128,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'email',
                     'message' => "The email must be a valid email address.",
                 ],
@@ -116,7 +139,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 1,
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'opinion',
                     'message' => "The opinion must be a string.",
                 ],
@@ -128,7 +150,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'name',
                     'message' => "The name may not be greater than 20 characters.",
                 ],
@@ -140,7 +161,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => 'hello',
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'email',
                     'message' => "The email may not be greater than 255 characters.",
                 ],
@@ -152,7 +172,6 @@ class BizInquiriesRequestTest extends TestCase
                     'opinion' => str_repeat('a', 1001),
                 ],
                 'expect' => [
-                    'result' => false,
                     'messageKey' => 'opinion',
                     'message' => "The opinion may not be greater than 1000 characters.",
                 ],

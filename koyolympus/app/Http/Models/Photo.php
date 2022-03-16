@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Models;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class Photo extends Model
 {
@@ -22,6 +23,7 @@ class Photo extends Model
     ];
     protected $perPage = 10;
     protected $keyType = 'string';
+    public $incrementing = false;
 
     public function __construct(array $attributes = [])
     {
@@ -38,7 +40,7 @@ class Photo extends Model
 
     public function getRandomId(): string
     {
-        return Str::uuid();
+        return Str::uuid()->toString();
     }
 
     public function getUrlAttribute(): string
@@ -46,7 +48,7 @@ class Photo extends Model
         return Storage::disk('s3')->url($this->attributes['file_path']);
     }
 
-    public function getAllPhoto(?int $genre): LengthAwarePaginator
+    public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
         $query = Photo::query();
 
@@ -55,6 +57,13 @@ class Photo extends Model
         }
         return $query
             ->orderBy('created_at', 'desc')->paginate();
+    }
+
+    public function getAllPhotoRandomly(): Collection
+    {
+        $query = Photo::query();
+
+        return $query->inRandomOrder()->get();
     }
 
     public function createPhotoInfo(string $fileName, string $filePath, int $genre): string
@@ -76,16 +85,14 @@ class Photo extends Model
         return $uniqueFileName;
     }
 
-    public function deletePhotoInfo(string $fileName)
+    public function deletePhotoInfo(string $id)
     {
-        $fileIdAndName = explode('.', $fileName);
-
         self::query()
-            ->where('id', $fileIdAndName[0])
+            ->where('id', $id)
             ->delete();
     }
 
-    public function getAllPhotos(): Collection
+    public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {
         return self::query()->orderBy('created_at', 'desc')->get();
     }

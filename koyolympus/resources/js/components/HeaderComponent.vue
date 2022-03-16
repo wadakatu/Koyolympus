@@ -1,25 +1,34 @@
 <template>
-    <div>
-        <div class="navbar">
-            <router-link v-bind:to="{name: 'main'}"><img src="/images/mylogo_white.png"
-                                                         class="logo" alt="myLogo"></router-link>
-            <nav>
-                <ul>
-                    <li><a href="">
-                        <router-link v-bind:to="{name: 'about.me'}">About Me</router-link>
-                    </a></li>
-                    <li><a href="" @click="this.photo">
-                        <router-link v-bind:to="{}">Photography</router-link>
-                    </a></li>
-                    <li><a>
-                        <router-link v-bind:to="{name: 'main.biz'}">Biz Inquiries</router-link>
-                    </a></li>
-                </ul>
-            </nav>
-            <img src="/images/menu.png" class="menu-icon" alt="menu" @click="showNav">
-        </div>
-        <sidebar-menu-component v-bind:showSidebar="showSidebars" @close="showSidebars = false"
-                                class="sidebar"></sidebar-menu-component>
+    <!--    <div>-->
+    <div class="navbar">
+        <router-link v-bind:to="{name: 'main'}"><img src="/images/mylogo_white.png"
+                                                     class="logo" alt="myLogo"></router-link>
+        <nav>
+            <ul>
+                <li class="about_me"><a href="">
+                    <router-link v-bind:to="{name: 'about.me'}">About Me</router-link>
+                </a></li>
+                <li class="photo"><a href="" @click="this.photo">
+                    <router-link v-bind:to="{}">Photography</router-link>
+                </a></li>
+                <li class="biz"><a>
+                    <router-link v-bind:to="{name: 'main.biz'}">Biz Inquiries</router-link>
+                </a></li>
+                <li class="more_menu">
+                    <div class="dropdown">
+                        <a class="dropbtn">More<i class="fa fa-caret-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="https://koyolympus.thebase.in/" target="_blank" rel="noopener noreferrer">E-Commerce</a>
+                            <a href="https://www.facebook.com/koyolympus/" target="_blank" rel="noopener noreferrer">Facebook</a>
+                            <a href="https://github.com/wadakatu/koyolympus" target="_blank" rel="noopener noreferrer">GitHub</a>
+                            <a href="https://www.instagram.com/wadakatu1234/?hl=ja" target="_blank"
+                               rel="noopener noreferrer">Instagram</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <hamburger-menu-component class="hamburger"></hamburger-menu-component>
     </div>
 </template>
 
@@ -28,7 +37,7 @@
 export default {
     name: "HeaderComponent.vue",
     components: {
-        'sidebar-menu-component': () => import('./SidebarMenuComponent'),
+        'hamburger-menu-component': () => import('./HamburgerMenuComponent'),
     },
     data: () => {
         return {
@@ -40,10 +49,10 @@ export default {
             this.showSidebars = this.showSidebars === false;
         },
         photo() {
-            let url = '/photo';
+            let url = '/photo/random';
             this.$store.commit('photo/setUrl', url);
             this.$store.commit('photo/setGenre', null);
-            this.$router.push({name: 'photo.all'}).catch(err => {
+            this.$router.push({name: 'photo.random'}).catch(err => {
             });
         },
     },
@@ -53,22 +62,15 @@ export default {
 <style scoped>
 
 .navbar {
-    height: 12%;
+    padding: 3vh 8vw 0 8vw;
     display: flex;
     align-items: center;
-    padding-top: 20px;
     z-index: 999;
 }
 
 .logo {
     width: 150px;
     cursor: pointer;
-}
-
-.menu-icon {
-    width: 30px;
-    cursor: pointer;
-    margin-left: 40px;
 }
 
 nav {
@@ -88,9 +90,52 @@ nav ul li a {
     font-size: 15px;
 }
 
-@media screen and (max-width: 760px) {
+/* Dropdown button */
+.dropdown .dropbtn {
+    /*font-size: 16px;*/
+    border: none;
+    outline: none;
+    color: white;
+    background-color: inherit;
+    /*margin: 0; !* Important for vertical align on mobile phones *!*/
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: black;
+    min-width: 5vw;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #252a2d;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.hamburger {
+    display: none;
+}
+
+@media screen and (max-width: 810px) {
     .logo {
-        width: 150px;
         text-align: center;
     }
 
@@ -98,47 +143,9 @@ nav ul li a {
         display: none;
     }
 
-    .menu-icon {
-        width: 40px;
-        position: fixed;
-        top: 7%;
-        right: 20vw;
-    }
-
-    .sidebar {
-        position: fixed;
-        right: 0;
+    .hamburger {
+        display: block;
+        margin-left: auto;
     }
 }
-
-@media screen and (max-width: 480px) {
-    .navbar {
-        height: 12%;
-        display: flex;
-        align-items: center;
-        padding-top: 20px;
-        z-index: 999;
-    }
-
-    .logo {
-        width: 150px;
-        text-align: center;
-    }
-
-    nav {
-        display: none;
-    }
-
-    .menu-icon {
-        width: 40px;
-        position: static;
-        padding-left: 20%;
-    }
-
-    .sidebar {
-        position: fixed;
-        right: 0;
-    }
-}
-
 </style>

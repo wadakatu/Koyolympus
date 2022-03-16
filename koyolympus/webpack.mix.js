@@ -30,7 +30,7 @@ mix.js('resources/js/app.js', 'public/js')
     })
     .options({
         processCssUrls: false
-    });
+    }).vue();
 
 if (mix.inProduction()) {
     mix.version();

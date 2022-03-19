@@ -78,7 +78,7 @@ class ImageController extends Controller
     {
         $file = $request->file;
         $fileName = $file->getClientOriginalName();
-        $genre = $request->input('genre');
+        $genre = (int)$request->input('genre');
 
         DB::beginTransaction();
 
@@ -107,7 +107,7 @@ class ImageController extends Controller
     {
         $file = $request->file;
         $fileName = $file['custom'];
-        $genre = $request->input('genre');
+        $genre = (int)$request->input('genre');
         $this->photoService->deletePhotoFromS3($fileName, $genre);
 
         return response()->json([]);

@@ -9,6 +9,7 @@
         </div>
         <photo-modal-component :val="postItem" v-show="showContent"
                                @close="closeModal"></photo-modal-component>
+        <PaginateComponent v-show="noPhoto" :current-page=1 :last-page=1></PaginateComponent>
     </div>
 </template>
 
@@ -86,9 +87,7 @@ export default {
 
 h2 {
     color: #fff;
-    position: fixed;
-    top: 50vh;
-    left: 30vw;
+    line-height: 70vh;
     font-size: 40px;
 }
 

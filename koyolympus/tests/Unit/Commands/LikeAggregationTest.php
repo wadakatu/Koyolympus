@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Commands;
 
 use Queue;
-use Mockery;
 use Tests\TestCase;
+use App\Http\Models\Like;
 use Carbon\CarbonImmutable;
 use App\Traits\PrivateTrait;
 use App\Http\Services\LikeService;
 use Illuminate\Support\Facades\DB;
+use App\Http\Models\LikeAggregate;
 use App\Jobs\AggregateDailyLikeJob;
 use App\Jobs\AggregateWeeklyLikeJob;
 use App\Jobs\AggregateMonthlyLikeJob;
@@ -29,7 +30,7 @@ class LikeAggregationTest extends TestCase
         parent::setUp();
         CarbonImmutable::setTestNow('2022-01-01 00:00:01');
 
-        $this->likeService = Mockery::mock(LikeService::class)->makePartial();
+        $this->likeService = new LikeService(new Like(), new LikeAggregate());
         $this->carbon = CarbonImmutable::now();
 
         $this->likeAggregateCommand = new LikeAggregation($this->likeService);

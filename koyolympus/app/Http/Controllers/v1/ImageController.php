@@ -84,33 +84,17 @@ class ImageController extends Controller
 
         try {
             Log::debug('ファイルのアップロード開始');
-            $uniqueFileName = $this->photoService->uploadPhotoToS3($file, $fileName, $genre);
+            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, $genre);
+            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, $genre);
             DB::commit();
             Log::debug('ファイルのアップロード終了');
         } catch (Exception $e) {
-            Log::error('ファイルのアップロードに失敗しました。');
             DB::rollBack();
-            $this->removePhoto($request);
+            Log::error('ファイルのアップロードに失敗しました。');
             Log::error($e->getMessage());
             return response()->json([], 500);
         }
 
         return response()->json(['file' => $uniqueFileName]);
     }
-
-    /**
-     * 写真をS3から、写真情報をDBから削除する。
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function removePhoto(Request $request): JsonResponse
-    {
-        $file = $request->file;
-        $fileName = $file['custom'];
-        $genre = (int)$request->input('genre');
-        $this->photoService->deletePhotoFromS3($fileName, $genre);
-
-        return response()->json([]);
-    }
-
 }

@@ -163,14 +163,15 @@ class ImageControllerTest extends TestCase
         Log::shouldReceive('error')->never();
 
         $this->photoService
+            ->shouldReceive('uploadPhotoDataToDB')
+            ->once()
+            ->with($fileName, 1)
+            ->andReturn($uniqueFileName = 'noError.jpeg');
+
+        $this->photoService
             ->shouldReceive('uploadPhotoToS3')
             ->once()
-            ->with($file, $fileName, 1)
-            ->andReturn('noError.jpeg');
-
-        $this->partialMock(ImageController::class, function ($mock) use ($request) {
-            $mock->shouldReceive('removePhoto')->never()->with($request)->andReturn(response()->json([]));
-        });
+            ->with($file, $uniqueFileName, 1);
 
         $response = $this->imageController->uploadPhoto($request);
 
@@ -207,37 +208,17 @@ class ImageControllerTest extends TestCase
             ->with("");
 
         $this->photoService
-            ->shouldReceive('uploadPhotoToS3')
+            ->shouldReceive('uploadPhotoDataToDB')
             ->once()
+            ->with($fileName, 1)
             ->andThrow(Exception::class);
 
-        $this->imageController
-            ->shouldReceive('removePhoto')
-            ->with($request);
+        $this->photoService
+            ->shouldReceive('uploadPhotoToS3')
+            ->never();
 
         $response = $this->imageController->uploadPhoto($request);
 
         $this->assertSame(500, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function removePhoto()
-    {
-        $fileName = 'fake.jpeg';
-        $file = [UploadedFile::fake()->image($fileName), 'custom' => $fileName];
-        $request = new Request;
-        $request->file = $file;
-        $request->merge(['genre' => 1]);
-
-        $this->photoService
-            ->shouldReceive('deletePhotoFromS3')
-            ->once()
-            ->with($fileName, 1);
-
-        $response = $this->imageController->removePhoto($request);
-
-        $this->assertSame(200, $response->getStatusCode());
     }
 }

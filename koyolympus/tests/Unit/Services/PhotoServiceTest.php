@@ -80,6 +80,59 @@ class PhotoServiceTest extends TestCase
 
     /**
      * @test
+     * @param $genre
+     * @param $filePath
+     * @dataProvider providerUploadPhotoDataToDB
+     */
+    public function uploadPhotoDataToDB($genre, $filePath)
+    {
+        $fileName = 'photo.jpeg';
+        $uniqueFileName = 'uniquePhoto.jpeg';
+
+        $this->photo
+            ->shouldReceive('createPhotoInfo')
+            ->once()
+            ->with($fileName, $filePath, $genre)
+            ->andReturn($uniqueFileName);
+
+        $result = $this->photoService->uploadPhotoDataToDB($fileName, $genre);
+
+        $this->assertSame($uniqueFileName, $result);
+    }
+
+    public function providerUploadPhotoDataToDB()
+    {
+        return [
+            'genre landscape' => [
+                'genre' => 1,
+                'filePath' => 'photo/landscape'
+            ],
+            'genre animal' => [
+                'genre' => 2,
+                'filePath' => 'photo/animal'
+            ],
+            'genre portrait' => [
+                'genre' => 3,
+                'filePath' => 'photo/portrait'
+            ],
+            'genre snapshot' => [
+                'genre' => 4,
+                'filePath' => 'photo/others/snapshot'
+            ],
+            'genre livecomposite' => [
+                'genre' => 5,
+                'filePath' => 'photo/others/livecomposite'
+            ],
+            'genre pinfilm' => [
+                'genre' => 6,
+                'filePath' => 'photo/others/pinfilm'
+            ],
+        ];
+    }
+
+
+    /**
+     * @test
      */
     public function uploadPhotoToS3()
     {
@@ -93,15 +146,7 @@ class PhotoServiceTest extends TestCase
         Storage::shouldReceive('disk')->once()->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
         $s3Disk->shouldReceive('putFileAs')->once()->with($filePath, $file, $expectedUniqueFileName, 'public');
 
-        $this->photo
-            ->shouldReceive('createPhotoInfo')
-            ->once()
-            ->with($fileName, $filePath, $genre)
-            ->andReturn($expectedUniqueFileName);
-
-        $uniqueFileName = $this->photoService->uploadPhotoToS3($file, $fileName, $genre);
-
-        $this->assertSame($expectedUniqueFileName, $uniqueFileName);
+        $this->photoService->uploadPhotoToS3($file, $expectedUniqueFileName, $genre);
     }
 
     /**

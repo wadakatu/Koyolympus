@@ -43,23 +43,27 @@ class PhotoService
         return $this->photo->getAllPhotoRandomly();
     }
 
-    /**
-     * 写真をS3バケットにアップロード
-     * @param UploadedFile $file
-     * @param string $fileName
-     * @param int $genre
-     * @return string
-     */
-    public function uploadPhotoToS3(UploadedFile $file, string $fileName, int $genre): string
+    public function uploadPhotoDataToDB(string $fileName, int $genre): string
     {
         //保存するS3のファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
         //DBに新規の写真レコード追加
-        $uniqueFileName = $this->photo->createPhotoInfo($fileName, $filePath, $genre);
+        return $this->photo->createPhotoInfo($fileName, $filePath, $genre);
+    }
+
+    /**
+     * 写真をS3バケットにアップロード
+     * @param UploadedFile $file
+     * @param string $uniqueFileName
+     * @param int $genre
+     */
+    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre)
+    {
+        //保存するS3のファイルパスを取得
+        $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
+
         //S3にファイルを追加
         Storage::disk('s3')->putFileAs($filePath, $file, $uniqueFileName, 'public');
-
-        return $uniqueFileName;
     }
 
     /**

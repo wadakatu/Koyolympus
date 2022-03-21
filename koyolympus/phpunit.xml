@@ -23,14 +23,18 @@
             <exclude>
                 <directory suffix=".php">./app/Http/Middleware</directory>
                 <directory suffix=".php">./app/Http/Controllers/Auth</directory>
-                <directory suffix=".php">./app/Providers</directory>
+                <file>./app/Console/Commands/CheckDatabase.php</file>
+                <file>./app/Console/Kernel.php</file>
+                <file>./app/Exceptions/Handler.php</file>
                 <file>./app/Http/Controllers/Controller.php</file>
                 <file>./app/Http/Controllers/HomeController.php</file>
                 <file>./app/Http/Kernel.php</file>
+                <file>./app/Providers/AppServiceProvider.php</file>
+                <file>./app/Providers/AuthServiceProvider.php</file>
+                <file>./app/Providers/BroadcastServiceProvider.php</file>
+                <file>./app/Providers/EventServiceProvider.php</file>
+                <file>./app/Providers/RouteServiceProvider.php</file>
                 <file>./app/User.php</file>
-                <file>./app/Exceptions/Handler.php</file>
-                <file>./app/Console/Commands/CheckDatabase.php</file>
-                <file>./app/Console/Kernel.php</file>
             </exclude>
         </whitelist>
     </filter>

@@ -93,7 +93,7 @@ jobs:
   build:
     working_directory: ~/koyolympus
     docker:
-      - image: cimg/php:7.3.27-node
+      - image: cimg/php:7.4-node
     steps:
       - checkout
       - restore_cache:
@@ -148,8 +148,8 @@ jobs:
 
   test:
     docker:
-      - image: circleci/php:7.3.0-node-browsers
-      - image: circleci/mariadb:10.4
+      - image: cimg/php:7.4.26
+      - image: cimg/mysql:5.7
     environment:
       - DB_CONNECTION: circle_testing
     steps:
@@ -158,17 +158,12 @@ jobs:
           name: Update apt-get
           command: sudo apt-get update
       - run:
-          name: Docker php extensiions install
-          command: sudo docker-php-ext-install pdo_mysql
-      - run:
-          name: libjpeg etc install
+          name: install wget git unzip etc...
           command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg-dev libpng-dev
       - run:
-          name: php-gd install
-          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
-      - run:
-          name: add install command
-          command: sudo docker-php-ext-install gd
+          name: install pcov
+          command: |
+            sudo pecl install pcov
       - attach_workspace:
           at: koyolympus/
       - run:
@@ -202,7 +197,7 @@ jobs:
           working_directory: koyolympus
           command: |
             ./cc-test-reporter before-build
-            vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
+            vendor/bin/phpunit --coverage-clover clover.xml
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - notify_slack_fail
       - notify_slack_pass

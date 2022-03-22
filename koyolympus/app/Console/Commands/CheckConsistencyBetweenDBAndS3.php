@@ -65,8 +65,8 @@ class CheckConsistencyBetweenDBAndS3 extends Command
             if (isset($fileName) && !$shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
                 $this->info(
-                    "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n
-                    The number of deleted files is $deletedFileInfo[count]."
+                    "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n" .
+                    "The number of deleted files is $deletedFileInfo[count]."
                 );
             }
 

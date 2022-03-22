@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
@@ -63,7 +64,10 @@ class CheckConsistencyBetweenDBAndS3 extends Command
         try {
             if (isset($fileName) && !$shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
-                $this->info("The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\nThe number of deleted files is $deletedFileInfo[count].");
+                $this->info(
+                    "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n
+                    The number of deleted files is $deletedFileInfo[count]."
+                );
             }
 
             if (!isset($fileName) && $shouldSearchAll) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -8,9 +10,10 @@ use Illuminate\Queue\SerializesModels;
 
 class BizInquiriesMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
-    private $_params;
+    private $params;
 
     /**
      * Create a new message instance.
@@ -19,7 +22,7 @@ class BizInquiriesMail extends Mailable
      */
     public function __construct(array $params)
     {
-        $this->_params = $params;
+        $this->params = $params;
     }
 
     /**
@@ -30,7 +33,7 @@ class BizInquiriesMail extends Mailable
     public function build(): BizInquiriesMail
     {
         return $this->subject('お問い合わせがありました。')
-            ->with('params', $this->_params)
+            ->with('params', $this->params)
             ->view('mail.contact');
     }
 }

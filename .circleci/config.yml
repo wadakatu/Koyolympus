@@ -196,7 +196,6 @@ jobs:
           name: run PHPUnit
           working_directory: koyolympus
           command: |
-            pwd
             ./cc-test-reporter before-build
             vendor/bin/phpunit --coverage-clover clover.xml
             ./cc-test-reporter format-coverage clover.xml --add-prefix koyolympus -t clover -o codeclimate.json

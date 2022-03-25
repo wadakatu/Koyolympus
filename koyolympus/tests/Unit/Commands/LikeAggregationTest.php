@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
@@ -19,7 +20,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeAggregationTest extends TestCase
 {
-    use PrivateTrait, RefreshDatabase;
+    use PrivateTrait;
+    use RefreshDatabase;
 
     private $likeAggregateCommand;
     private $likeService;
@@ -70,7 +72,7 @@ class LikeAggregationTest extends TestCase
      *
      * @test
      */
-    public function handle_queue()
+    public function handleQueueTest()
     {
         $this->assertFalse(DB::table('jobs')->exists());
 

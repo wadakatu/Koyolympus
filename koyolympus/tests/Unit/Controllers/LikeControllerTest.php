@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
@@ -92,7 +93,7 @@ class LikeControllerTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function likePhoto_withException()
+    public function likePhotoWithException()
     {
         $id = '3';
         $exception = new Exception('例外発生！');
@@ -156,7 +157,7 @@ class LikeControllerTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function unlikePhoto_withException()
+    public function unlikePhotoWithException()
     {
         $id = '5';
         $exception = new Exception('例外発生！');
@@ -184,5 +185,4 @@ class LikeControllerTest extends TestCase
         $this->assertSame(400, $response->getStatusCode());
         $this->assertSame(json_encode(['error' => 'いいね解除に失敗しました。']), $response->getContent());
     }
-
 }

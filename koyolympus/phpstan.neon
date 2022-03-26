@@ -15,6 +15,7 @@ parameters:
         - ./app/Http/Controllers/Auth/
         - ./app/Http/Middleware/
 
+        - ./app/Console/Commands/CheckDatabase.php
         - ./app/Console/Kernel.php
         - ./app/Exception/Handler.php
         - ./app/Http/Kernel.php

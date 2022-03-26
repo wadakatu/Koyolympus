@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Jobs;
@@ -56,7 +57,7 @@ class AggregateWeeklyLikeJobTest extends TestCase
     /**
      * @test
      */
-    public function failed_exception()
+    public function failedException()
     {
         $throwable = new Exception('例外です！');
 
@@ -79,7 +80,7 @@ class AggregateWeeklyLikeJobTest extends TestCase
     /**
      * @test
      */
-    public function failed_error()
+    public function failedError()
     {
         $throwable = new Error('例外です！');
 

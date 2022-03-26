@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Models;
@@ -183,9 +184,9 @@ class LikeAggregateTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providerGetForAggregation_success_single
+     * @dataProvider providerGetForAggregationSingle
      */
-    public function getForAggregation_single($params, $expected)
+    public function getForAggregationSingle($params, $expected)
     {
         factory(Like::class)->create($params['likes']);
         factory(LikeAggregate::class)->create($params['like_aggregates']);
@@ -202,7 +203,7 @@ class LikeAggregateTest extends TestCase
     }
 
 
-    public function providerGetForAggregation_success_single(): array
+    public function providerGetForAggregationSingle(): array
     {
         return [
             'success_first_of_week' => [
@@ -343,7 +344,7 @@ class LikeAggregateTest extends TestCase
     /**
      * @test
      */
-    public function getForAggregation_sum()
+    public function getForAggregationSum()
     {
         $photoIdForSum = 'test_sum';
 
@@ -384,7 +385,7 @@ class LikeAggregateTest extends TestCase
     /**
      * @test
      */
-    public function getForAggregation_weekly_sameMonth()
+    public function getForAggregationWeeklySameMonth()
     {
         $photo1 = 'photo1';
         $photo2 = 'photo2';
@@ -452,10 +453,14 @@ class LikeAggregateTest extends TestCase
         );
 
         $this->assertSame(2, $result->count());
-        $this->assertSame(['photo_id' => $photo1, 'likes' => 28],
-            $result->where('photo_id', $photo1)->first()->toArray());
-        $this->assertSame(['photo_id' => $photo2, 'likes' => 12],
-            $result->where('photo_id', $photo2)->first()->toArray());
+        $this->assertSame(
+            ['photo_id' => $photo1, 'likes' => 28],
+            $result->where('photo_id', $photo1)->first()->toArray()
+        );
+        $this->assertSame(
+            ['photo_id' => $photo2, 'likes' => 12],
+            $result->where('photo_id', $photo2)->first()->toArray()
+        );
         $this->assertIsInt($result->where('photo_id', $photo1)->first()->likes);
         $this->assertIsInt($result->where('photo_id', $photo2)->first()->likes);
         $this->assertNull($result->where('photo_id', $photo3)->first());
@@ -464,7 +469,7 @@ class LikeAggregateTest extends TestCase
     /**
      * @test
      */
-    public function getForAggregation_weekly_diffMonth()
+    public function getForAggregationWeeklyDiffMonth()
     {
         $photo1 = 'photo1';
 
@@ -518,7 +523,7 @@ class LikeAggregateTest extends TestCase
     /**
      * @test
      */
-    public function getForAggregation_monthly()
+    public function getForAggregationMonthly()
     {
         $photo1 = 'photo1';
         $photo2 = 'photo2';
@@ -616,10 +621,14 @@ class LikeAggregateTest extends TestCase
         );
 
         $this->assertSame(2, $result->count());
-        $this->assertSame(['photo_id' => $photo1, 'likes' => 15],
-            $result->where('photo_id', $photo1)->first()->toArray());
-        $this->assertSame(['photo_id' => $photo2, 'likes' => 12],
-            $result->where('photo_id', $photo2)->first()->toArray());
+        $this->assertSame(
+            ['photo_id' => $photo1, 'likes' => 15],
+            $result->where('photo_id', $photo1)->first()->toArray()
+        );
+        $this->assertSame(
+            ['photo_id' => $photo2, 'likes' => 12],
+            $result->where('photo_id', $photo2)->first()->toArray()
+        );
         $this->assertIsInt($result->where('photo_id', $photo1)->first()->likes);
         $this->assertIsInt($result->where('photo_id', $photo2)->first()->likes);
         $this->assertNull($result->where('photo_id', $photo3)->first());

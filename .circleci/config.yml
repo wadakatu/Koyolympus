@@ -204,7 +204,8 @@ jobs:
       - notify_slack_pass
   
   style-check:
-    docker: cimg/php:7.4.26
+    docker: 
+      - image: cimg/php:7.4.26
     steps:
       - checkout
       - attach_workspace:

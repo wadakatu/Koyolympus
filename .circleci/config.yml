@@ -144,6 +144,19 @@ jobs:
             - vendor/
       - notify_slack_fail
 
+  style-check:
+    docker: 
+      - image: cimg/php:7.4.26
+    steps:
+      - checkout
+      - attach_workspace:
+          at: koyolympus/ 
+      - run:
+          name: check PHP code style (PSR12)
+          working_directory: koyolympus
+          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
+      - notify_slack_fail
+
   test:
     docker:
       - image: cimg/php:7.4.26
@@ -200,18 +213,6 @@ jobs:
             ./cc-test-reporter upload-coverage -i codeclimate.json
       - notify_slack_fail
       - notify_slack_pass
-  
-  style-check:
-    docker: 
-      - image: cimg/php:7.4.26
-    steps:
-      - checkout
-      - attach_workspace:
-          at: koyolympus/ 
-      - run:
-          name: check PHP code style (PSR12)
-          working_directory: koyolympus
-          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
 
 workflows:
   version: 2

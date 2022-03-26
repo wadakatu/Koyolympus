@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Mails;
@@ -36,5 +37,4 @@ class ThrowableMailTest extends TestCase
         $this->assertSame('mail.exception', $result->view);
         $this->assertSame($this->params, $result->viewData['params']);
     }
-
 }

@@ -201,6 +201,17 @@ jobs:
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - notify_slack_fail
       - notify_slack_pass
+  
+  style-check:
+    docker: cimg/php:7.4.26
+    steps:
+      - checkout
+      - attach_workspace:
+          at: koyolympus/ 
+      - run:
+          name: code-style check (PSR12)
+          working_directory: koyolympus
+          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
 
 workflows:
   version: 2
@@ -208,7 +219,12 @@ workflows:
     jobs:
       - build:
           context: koyolympus
+      - style-check:
+          context: koyolympus
+          requires:
+            - build
       - test:
           context: koyolympus
           requires:
             - build
+            - style-check

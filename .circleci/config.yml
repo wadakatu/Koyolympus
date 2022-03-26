@@ -213,7 +213,10 @@ jobs:
       - run:
           name: code-style check (PSR12)
           working_directory: koyolympus
-          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
+          command: |
+            pwd
+            ls
+            vendor/bin/phpcs --standard=phpcs.xml -p ./
 
 workflows:
   version: 2

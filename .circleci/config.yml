@@ -215,6 +215,7 @@ jobs:
           working_directory: koyolympus
           command: |
             pwd
+            cd vendor/bin
             ls
             vendor/bin/phpcs --standard=phpcs.xml -p ./
 

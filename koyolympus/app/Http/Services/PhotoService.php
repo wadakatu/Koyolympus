@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Services;
@@ -11,10 +12,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-
 class PhotoService
 {
-
     private $photo;
     private $like;
 
@@ -137,8 +136,14 @@ class PhotoService
             if (count($photoInfoArray) === 1) {
                 unset($photoList[$photoInfoArray[0]['index']]);
             } else {
-                array_multisort(array_map("strtotime", array_column($photoInfoArray, "created_at")),
-                    SORT_DESC, $photoInfoArray);
+                array_multisort(
+                    array_map(
+                        "strtotime",
+                        array_column($photoInfoArray, "created_at")
+                    ),
+                    SORT_DESC,
+                    $photoInfoArray
+                );
                 $deletePhotoInfo = array_values($photoInfoArray)[0];
                 unset($photoList[$deletePhotoInfo['index']]);
             }

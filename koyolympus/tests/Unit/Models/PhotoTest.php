@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Models;
@@ -168,7 +169,6 @@ class PhotoTest extends TestCase
         $this->assertSame('test2.jpeg', $photoList[0]->file_name);
         $this->assertSame('test1.jpeg', $photoList[1]->file_name);
         $this->assertSame('test3.jpeg', $photoList[2]->file_name);
-
     }
 
     /**

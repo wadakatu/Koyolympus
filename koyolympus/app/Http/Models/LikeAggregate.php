@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Models;
@@ -40,7 +41,8 @@ class LikeAggregate extends Model
                 && $startAt->month !== $endAt->month,
                 function (Builder $query) {
                     return $query->addSelect(DB::raw('month(start_at) as carry_over'));
-                })
+                }
+            )
             ->groupBy('like_aggregates.photo_id', DB::raw("month(start_at)"))
             ->get();
     }

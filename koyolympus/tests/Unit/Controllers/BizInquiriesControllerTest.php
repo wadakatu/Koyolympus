@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
@@ -11,7 +12,6 @@ use App\Http\Controllers\v1\BizInquiriesController;
 
 class BizInquiriesControllerTest extends TestCase
 {
-
     private $bizInquiriesController;
 
     protected function setUp(): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
@@ -20,7 +21,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ImageControllerTest extends TestCase
 {
-
     private $imageController;
     private $photoService;
 
@@ -78,7 +78,7 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function downloadPhoto_success()
+    public function downloadPhotoSuccess()
     {
         $filePath = '/photo/landscape';
         $photo = new Photo(['file_path' => $filePath]);
@@ -111,7 +111,7 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function downloadPhoto_error()
+    public function downloadPhotoError()
     {
         $photo = new Photo(['file_path' => '/photo/landscape']);
         $fileSystemAdapter = Mockery::mock(FilesystemAdapter::class);
@@ -139,10 +139,10 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function uploadPhoto_noError()
+    public function uploadPhotoSuccess()
     {
         $fileName = 'fake.jpeg';
-        $request = new Request;
+        $request = new Request();
         $request->merge(['genre' => 1]);
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;
@@ -182,10 +182,10 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function uploadPhoto_withError()
+    public function uploadPhotoError()
     {
         $fileName = 'fake.jpeg';
-        $request = new Request;
+        $request = new Request();
         $request->merge(['genre' => 1]);
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;

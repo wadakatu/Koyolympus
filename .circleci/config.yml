@@ -161,7 +161,7 @@ jobs:
     docker:
       - image: cimg/php:7.4.26
     steps:
-      -checkout
+      - checkout
       - attach_workspace:
           at: koyolympus/ 
       - run:

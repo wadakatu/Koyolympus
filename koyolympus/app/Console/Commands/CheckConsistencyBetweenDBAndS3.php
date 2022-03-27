@@ -42,7 +42,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      * @throws Exception
      */
     public function handle()

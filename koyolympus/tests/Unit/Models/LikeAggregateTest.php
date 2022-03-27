@@ -6,6 +6,7 @@ namespace Tests\Unit\Models;
 
 use Tests\TestCase;
 use App\Http\Models\Like;
+use App\Http\Models\Photo;
 use Carbon\CarbonImmutable;
 use App\Http\Models\LikeAggregate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -178,6 +179,80 @@ class LikeAggregateTest extends TestCase
                 'expected' => [
                     'count' => 0,
                 ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function scopeAddSelectWhenDailyAndDiffMonthTrue()
+    {
+        $startAt = CarbonImmutable::parse('2021-01-31');
+        $endAt = CarbonImmutable::parse('2021-02-06');
+        $type = 1;
+
+        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+
+        $result = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)->get();
+
+        $this->assertArrayHasKey('carry_over', $result[0]->toArray());
+        $this->assertSame(5, $result[0]->carry_over);
+    }
+
+    /**
+     * @test
+     * @dataProvider providerScopeAddSelectWhenDailyAndDiffMonthFalse
+     */
+    public function scopeAddSelectWhenDailyAndDiffMonthFalse($params)
+    {
+        $startAt = CarbonImmutable::parse($params['start_at']);
+        $endAt = CarbonImmutable::parse($params['end_at']);
+
+        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+
+        $result = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $params['type'])->get();
+
+        $this->assertArrayNotHasKey('carry_over', $result[0]->toArray());
+    }
+
+    public function providerScopeAddSelectWhenDailyAndDiffMonthFalse(): array
+    {
+        return [
+            'weekly && diff month' => [
+                'params' => [
+                    'start_at' => '2021-01-31',
+                    'end_at' => '2021-02-06',
+                    'type' => 2
+                ],
+            ],
+            'monthly && diff month' => [
+                'params' => [
+                    'start_at' => '2021-01-31',
+                    'end_at' => '2021-02-06',
+                    'type' => 3
+                ],
+            ],
+            'daily && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 1
+                ],
+            ],
+            'weekly && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 2
+                ],
+            ],
+            'monthly && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 3
+                ],
             ],
         ];
     }
@@ -632,6 +707,58 @@ class LikeAggregateTest extends TestCase
         $this->assertIsInt($result->where('photo_id', $photo1)->first()->likes);
         $this->assertIsInt($result->where('photo_id', $photo2)->first()->likes);
         $this->assertNull($result->where('photo_id', $photo3)->first());
+    }
+
+    /**
+     * @test
+     */
+    public function getForAggregationGroupBy()
+    {
+        $photo1 = factory(Like::class)->create();
+        $photo2 = factory(Like::class)->create();
+
+        factory(LikeAggregate::class, 2)->create(
+            [
+                'photo_id' => $photo1->photo_id,
+                'start_at' => '2021-01-01',
+                'end_at' => '2021-01-31',
+                'likes' => 10,
+                'aggregate_type' => 1,
+                'status' => 0
+            ]
+        );
+        factory(LikeAggregate::class)->create(
+            [
+                'photo_id' => $photo2->photo_id,
+                'start_at' => '2021-02-01',
+                'end_at' => '2021-02-28',
+                'likes' => 20,
+                'aggregate_type' => 1,
+                'status' => 0
+            ]
+        );
+        factory(LikeAggregate::class)->create(
+            [
+                'photo_id' => $photo2->photo_id,
+                'start_at' => '2021-03-01',
+                'end_at' => '2021-03-31',
+                'likes' => 30,
+                'aggregate_type' => 1,
+                'status' => 0
+            ]
+        );
+
+        $result = $this->likeAggregate->getForAggregation(
+            CarbonImmutable::parse('2021-01-01'),
+            CarbonImmutable::parse('2021-03-31'),
+            1
+        );
+
+        $this->assertSame(1, $result->where('photo_id', $photo1->photo_id)->count());
+        $this->assertSame(20, $result->where('photo_id', $photo1->photo_id)->first()->likes);
+        $this->assertSame(2, $result->where('photo_id', $photo2->photo_id)->count());
+        $this->assertContains(20, $result->where('photo_id', $photo2->photo_id)->pluck('likes'));
+        $this->assertContains(30, $result->where('photo_id', $photo2->photo_id)->pluck('likes'));
     }
 
     /**

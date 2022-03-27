@@ -157,6 +157,19 @@ jobs:
           command: vendor/bin/phpcs --standard=phpcs.xml -p ./
       - notify_slack_fail
 
+  larastan:
+    docker:
+      - image: cimg/php:7.4.26
+    steps:
+      - checkout
+      - attach_workspace:
+          at: koyolympus/ 
+      - run:
+          name: analyze php code statically
+          working_directory: koyolympus
+          command: vendor/bin/phpstan analyse
+      - notify_slack_fail
+
   test:
     docker:
       - image: cimg/php:7.4.26
@@ -224,8 +237,14 @@ workflows:
           context: koyolympus
           requires:
             - build
+      - larastan:
+          context: koyolympus
+          requires:
+            - build
+            - style-check  
       - test:
           context: koyolympus
           requires:
             - build
             - style-check
+            - larastan

@@ -7,7 +7,7 @@ parameters:
         - app
 
     # The level 9 is the highest level
-    level: 0
+    level: 3
 
     ignoreErrors:
 
@@ -17,7 +17,7 @@ parameters:
 
         - ./app/Console/Commands/CheckDatabase.php
         - ./app/Console/Kernel.php
-        - ./app/Exception/Handler.php
+        - ./app/Exceptions/Handler.php
         - ./app/Http/Kernel.php
         - ./app/Http/Controllers/Controller.php
         - ./app/Http/Controllers/HomeController.php

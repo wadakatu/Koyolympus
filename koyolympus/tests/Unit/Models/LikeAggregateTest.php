@@ -184,6 +184,80 @@ class LikeAggregateTest extends TestCase
 
     /**
      * @test
+     */
+    public function scopeAddSelectWhenDailyAndDiffMonthTrue()
+    {
+        $startAt = CarbonImmutable::parse('2021-01-31');
+        $endAt = CarbonImmutable::parse('2021-02-06');
+        $type = 1;
+
+        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+
+        $result = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)->get();
+
+        $this->assertArrayHasKey('carry_over', $result[0]->toArray());
+        $this->assertSame(5, $result[0]->carry_over);
+    }
+
+    /**
+     * @test
+     * @dataProvider providerScopeAddSelectWhenDailyAndDiffMonthFalse
+     */
+    public function scopeAddSelectWhenDailyAndDiffMonthFalse($params)
+    {
+        $startAt = CarbonImmutable::parse($params['start_at']);
+        $endAt = CarbonImmutable::parse($params['end_at']);
+
+        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+
+        $result = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $params['type'])->get();
+
+        $this->assertArrayNotHasKey('carry_over', $result[0]->toArray());
+    }
+
+    public function providerScopeAddSelectWhenDailyAndDiffMonthFalse(): array
+    {
+        return [
+            'weekly && diff month' => [
+                'params' => [
+                    'start_at' => '2021-01-31',
+                    'end_at' => '2021-02-06',
+                    'type' => 2
+                ],
+            ],
+            'monthly && diff month' => [
+                'params' => [
+                    'start_at' => '2021-01-31',
+                    'end_at' => '2021-02-06',
+                    'type' => 3
+                ],
+            ],
+            'daily && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 1
+                ],
+            ],
+            'weekly && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 2
+                ],
+            ],
+            'monthly && same month' => [
+                'params' => [
+                    'start_at' => '2021-01-01',
+                    'end_at' => '2021-01-07',
+                    'type' => 3
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @test
      * @dataProvider providerGetForAggregationSingle
      */
     public function getForAggregationSingle($params, $expected)

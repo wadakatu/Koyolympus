@@ -59,7 +59,7 @@ class LikeAggregate extends Model
                 DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
             ])
             ->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)
-            ->groupBy('like_aggregates.photo_id', DB::raw("month(start_at)"))
+            ->groupBy(['like_aggregates.photo_id', DB::raw("month(start_at)")])
             ->get();
     }
 

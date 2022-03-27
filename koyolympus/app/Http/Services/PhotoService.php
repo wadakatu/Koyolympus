@@ -136,14 +136,18 @@ class PhotoService
             if (count($photoInfoArray) === 1) {
                 unset($photoList[$photoInfoArray[0]['index']]);
             } else {
+                // 作成日を全てUnixタイムスタンプに変換
+                $createdAtArr = array_map(
+                    "strtotime",
+                    array_column($photoInfoArray, "created_at")
+                );
+                //Unixタイムスタンプを基に写真配列を降順に並び替える
                 array_multisort(
-                    array_map(
-                        "strtotime",
-                        array_column($photoInfoArray, "created_at")
-                    ),
+                    $createdAtArr,
                     SORT_DESC,
                     $photoInfoArray
                 );
+                //作成日が最新のものはDBとS3に残すので配列から削除する
                 $deletePhotoInfo = array_values($photoInfoArray)[0];
                 unset($photoList[$deletePhotoInfo['index']]);
             }

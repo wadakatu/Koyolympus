@@ -18,10 +18,10 @@ class PhotoSeeder extends Seeder
     {
         $this->command->getOutput()->progressStart($this->number);
         for ($i = 1; $i <= $this->number; $i++) {
-            $index = (6 < $i % 10 || $i % 10 === 0) ? 1 : $i % 10;
-            $fileUrl = config("const.PHOTO.GENRE_FILE_URL.$index");
+            $genre = $this->getPhotoGenre($i);
+            $fileUrl = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
-            $photo = factory(Photo::class)->make();
+            $photo = factory(Photo::class)->make(['genre' => $genre]);
             $fileName = $photo->id . "-test.jpeg";
             $photo->file_path = $fileUrl . '/' . $fileName;
 
@@ -34,11 +34,27 @@ class PhotoSeeder extends Seeder
                 DB::rollBack();
                 $this->deletePhotoFromS3($fileUrl, $fileName);
                 continue;
-            }finally{
+            } finally {
                 $this->command->getOutput()->progressAdvance();
             }
         }
         $this->command->getOutput()->progressFinish();
+    }
+
+    private function getPhotoGenre(int $index): int
+    {
+        $remainder = $index % 10;
+
+        switch ($remainder) {
+            case $remainder < 7;
+                $genre = $remainder;
+                break;
+            default:
+                $genre = 1;
+                break;
+        }
+
+        return $genre;
     }
 
     private function putPhotoToS3(string $fileUrl, string $fileName)

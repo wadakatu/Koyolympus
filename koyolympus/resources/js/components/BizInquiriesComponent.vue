@@ -6,17 +6,17 @@
                     <input type="hidden" name="_token" v-model="csrf">
                     <h1 class="biz_title">Biz Inquiries</h1>
                     <div class="inputBox">
-                        <input type="text" name="name" class="params_input" v-model="params.name" required>
+                        <input type="text" name="name" class="params_input" v-model="params.name" required placeholder=" ">
                         <span class="params_name">Your name</span>
                     </div>
                     <div class="error_text" v-html="errors.name"></div>
                     <div class="inputBox">
-                        <input type="email" name="email" class="params_input" v-model="params.email" required>
+                        <input type="email" name="email" class="params_input" v-model="params.email" required placeholder=" ">
                         <span class="params_name">Email</span>
                     </div>
                     <div class="error_text" v-html="errors.email"></div>
                     <div class="inputBox">
-                        <textarea name="opinion" class="params_textarea" v-model="params.opinion" required></textarea>
+                        <textarea name="opinion" class="params_textarea" v-model="params.opinion" required placeholder=" "></textarea>
                         <span class="params_name">Type your thoughts...</span>
                     </div>
                     <div class="error_text" v-html="errors.opinion"></div>
@@ -147,6 +147,7 @@ export default {
 .params_name {
     position: absolute;
     left: 0;
+    top: 1vh;
     padding: 5px 0;
     font-size: 16px;
     margin: 10px 0;
@@ -156,9 +157,20 @@ export default {
 }
 
 .params_input:focus ~ .params_name,
+.params_textarea:focus ~ .params_name {
+    font-size: 12px;
+    transform: translateY(-20px);
+}
+
 .params_input:valid ~ .params_name,
-.params_textarea:focus ~ .params_name,
 .params_textarea:valid ~ .params_name {
+    color: #43e91e;
+    font-size: 12px;
+    transform: translateY(-20px);
+}
+
+.params_input:invalid:not(:placeholder-shown) ~ .params_name,
+.params_textarea:invalid:not(:placeholder-shown) ~ .params_name {
     color: #e91e63;
     font-size: 12px;
     transform: translateY(-20px);

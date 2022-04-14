@@ -2,6 +2,10 @@
 
 @section('title', 'Koyolympus')
 
+@push('css')
+    <link href="{{ asset('/css/main.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
     <div id="app">
         <header-component></header-component>

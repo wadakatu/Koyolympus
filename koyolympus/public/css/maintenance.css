@@ -1,8 +1,9 @@
 html {
-    background-color: black;
+    font-size: 10px;
 }
 
 body {
+    font-family: Roboto, sans-serif;
     display: flex;
     flex-direction: column;
 }
@@ -12,8 +13,53 @@ body {
     margin: 0 auto;
 }
 
+.slide-show {
+    width: 100%;
+    height: 100vh;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    backface-visibility: hidden;
+    animation: slideShow 16s linear infinite 0s;
+    animation-timing-function: ease-in-out;
+    background-image: url("../images/cat.jpeg");
+}
+
+@keyframes slideShow {
+    0% {
+        background-image: url("../images/cat.jpeg");
+    }
+
+    25% {
+        background-image: url("../images/film.jpeg");
+    }
+
+    50% {
+        background-image: url("../images/livecomp.jpeg");
+    }
+
+    75% {
+        background-image: url("../images/yellow.jpeg");
+    }
+
+    100% {
+        background-image: url("../images/PC280455.jpeg");
+    }
+}
+
 body h1 {
-    color: white;
+    font-size: clamp(3.5rem, 10vw, 15rem);
+    margin-top: auto;
+    text-align: center;
+    color: #000000;
+    -webkit-text-stroke: 1px #FFF;
+    text-stroke: 1px #FFF;
+}
+
+body p {
+    text-align: center;
+    font-size: clamp(1.1rem, 1vw, 5rem);
+    color: #FFFFFF;
 }
 
 .social-container {
@@ -31,7 +77,7 @@ body h1 {
     display: inline-block;
     margin: 0.15em;
     position: relative;
-    font-size: 1.2em;
+    font-size: clamp(0.3rem, 5vw, 2rem);
 }
 
 .social-icons i {

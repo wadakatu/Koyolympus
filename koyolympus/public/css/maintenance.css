@@ -19,46 +19,20 @@ body {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    backface-visibility: hidden;
-    animation: slideShow 16s linear infinite 0s;
-    animation-timing-function: ease-in-out;
-    background-image: url("../images/cat.jpeg");
-}
-
-@keyframes slideShow {
-    0% {
-        background-image: url("../images/cat.jpeg");
-    }
-
-    25% {
-        background-image: url("../images/film.jpeg");
-    }
-
-    50% {
-        background-image: url("../images/livecomp.jpeg");
-    }
-
-    75% {
-        background-image: url("../images/yellow.jpeg");
-    }
-
-    100% {
-        background-image: url("../images/PC280455.jpeg");
-    }
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../images/cat.jpeg");
 }
 
 body h1 {
-    font-size: clamp(3.5rem, 10vw, 15rem);
+    font-size: clamp(4rem, 10vw, 15rem);
     margin-top: auto;
     text-align: center;
-    color: #000000;
-    -webkit-text-stroke: 1px #FFF;
-    text-stroke: 1px #FFF;
+    color: transparent;
+    -webkit-text-stroke: 2px #FFF;
 }
 
 body p {
     text-align: center;
-    font-size: clamp(1.1rem, 1vw, 5rem);
+    font-size: clamp(0.8rem, 1.5vw, 5rem);
     color: #FFFFFF;
 }
 

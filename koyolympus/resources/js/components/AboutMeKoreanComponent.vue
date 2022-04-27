@@ -32,6 +32,10 @@ export default {
 
 <style scoped>
 
+h5 {
+    margin: 0 0 1vh 0;
+}
+
 .col {
     flex-basis: 50%;
 }

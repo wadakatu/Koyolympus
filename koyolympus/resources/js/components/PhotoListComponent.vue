@@ -85,15 +85,12 @@ h2 {
 }
 
 img {
+    display: inline-block;
     width: 15vw;
     height: 25vh;
     object-fit: cover;
     cursor: zoom-in;
     padding: 0 5px;
-}
-
-.images {
-    display: inline-block;
 }
 
 @media screen and (max-width: 1350px) {

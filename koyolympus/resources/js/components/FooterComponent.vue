@@ -27,7 +27,7 @@ img {
 }
 
 footer {
-    padding: 0 8vw 3vh 8vw;
+    padding: 0 8vw 0 8vw;
     text-align: center;
 }
 

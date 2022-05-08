@@ -25,37 +25,6 @@ const router = new VueRouter({
             name: 'about.me',
         },
         {
-            path: '/aboutme/english',
-            components: {
-                default: () => import('./components/AboutMeEnglishComponent'),
-                card: MainCardComponent,
-            },
-            name: 'about.me.english'
-        },
-        {
-            path: '/aboutme/french',
-            components: {
-                default: () => import('./components/AboutMeFrenchComponent'),
-                card: MainCardComponent,
-            },
-            name: 'about.me.french',
-        },
-        {
-            path: '/aboutme/korean',
-            components: {
-                default: () => import('./components/AboutMeKoreanComponent'),
-                card: MainCardComponent,
-            },
-            name: 'about.me.korean',
-        },
-        {
-            path: '/aboutme/chinese',
-            components: {
-                default: () => import('./components/AboutMeChineseComponent'),
-                card: MainCardComponent,
-            }
-        },
-        {
             path: '/bizinq',
             components: {
                 default: () => import('./components/BizInquiriesComponent'),

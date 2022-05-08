@@ -2,11 +2,11 @@
     <ul class="language" ontouchstart="">
         <li class="language_title"><a>Language</a>
             <ul class="language_ul">
-                <li class="lang"><a @click="changeLang('/aboutme')" class="lang_detail">日本語</a></li>
-                <li class="lang"><a @click="changeLang('/aboutme/english')" class="lang_detail">English</a></li>
-                <li class="lang"><a @click="changeLang('/aboutme/french')" class="lang_detail">French</a></li>
-                <li class="lang"><a @click="changeLang('/aboutme/korean')" class="lang_detail">한국말</a></li>
-                <li class="lang"><a @click="changeLang('/aboutme/chinese')" class="lang_detail">中文</a></li>
+                <li class="lang"><a @click="changeLang('japanese')" class="lang_detail">日本語</a></li>
+                <li class="lang"><a @click="changeLang('english')" class="lang_detail">English</a></li>
+                <li class="lang"><a @click="changeLang('french')" class="lang_detail">French</a></li>
+                <li class="lang"><a @click="changeLang('korean')" class="lang_detail">한국말</a></li>
+                <li class="lang"><a @click="changeLang('chinese')" class="lang_detail">中文</a></li>
             </ul>
         </li>
     </ul>
@@ -16,12 +16,8 @@
 export default {
     name: "LanguageSelectComponent.vue",
     methods: {
-        changeLang: function (redirectToURL) {
-            const currentPath = this.$route.path;
-
-            if (currentPath !== redirectToURL) {
-                this.$router.push(redirectToURL);
-            }
+        changeLang(lang) {
+            this.$emit('update', lang);
         }
     },
 }
@@ -30,13 +26,15 @@ export default {
 <style scoped>
 
 .language {
-    margin-left: 85%;
+    margin-right: 0;
+    margin-left: auto;
+    width: 75px;
     background-color: #1a5293;
     color: #fff;
     position: relative;
     list-style-type: none;
-    width: 75px;
-    height: 25px;
+    font-size: 15px;
+    padding: 5px;
     z-index: 990;
 }
 
@@ -50,13 +48,15 @@ export default {
 .lang_detail {
     display: block;
     margin: 0;
-    padding: 13px 0;
     color: #fff;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     line-height: 1;
     text-decoration: none;
     cursor: pointer;
+    padding: 13px 15px;
+    background: #1a5293;
+    text-align: center;
 }
 
 .language_ul {
@@ -80,14 +80,6 @@ export default {
     transition: .2s;
 }
 
-.lang_detail {
-    padding: 13px 15px;
-    background: #1a5293;
-    text-align: center;
-    font-size: 12px;
-    font-weight: normal;
-}
-
 .language_title:hover > a {
     background: #1a5293;
     color: #e0dc62;
@@ -106,66 +98,4 @@ export default {
 .language_title:hover .lang:last-child {
     border-bottom: 0;
 }
-
-@media screen and (max-width: 950px) {
-    .language {
-        margin-left: 45vw;
-        width: 20vw;
-        height: 3vh;
-        z-index: 900;
-    }
-
-    .language_title {
-        width: 20vw;
-    }
-
-    .lang_detail {
-        font-size: 25px;
-    }
-
-    .language_ul {
-        position: relative;
-        z-index: 900;
-    }
-
-    .lang {
-        width: 20vw;
-    }
-
-    .lang_detail {
-        font-size: 16px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .language {
-        width: 23vw;
-        height: 3vh;
-    }
-
-    .language_title {
-        width: 23vw;
-    }
-
-    .lang_detail {
-        padding: 1vh;
-        font-size: 30px;
-    }
-
-    .lang {
-        width: 23vw;
-    }
-
-    .lang_detail {
-        padding: 15px;
-        font-size: 15px;
-    }
-
-    .language_title:hover .lang {
-        height: 5vh;
-        border-bottom: 2px solid #fff;
-    }
-}
-
-
 </style>

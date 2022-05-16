@@ -7,10 +7,10 @@ namespace Tests\Unit\Commands;
 use Mockery;
 use Exception;
 use Tests\TestCase;
-use App\Http\Models\Photo;
-use Illuminate\Support\Collection;
+use App\Models\Photo;
+use App\Services\PhotoService;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use Illuminate\Support\Collection;
 
 class CheckConsistencyBetweenDBAndS3Test extends TestCase
 {

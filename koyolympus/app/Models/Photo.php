@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Models;
+namespace App\Models;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

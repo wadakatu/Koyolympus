@@ -7,7 +7,7 @@ namespace Tests\Unit\Commands;
 use DB;
 use Mockery;
 use Tests\TestCase;
-use App\Http\Services\ReplaceUuid\BaseService;
+use App\Services\ReplaceUuid\BaseService;
 
 class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 {

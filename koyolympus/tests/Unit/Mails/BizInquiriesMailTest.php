@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Mails;
 
 use Tests\TestCase;
-use App\Mail\BizInquiriesMail;
+use App\Mails\BizInquiriesMail;
 
 class BizInquiriesMailTest extends TestCase
 {

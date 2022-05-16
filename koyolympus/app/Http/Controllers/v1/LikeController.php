@@ -7,7 +7,7 @@ namespace App\Http\Controllers\v1;
 use DB;
 use Log;
 use Exception;
-use App\Http\Models\Like;
+use App\Models\Like;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\LikeRequest;
 use App\Http\Controllers\Controller;

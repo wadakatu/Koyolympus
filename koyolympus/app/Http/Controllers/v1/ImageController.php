@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\v1;
 
 use Exception;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use App\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetPhotoRequest;

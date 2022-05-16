@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Models;
 
 use Tests\TestCase;
-use App\Http\Models\Like;
-use App\Http\Models\Photo;
+use App\Models\Like;
 use Carbon\CarbonImmutable;
-use App\Http\Models\LikeAggregate;
+use App\Models\LikeAggregate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeAggregateTest extends TestCase

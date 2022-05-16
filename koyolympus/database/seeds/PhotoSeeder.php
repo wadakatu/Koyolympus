@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 

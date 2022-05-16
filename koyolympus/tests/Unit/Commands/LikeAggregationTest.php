@@ -6,12 +6,12 @@ namespace Tests\Unit\Commands;
 
 use Queue;
 use Tests\TestCase;
-use App\Http\Models\Like;
+use App\Models\Like;
 use Carbon\CarbonImmutable;
 use App\Traits\PrivateTrait;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
+use App\Models\LikeAggregate;
 use Illuminate\Support\Facades\DB;
-use App\Http\Models\LikeAggregate;
 use App\Jobs\AggregateDailyLikeJob;
 use App\Jobs\AggregateWeeklyLikeJob;
 use App\Jobs\AggregateMonthlyLikeJob;

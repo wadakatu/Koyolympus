@@ -9,12 +9,12 @@ use Config;
 use Mockery;
 use Storage;
 use Tests\TestCase;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\UploadedFile;
+use App\Services\ReplaceUuid\BaseService;
 use App\Exceptions\S3\S3MoveFailedException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\FilesystemAdapter;
-use App\Http\Services\ReplaceUuid\BaseService;
 use App\Exceptions\Model\ModelUpdateFailedException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 

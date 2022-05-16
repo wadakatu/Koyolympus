@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use DB;
 use Exception;
 use Carbon\Carbon;
 use App\Traits\LogTrait;
-use App\Http\Models\Like;
+use App\Models\Like;
 use Carbon\CarbonImmutable;
-use App\Mail\ThrowableMail;
-use App\Http\Models\LikeAggregate;
+use App\Mails\ThrowableMail;
+use App\Models\LikeAggregate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Collection;
 

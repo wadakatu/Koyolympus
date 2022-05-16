@@ -9,7 +9,7 @@ use Log;
 use Mockery;
 use Exception;
 use Tests\TestCase;
-use App\Http\Models\Like;
+use App\Models\Like;
 use App\Http\Requests\LikeRequest;
 use App\Http\Controllers\v1\LikeController;
 

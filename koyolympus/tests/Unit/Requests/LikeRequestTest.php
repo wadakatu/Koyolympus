@@ -9,7 +9,6 @@ use Exception;
 use Tests\TestCase;
 use Ramsey\Uuid\Uuid;
 use App\Http\Requests\LikeRequest;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LikeRequestTest extends TestCase
 {

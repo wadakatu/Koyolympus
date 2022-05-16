@@ -3,7 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use Faker\Generator as Faker;
-use App\Http\Models\LikeAggregate;
+use App\Models\LikeAggregate;
 
 $factory->define(LikeAggregate::class, function (Faker $faker) {
     return [

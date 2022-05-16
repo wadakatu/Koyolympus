@@ -7,7 +7,7 @@ namespace Tests\Unit\Models;
 use Str;
 use Mockery;
 use Tests\TestCase;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;

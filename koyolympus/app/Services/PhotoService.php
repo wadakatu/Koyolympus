@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use Storage;
 use Exception;
-use App\Http\Models\Like;
-use App\Http\Models\Photo;
+use App\Models\Like;
+use App\Models\Photo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

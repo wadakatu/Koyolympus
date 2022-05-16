@@ -6,9 +6,7 @@ namespace Tests\Unit\Requests;
 
 use Validator;
 use Tests\TestCase;
-use BadMethodCallException;
 use App\Http\Requests\BizInquiriesRequest;
-use Illuminate\Validation\ValidationException;
 
 class BizInquiriesRequestTest extends TestCase
 {

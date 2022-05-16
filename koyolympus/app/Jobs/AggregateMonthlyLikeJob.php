@@ -7,7 +7,7 @@ namespace App\Jobs;
 use Throwable;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;

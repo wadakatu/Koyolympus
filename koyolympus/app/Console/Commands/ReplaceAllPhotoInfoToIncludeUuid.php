@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Http\Services\ReplaceUuid\BaseService;
+use App\Services\ReplaceUuid\BaseService;
 use Error;
 use Exception;
 use Illuminate\Console\Command;

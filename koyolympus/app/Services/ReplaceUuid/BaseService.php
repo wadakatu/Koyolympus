@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Services\ReplaceUuid;
+namespace App\Services\ReplaceUuid;
 
 use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;

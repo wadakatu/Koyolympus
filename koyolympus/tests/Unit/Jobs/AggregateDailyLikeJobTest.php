@@ -9,7 +9,7 @@ use Mockery;
 use Exception;
 use Tests\TestCase;
 use Carbon\CarbonImmutable;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
 use App\Jobs\AggregateDailyLikeJob;
 
 class AggregateDailyLikeJobTest extends TestCase

@@ -9,13 +9,13 @@ use Mockery;
 use Exception;
 use Carbon\Carbon;
 use Tests\TestCase;
+use App\Models\Like;
 use ReflectionException;
-use App\Http\Models\Like;
 use Carbon\CarbonImmutable;
-use App\Mail\ThrowableMail;
+use App\Mails\ThrowableMail;
 use App\Traits\PrivateTrait;
-use App\Http\Models\LikeAggregate;
-use App\Http\Services\LikeService;
+use App\Models\LikeAggregate;
+use App\Services\LikeService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Collection;
 

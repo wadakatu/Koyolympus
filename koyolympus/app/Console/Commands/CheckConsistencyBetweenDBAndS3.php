@@ -7,7 +7,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use App\Services\PhotoService;
 
 class CheckConsistencyBetweenDBAndS3 extends Command
 {

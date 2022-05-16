@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
 
-use App\Mail\BizInquiriesMail;
+use App\Mails\BizInquiriesMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\BizInquiriesRequest;

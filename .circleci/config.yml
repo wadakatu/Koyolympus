@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  slack: circleci/slack@4.4.4
+  slack: circleci/slack@4.10.1
 
 commands:
   notify_slack_pass:
@@ -145,12 +145,12 @@ jobs:
       - notify_slack_fail
 
   style-check:
-    docker: 
+    docker:
       - image: cimg/php:7.4.26
     steps:
       - checkout
       - attach_workspace:
-          at: koyolympus/ 
+          at: koyolympus/
       - run:
           name: check PHP code style (PSR12)
           working_directory: koyolympus
@@ -163,7 +163,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: koyolympus/ 
+          at: koyolympus/
       - run:
           name: analyze php code statically
           working_directory: koyolympus
@@ -227,9 +227,21 @@ jobs:
       - notify_slack_fail
       - notify_slack_pass
 
+  deploy:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+      - run:
+          name: install aws cli
+          command: sudo pip install awscli
+      - run:
+          name: run shell script for deploying
+          command: .circleci/deploy.sh
+
 workflows:
   version: 2
-  build_and_test:
+  build_to_deploy:
     jobs:
       - build:
           context: koyolympus
@@ -240,11 +252,17 @@ workflows:
       - larastan:
           context: koyolympus
           requires:
-            - build
-            - style-check  
+            - style-check
       - test:
           context: koyolympus
           requires:
-            - build
-            - style-check
             - larastan
+      - deploy:
+          context: koyolympus
+          requires:
+            - test
+          # filters:
+          #   tags: 
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/

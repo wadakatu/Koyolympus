@@ -1,8 +1,8 @@
 #!/bin/sh
 set -ex
 
-export tag = $1;
+export TAG=$1;
 
-cd /var/www/koyolympus
+cd /var/www/koyolympus/koyolympus
 ls -a
-echo tag
+echo $TAG

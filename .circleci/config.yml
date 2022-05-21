@@ -236,6 +236,9 @@ jobs:
           name: install aws cli
           command: sudo pip install awscli
       - run:
+          name: ls
+          command: cd .circleci/ && ls -a
+      - run:
           name: run shell script for deploying
           command: .circleci/deploy.sh
 

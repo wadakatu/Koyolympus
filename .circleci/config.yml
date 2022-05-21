@@ -257,10 +257,19 @@ workflows:
           context: koyolympus
           requires:
             - larastan
+      - approval:
+          type: approval
+          requires:
+            - test
+          # filters:
+          #   tags:
+          #     only: /^v(\d\.){2}\d.*/
+          #   branches:
+          #     ignore: /.*/
       - deploy:
           context: koyolympus
           requires:
-            - test
+            - approval
           # filters:
           #   tags: 
           #     only: /^v.*/

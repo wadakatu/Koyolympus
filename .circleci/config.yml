@@ -237,7 +237,9 @@ jobs:
           command: sudo pip install awscli
       - run:
           name: run shell script for deploying
-          command: .circleci/deploy.sh ${CIRCLE_BRANCH}
+          command: .circleci/deploy.sh ${CIRCLE_TAG}
+      - notify_slack_fail
+      - notify_slack_pass
 
 workflows:
   version: 2
@@ -261,17 +263,17 @@ workflows:
           type: approval
           requires:
             - test
-          # filters:
-          #   tags:
-          #     only: /^v(\d\.){2}\d.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              ignore: /.*/
       - deploy:
           context: koyolympus
           requires:
             - approval
-          # filters:
-          #   tags: 
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              ignore: /.*/

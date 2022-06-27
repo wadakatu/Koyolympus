@@ -13,7 +13,3 @@ systemctl reload nginx && php artisan up && STATUS=`curl -LI https://koyolympus.
 if [ $STATUS -ne $SUCCESS ]; then
   exit 1;
 fi
-
-
-
-

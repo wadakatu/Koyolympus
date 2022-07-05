@@ -1,30 +1,34 @@
 <template>
     <div class="col">
         <h1 class="aboutMe">About me</h1>
-        <language-select-component></language-select-component>
+        <language-select-component @update="updateLang"></language-select-component>
         <div class="intro">
-            <h4 class="question_jp">名前</h4>
-            <h5 class="answer_jp">磯野 公耀</h5>
-            <h4 class="question_jp">生息地</h4>
-            <h5 class="answer_jp">東京都と埼玉県の狭間</h5>
-            <h4 class="question_jp">年齢/星座/誕生日</h4>
-            <h5 class="answer_jp">22歳/おひつじ座/3月30日</h5>
-            <h4 class="question_jp">趣味</h4>
-            <h5 class="answer_jp">カメラ/ロードバイク/ゲーム</h5>
-            <h4 class="question_jp">私のカメラ</h4>
-            <h5 class="answer_jp">OLYMPUS PEN-F/OMD EM-1 MarkⅡ</h5>
-            <h4 class="question_jp">座右の銘</h4>
-            <h5 class="answer_jp">Fake it until you make it.</h5>
-            <button class="top_button" @click="$router.push('/')">TOPへ</button>
+            <p v-for="(value, index) in language"
+               :class="index % 2 === 0 ? question : answer">
+                {{ value }}
+            </p>
         </div>
+        <button class="top_button" @click="$router.push('/')">TOPへ</button>
     </div>
 </template>
 
 <script>
-
+const aboutMe = require('../lang/aboutMe.json');
 export default {
     components: {
         'language-select-component': () => import('./LanguageSelectComponent'),
+    },
+    data() {
+        return {
+            language: aboutMe.japanese,
+            question: 'question',
+            answer: 'answer'
+        }
+    },
+    methods: {
+        updateLang(value) {
+            this.language = aboutMe[value];
+        }
     }
 }
 
@@ -32,8 +36,13 @@ export default {
 
 <style scoped>
 
+p {
+    margin: 0 0 1vh 0;
+}
+
 .col {
     flex-basis: 50%;
+    text-align: center;
 }
 
 .aboutMe {
@@ -48,12 +57,12 @@ export default {
     text-align: center;
 }
 
-.question_jp {
+.question {
     color: #fff;
     font-size: 14px;
 }
 
-.answer_jp {
+.answer {
     color: #fff;
     font-size: 19px;
     border-bottom: solid 2px #1f6fb2;

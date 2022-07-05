@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Http\Services\ReplaceUuid;
+namespace App\Services\ReplaceUuid;
 
 use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -13,7 +14,6 @@ use Storage;
 
 class BaseService
 {
-
     private $photo;
     private $publicDir;
 
@@ -48,8 +48,11 @@ class BaseService
                 //S3の写真を移動させる
                 $moveResult = $this->movePhotoToNewFolder($oldPath, $newInfo['file_name'], $photo->genre);
                 if (!$moveResult) {
-                    throw new S3MoveFailedException($oldPath, $newInfo['file_path'],
-                        'A file move failed for some reason.');
+                    throw new S3MoveFailedException(
+                        $oldPath,
+                        $newInfo['file_path'],
+                        'A file move failed for some reason.'
+                    );
                 }
                 //DB内の写真情報をUUIDを含むものに更新
                 $updateResult = $photo->update($newInfo);

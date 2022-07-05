@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Jobs;
@@ -7,7 +8,7 @@ use Throwable;
 use Exception;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,7 +16,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class AggregateDailyLikeJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
+    use Dispatchable;
+    use SerializesModels;
+    use InteractsWithQueue;
 
     /**
      * 最大試行回数

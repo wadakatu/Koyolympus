@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
@@ -8,11 +9,9 @@ use Exception;
 use Tests\TestCase;
 use Ramsey\Uuid\Uuid;
 use App\Http\Requests\LikeRequest;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LikeRequestTest extends TestCase
 {
-
     private $request;
 
     protected function setUp(): void
@@ -39,7 +38,7 @@ class LikeRequestTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function validation_success()
+    public function validationSuccess()
     {
         $data = ['id' => Uuid::uuid4()->toString()];
         $rule = $this->request->rules();
@@ -55,11 +54,11 @@ class LikeRequestTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providerValidation_error
+     * @dataProvider providerValidationError
      * @param $data
      * @param $expected
      */
-    public function validation_error($data, $expected)
+    public function validationError($data, $expected)
     {
         $rules = $this->request->rules();
 
@@ -72,7 +71,7 @@ class LikeRequestTest extends TestCase
         $this->assertSame($expected['message'], $messages->get($expected['messageKey'])[0]);
     }
 
-    public function providerValidation_error(): array
+    public function providerValidationError(): array
     {
         return [
             'idがnull' => [

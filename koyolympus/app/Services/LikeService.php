@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use DB;
 use Exception;
 use Carbon\Carbon;
 use App\Traits\LogTrait;
-use App\Http\Models\Like;
+use App\Models\Like;
 use Carbon\CarbonImmutable;
-use App\Mail\ThrowableMail;
-use App\Http\Models\LikeAggregate;
+use App\Mails\ThrowableMail;
+use App\Models\LikeAggregate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -141,8 +142,12 @@ class LikeService
             DB::beginTransaction();
             $photoId = $record['photo_id'];
             try {
-                $this->likeAggregate->registerForAggregation($record, $startOfLastMonth, $endOfLastMonth,
-                    $this->monthlyType);
+                $this->likeAggregate->registerForAggregation(
+                    $record,
+                    $startOfLastMonth,
+                    $endOfLastMonth,
+                    $this->monthlyType
+                );
                 $this->like->saveByPhotoId($photoId, ['month_likes' => $record['likes']]);
                 $this->likeAggregate->updateForAggregation(
                     $photoId,
@@ -172,17 +177,29 @@ class LikeService
             if (isset($record['carry_over'])) {
                 if ($record['carry_over'] === $startAt->month) {
                     //startAtの月の集計結果の場合
-                    $this->likeAggregate->registerForAggregation($record, $startAt, $startAt->endOfMonth(),
-                        $this->weeklyType);
+                    $this->likeAggregate->registerForAggregation(
+                        $record,
+                        $startAt,
+                        $startAt->endOfMonth(),
+                        $this->weeklyType
+                    );
                 } elseif ($record['carry_over'] === $endAt->month) {
                     //endAtの月の集計結果の場合
-                    $this->likeAggregate->registerForAggregation($record, $endAt->startOfMonth(), $endAt,
-                        $this->weeklyType);
+                    $this->likeAggregate->registerForAggregation(
+                        $record,
+                        $endAt->startOfMonth(),
+                        $endAt,
+                        $this->weeklyType
+                    );
                 }
             } else {
                 //StartAtとEndAtの月が同じ場合
-                $this->likeAggregate->registerForAggregation($record, $startAt, $endAt,
-                    $this->weeklyType);
+                $this->likeAggregate->registerForAggregation(
+                    $record,
+                    $startAt,
+                    $endAt,
+                    $this->weeklyType
+                );
             }
         }
     }
@@ -240,5 +257,4 @@ class LikeService
 
         Mail::to(config('const.MAIL'))->send(new ThrowableMail($params));
     }
-
 }

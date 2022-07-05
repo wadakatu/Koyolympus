@@ -1,14 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
 use Queue;
-use Mockery;
 use Tests\TestCase;
+use App\Models\Like;
 use Carbon\CarbonImmutable;
 use App\Traits\PrivateTrait;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
+use App\Models\LikeAggregate;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\AggregateDailyLikeJob;
 use App\Jobs\AggregateWeeklyLikeJob;
@@ -18,7 +20,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeAggregationTest extends TestCase
 {
-    use PrivateTrait, RefreshDatabase;
+    use PrivateTrait;
+    use RefreshDatabase;
 
     private $likeAggregateCommand;
     private $likeService;
@@ -29,7 +32,7 @@ class LikeAggregationTest extends TestCase
         parent::setUp();
         CarbonImmutable::setTestNow('2022-01-01 00:00:01');
 
-        $this->likeService = Mockery::mock(LikeService::class)->makePartial();
+        $this->likeService = new LikeService(new Like(), new LikeAggregate());
         $this->carbon = CarbonImmutable::now();
 
         $this->likeAggregateCommand = new LikeAggregation($this->likeService);
@@ -69,7 +72,7 @@ class LikeAggregationTest extends TestCase
      *
      * @test
      */
-    public function handle_queue()
+    public function handleQueueTest()
     {
         $this->assertFalse(DB::table('jobs')->exists());
 

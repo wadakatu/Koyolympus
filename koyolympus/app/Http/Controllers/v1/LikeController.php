@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
@@ -6,7 +7,7 @@ namespace App\Http\Controllers\v1;
 use DB;
 use Log;
 use Exception;
-use App\Http\Models\Like;
+use App\Models\Like;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\LikeRequest;
 use App\Http\Controllers\Controller;
@@ -62,10 +63,10 @@ class LikeController extends Controller
     public function unlikePhoto(LikeRequest $request): JsonResponse
     {
         DB::beginTransaction();
-        try{
+        try {
             $this->like->subLike($request->get('id'));
             DB::commit();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('[UNLIKE PHOTO]:' . $e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'いいね解除に失敗しました。'], 400);

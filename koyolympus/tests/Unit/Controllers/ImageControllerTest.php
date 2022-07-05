@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
@@ -6,11 +7,11 @@ namespace Tests\Unit\Controllers;
 use Mockery;
 use Exception;
 use Tests\TestCase;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\Request;
+use App\Services\PhotoService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\GetPhotoRequest;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ImageControllerTest extends TestCase
 {
-
     private $imageController;
     private $photoService;
 
@@ -78,7 +78,7 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function downloadPhoto_success()
+    public function downloadPhotoSuccess()
     {
         $filePath = '/photo/landscape';
         $photo = new Photo(['file_path' => $filePath]);
@@ -111,7 +111,7 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function downloadPhoto_error()
+    public function downloadPhotoError()
     {
         $photo = new Photo(['file_path' => '/photo/landscape']);
         $fileSystemAdapter = Mockery::mock(FilesystemAdapter::class);
@@ -139,10 +139,10 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function uploadPhoto_noError()
+    public function uploadPhotoSuccess()
     {
         $fileName = 'fake.jpeg';
-        $request = new Request;
+        $request = new Request();
         $request->merge(['genre' => 1]);
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;
@@ -163,14 +163,15 @@ class ImageControllerTest extends TestCase
         Log::shouldReceive('error')->never();
 
         $this->photoService
+            ->shouldReceive('uploadPhotoDataToDB')
+            ->once()
+            ->with($fileName, 1)
+            ->andReturn($uniqueFileName = 'noError.jpeg');
+
+        $this->photoService
             ->shouldReceive('uploadPhotoToS3')
             ->once()
-            ->with($file, $fileName, 1)
-            ->andReturn('noError.jpeg');
-
-        $this->partialMock(ImageController::class, function ($mock) use ($request) {
-            $mock->shouldReceive('removePhoto')->never()->with($request)->andReturn(response()->json([]));
-        });
+            ->with($file, $uniqueFileName, 1);
 
         $response = $this->imageController->uploadPhoto($request);
 
@@ -181,10 +182,10 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function uploadPhoto_withError()
+    public function uploadPhotoError()
     {
         $fileName = 'fake.jpeg';
-        $request = new Request;
+        $request = new Request();
         $request->merge(['genre' => 1]);
         $file = UploadedFile::fake()->image($fileName);
         $request->file = $file;
@@ -207,37 +208,17 @@ class ImageControllerTest extends TestCase
             ->with("");
 
         $this->photoService
-            ->shouldReceive('uploadPhotoToS3')
+            ->shouldReceive('uploadPhotoDataToDB')
             ->once()
+            ->with($fileName, 1)
             ->andThrow(Exception::class);
 
-        $this->imageController
-            ->shouldReceive('removePhoto')
-            ->with($request);
+        $this->photoService
+            ->shouldReceive('uploadPhotoToS3')
+            ->never();
 
         $response = $this->imageController->uploadPhoto($request);
 
         $this->assertSame(500, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function removePhoto()
-    {
-        $fileName = 'fake.jpeg';
-        $file = [UploadedFile::fake()->image($fileName), 'custom' => $fileName];
-        $request = new Request;
-        $request->file = $file;
-        $request->merge(['genre' => 1]);
-
-        $this->photoService
-            ->shouldReceive('deletePhotoFromS3')
-            ->once()
-            ->with($fileName, 1);
-
-        $response = $this->imageController->removePhoto($request);
-
-        $this->assertSame(200, $response->getStatusCode());
     }
 }

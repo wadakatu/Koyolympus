@@ -1,0 +1,54 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app
+
+    # The level 9 is the highest level
+    level: 5
+
+    ignoreErrors:
+
+    excludePaths:
+        - ./app/Http/Controllers/Auth/
+        - ./app/Http/Middleware/
+
+        - ./app/Console/Commands/CheckDatabase.php
+        - ./app/Console/Kernel.php
+        - ./app/Exceptions/Handler.php
+        - ./app/Http/Kernel.php
+        - ./app/Http/Controllers/Controller.php
+        - ./app/Http/Controllers/HomeController.php
+        - ./app/Http/Kernel.php
+        - ./app/Providers/AppServiceProvider.php
+        - ./app/Providers/AuthServiceProvider.php
+        - ./app/Providers/BroadcastServiceProvider.php
+        - ./app/Providers/EventServiceProvider.php
+        - ./app/Providers/RouteServiceProvider.php
+        - ./app/User.php
+
+    # for, while内で初期化した変数をスコープ外で使用して良いか
+    polluteScopeWithLoopInitialAssignments: false
+    # foreach内で展開した変数をスコープ外で使用して良いか
+    polluteScopeWithAlwaysIterableForeach: false
+    # 常にTrueになる型比較をチェックするか
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    # 常にTrueになるインスタンス比較をチェックするか
+    checkAlwaysTrueInstanceof: true
+    # === or !=== で常にTrueになる条件式をチェックするか
+    checkAlwaysTrueStrictComparison: true
+    # PHPDoc[@return mixed]の記載があるがreturn文がない時に警告を出すか
+    checkExplicitMixedMissingReturn: true
+    # PHPの関数名をチェックするか（htmlspecialchars()：◯, htmlSpecialChars(): ×）
+    checkFunctionNameCase: true
+    # ビルトインクラスの型表記のチェックをするか
+    checkInternalClassCaseSensitivity: true
+    # 継承元で定義した関数の戻り値が継承先で異なっている時に警告を出すか
+    reportMaybesInMethodSignatures: true
+    # static関数の引数、戻り値の型が異なっている時に警告を出すか
+    reportStaticMethodSignatures: true
+    # 戻り値の型に複数指定しているが不要な指定がある場合に警告を出すか
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkMissingIterableValueType: false

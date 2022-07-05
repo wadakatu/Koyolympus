@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Http\Models;
+namespace App\Models;
 
 use DB;
 use Carbon\CarbonImmutable;
@@ -26,6 +27,28 @@ class LikeAggregate extends Model
             ->whereDate('end_at', '<=', $endAt);
     }
 
+
+    public function scopeAddSelectWhenDailyAndDiffMonth(
+        Builder $query,
+        CarbonImmutable $startAt,
+        CarbonImmutable $endAt,
+        int $type
+    ): Builder {
+        return $query->when(
+            $type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
+            && $startAt->month !== $endAt->month,
+            function (Builder $query): Builder {
+                return $query->addSelect(DB::raw('month(start_at) as carry_over'));
+            }
+        );
+    }
+
+    /**
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @param int $type
+     * @return Collection
+     */
     public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type): Collection
     {
         return self::query()
@@ -35,13 +58,8 @@ class LikeAggregate extends Model
                 'like_aggregates.photo_id',
                 DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
             ])
-            ->when(
-                $type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
-                && $startAt->month !== $endAt->month,
-                function (Builder $query) {
-                    return $query->addSelect(DB::raw('month(start_at) as carry_over'));
-                })
-            ->groupBy('like_aggregates.photo_id', DB::raw("month(start_at)"))
+            ->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)
+            ->groupBy(['like_aggregates.photo_id', DB::raw("month(start_at)")])
             ->get();
     }
 

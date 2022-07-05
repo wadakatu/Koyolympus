@@ -1,13 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
 
 use Validator;
 use Tests\TestCase;
-use BadMethodCallException;
 use App\Http\Requests\BizInquiriesRequest;
-use Illuminate\Validation\ValidationException;
 
 class BizInquiriesRequestTest extends TestCase
 {
@@ -36,7 +35,7 @@ class BizInquiriesRequestTest extends TestCase
     /**
      * @test
      */
-    public function validation_success()
+    public function validationSuccess()
     {
         $dataList = [
             'name' => 'test',
@@ -57,11 +56,11 @@ class BizInquiriesRequestTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providerValidation_error
+     * @dataProvider providerValidationError
      * @param $data
      * @param $expected
      */
-    public function validation_error($data, $expected)
+    public function validationError($data, $expected)
     {
         $rules = $this->request->rules();
 
@@ -74,7 +73,7 @@ class BizInquiriesRequestTest extends TestCase
         $this->assertSame($expected['message'], $messages->get($expected['messageKey'])[0]);
     }
 
-    public function providerValidation_error(): array
+    public function providerValidationError(): array
     {
         return [
             '名前が未入力' => [

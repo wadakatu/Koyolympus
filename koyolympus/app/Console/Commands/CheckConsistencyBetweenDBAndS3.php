@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
@@ -6,7 +7,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use App\Services\PhotoService;
 
 class CheckConsistencyBetweenDBAndS3 extends Command
 {
@@ -41,7 +42,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      * @throws Exception
      */
     public function handle()
@@ -63,7 +64,10 @@ class CheckConsistencyBetweenDBAndS3 extends Command
         try {
             if (isset($fileName) && !$shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
-                $this->info("The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\nThe number of deleted files is $deletedFileInfo[count].");
+                $this->info(
+                    "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n" .
+                    "The number of deleted files is $deletedFileInfo[count]."
+                );
             }
 
             if (!isset($fileName) && $shouldSearchAll) {

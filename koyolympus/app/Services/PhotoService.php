@@ -1,20 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use Storage;
 use Exception;
-use App\Http\Models\Like;
-use App\Http\Models\Photo;
+use App\Models\Like;
+use App\Models\Photo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-
 class PhotoService
 {
-
     private $photo;
     private $like;
 
@@ -43,23 +42,27 @@ class PhotoService
         return $this->photo->getAllPhotoRandomly();
     }
 
-    /**
-     * 写真をS3バケットにアップロード
-     * @param UploadedFile $file
-     * @param string $fileName
-     * @param int $genre
-     * @return string
-     */
-    public function uploadPhotoToS3(UploadedFile $file, string $fileName, int $genre): string
+    public function uploadPhotoDataToDB(string $fileName, int $genre): string
     {
         //保存するS3のファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
         //DBに新規の写真レコード追加
-        $uniqueFileName = $this->photo->createPhotoInfo($fileName, $filePath, $genre);
+        return $this->photo->createPhotoInfo($fileName, $filePath, $genre);
+    }
+
+    /**
+     * 写真をS3バケットにアップロード
+     * @param UploadedFile $file
+     * @param string $uniqueFileName
+     * @param int $genre
+     */
+    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre)
+    {
+        //保存するS3のファイルパスを取得
+        $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
+
         //S3にファイルを追加
         Storage::disk('s3')->putFileAs($filePath, $file, $uniqueFileName, 'public');
-
-        return $uniqueFileName;
     }
 
     /**
@@ -133,8 +136,18 @@ class PhotoService
             if (count($photoInfoArray) === 1) {
                 unset($photoList[$photoInfoArray[0]['index']]);
             } else {
-                array_multisort(array_map("strtotime", array_column($photoInfoArray, "created_at")),
-                    SORT_DESC, $photoInfoArray);
+                // 作成日を全てUnixタイムスタンプに変換
+                $createdAtArr = array_map(
+                    "strtotime",
+                    array_column($photoInfoArray, "created_at")
+                );
+                //Unixタイムスタンプを基に写真配列を降順に並び替える
+                array_multisort(
+                    $createdAtArr,
+                    SORT_DESC,
+                    $photoInfoArray
+                );
+                //作成日が最新のものはDBとS3に残すので配列から削除する
                 $deletePhotoInfo = array_values($photoInfoArray)[0];
                 unset($photoList[$deletePhotoInfo['index']]);
             }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
@@ -6,14 +7,13 @@ namespace Tests\Unit\Commands;
 use Mockery;
 use Exception;
 use Tests\TestCase;
-use App\Http\Models\Photo;
-use Illuminate\Support\Collection;
+use App\Models\Photo;
+use App\Services\PhotoService;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use Illuminate\Support\Collection;
 
 class CheckConsistencyBetweenDBAndS3Test extends TestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,15 +32,18 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
      */
     public function handle($prepare, $expect)
     {
-        $this->app->instance(PhotoService::class, Mockery::mock(PhotoService::class, function ($mock) use ($prepare) {
-            $mock->shouldReceive('deletePhotoIfDuplicate')
-                ->times($prepare['deletePhotoIfDuplicate']['times'])
-                ->with($prepare['deletePhotoIfDuplicate']['with'])
-                ->andReturn($prepare['deletePhotoIfDuplicate']['return']);
-            $mock->shouldReceive('deleteMultiplePhotosIfDuplicate')
-                ->times($prepare['deleteMultiplePhotosIfDuplicate']['times'])
-                ->andReturn($prepare['deleteMultiplePhotosIfDuplicate']['return']);
-        }));
+        $this->app->instance(
+            PhotoService::class,
+            Mockery::mock(PhotoService::class, function ($mock) use ($prepare) {
+                $mock->shouldReceive('deletePhotoIfDuplicate')
+                    ->times($prepare['deletePhotoIfDuplicate']['times'])
+                    ->with($prepare['deletePhotoIfDuplicate']['with'])
+                    ->andReturn($prepare['deletePhotoIfDuplicate']['return']);
+                $mock->shouldReceive('deleteMultiplePhotosIfDuplicate')
+                    ->times($prepare['deleteMultiplePhotosIfDuplicate']['times'])
+                    ->andReturn($prepare['deleteMultiplePhotosIfDuplicate']['return']);
+            })
+        );
 
         DB::shouldReceive('beginTransaction')
             ->times($prepare['beginTransaction']['times']);
@@ -52,18 +55,20 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
             ->times($prepare['rollBack']['times']);
 
         if (!isset($expect['message2'])) {
-            $this->artisan('command:checkDBandS3',
-                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']])
-                ->expectsOutput($expect['message1']);
+            $this->artisan(
+                'command:checkDBandS3',
+                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']]
+            )->expectsOutput($expect['message1']);
         } elseif (!isset($expect['message3'])) {
-            $this->artisan('command:checkDBandS3',
-                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']])
-                ->expectsOutput($expect['message1'])
-                ->expectsOutput($expect['message2']);
+            $this->artisan(
+                'command:checkDBandS3',
+                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']]
+            )->expectsOutput($expect['message1'])->expectsOutput($expect['message2']);
         } else {
-            $this->artisan('command:checkDBandS3',
-                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']])
-                ->expectsOutput($expect['message1'])
+            $this->artisan(
+                'command:checkDBandS3',
+                ['fileName' => $prepare['fileName'], '--all' => $prepare['all']]
+            )->expectsOutput($expect['message1'])
                 ->expectsOutput($expect['message2'])
                 ->expectsOutput($expect['message3']);
         }
@@ -72,17 +77,20 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
     /**
      * @test
      */
-    public function handle_withException()
+    public function handleWithException()
     {
-        $this->app->instance(PhotoService::class, Mockery::mock(PhotoService::class, function ($mock) {
-            $mock->shouldReceive('deletePhotoIfDuplicate')
-                ->once()
-                ->with('test.jpeg')
-                ->andThrow(new Exception('例外発生！'));
-            $mock->shouldReceive('deleteMultiplePhotosIfDuplicate')
-                ->never()
-                ->andReturn(null);
-        }));
+        $this->app->instance(
+            PhotoService::class,
+            Mockery::mock(PhotoService::class, function ($mock) {
+                $mock->shouldReceive('deletePhotoIfDuplicate')
+                    ->once()
+                    ->with('test.jpeg')
+                    ->andThrow(new Exception('例外発生！'));
+                $mock->shouldReceive('deleteMultiplePhotosIfDuplicate')
+                    ->never()
+                    ->andReturn(null);
+            })
+        );
 
         DB::shouldReceive('beginTransaction')
             ->once();
@@ -93,8 +101,10 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
         DB:: shouldReceive('rollBack')
             ->once();
 
-        $this->artisan('command:checkDBandS3',
-            ['fileName' => 'test.jpeg', '--all' => false])
+        $this->artisan(
+            'command:checkDBandS3',
+            ['fileName' => 'test.jpeg', '--all' => false]
+        )
             ->expectsOutput("例外発生！");
     }
 
@@ -125,7 +135,8 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
                     ]
                 ],
                 'expect' => [
-                    'message1' => "The duplicate file 'id01.test.jpeg' is successfully deleted.\nThe number of deleted files is 1.",
+                    'message1' => "The duplicate file 'id01.test.jpeg' is successfully deleted.\n" .
+                        "The number of deleted files is 1.",
                 ],
             ],
             '正常(ファイル名なし・全件検索あり/削除ファイル１つ)' => [
@@ -168,9 +179,9 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
                     'deleteMultiplePhotosIfDuplicate' => [
                         'times' => 1,
                         'return' => new Collection([
-                            new Photo(['file_name' => 'id01.test.jpeg']),
-                            new Photo(['file_name' => 'id02.test.jpeg'])
-                        ]),
+                                                       new Photo(['file_name' => 'id01.test.jpeg']),
+                                                       new Photo(['file_name' => 'id02.test.jpeg'])
+                                                   ]),
                     ],
                     'beginTransaction' => [
                         'times' => 1

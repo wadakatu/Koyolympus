@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Models;
 
 use Tests\TestCase;
-use App\Http\Models\Like;
-use App\Http\Models\Photo;
+use App\Models\Like;
+use App\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeTest extends TestCase
@@ -29,7 +30,7 @@ class LikeTest extends TestCase
     /**
      * @test
      */
-    public function getAllLike_first()
+    public function getAllLikeFirst()
     {
         $allLikes = 500;
         $target = factory(Like::class)->create([
@@ -42,7 +43,7 @@ class LikeTest extends TestCase
     /**
      * @test
      */
-    public function getAllLike_create()
+    public function getAllLikeCreate()
     {
         $likeRecord = factory(Like::class)->create([
             'photo_id' => 'abc',
@@ -50,15 +51,17 @@ class LikeTest extends TestCase
         ]);
 
         $this->assertSame(0, $this->like->getAllLike('def'));
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => 'def', 'likes' => 0, 'week_likes' => 0, 'month_likes' => 0, 'all_likes' => 0]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => 'def', 'likes' => 0, 'week_likes' => 0, 'month_likes' => 0, 'all_likes' => 0]
+        );
         $this->assertDatabaseHas('likes', $likeRecord->getAttributes());
     }
 
     /**
      * @test
      */
-    public function addLike_singleRequest()
+    public function addLikeSingleRequest()
     {
         $target = factory(Like::class)->create([
             'likes' => 10,
@@ -73,15 +76,17 @@ class LikeTest extends TestCase
 
         $expectedLikes = 11;
         $expectedAllLikes = 12;
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
 
     /**
      * @test
      */
-    public function addLike_multipleRequest()
+    public function addLikeMultipleRequest()
     {
         $target = factory(Like::class)->create([
             'likes' => 10,
@@ -98,15 +103,17 @@ class LikeTest extends TestCase
 
         $expectedLikes = 13;
         $expectedAllLikes = 14;
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
 
     /**
      * @test
      */
-    public function subLike_singleRequest()
+    public function subLikeSingleRequest()
     {
         $target = factory(Like::class)->create([
             'likes' => 11,
@@ -121,15 +128,17 @@ class LikeTest extends TestCase
 
         $expectedLikes = 10;
         $expectedAllLikes = 11;
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
 
     /**
      * @test
      */
-    public function subLike_multipleRequest()
+    public function subLikeMultipleRequest()
     {
         $target = factory(Like::class)->create([
             'likes' => 13,
@@ -146,15 +155,17 @@ class LikeTest extends TestCase
 
         $expectedLikes = 10;
         $expectedAllLikes = 11;
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
 
     /**
      * @test
      */
-    public function subLike_ifLikesZero()
+    public function subLikeIfLikesZero()
     {
         $target = factory(Like::class)->create([
             'likes' => 0,
@@ -169,8 +180,10 @@ class LikeTest extends TestCase
 
         $expectedLikes = 0;
         $expectedAllLikes = -1;
-        $this->assertDatabaseHas('likes',
-            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]);
+        $this->assertDatabaseHas(
+            'likes',
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
     }
 
@@ -270,9 +283,13 @@ class LikeTest extends TestCase
         $result = $this->like->getForDailyAggregation();
 
         $this->assertSame(2, $result->count());
-        $this->assertSame(['photo_id' => $photoId, 'likes' => 1],
-            $result->where('photo_id', $photoId)->first()->toArray());
-        $this->assertSame(['photo_id' => $photoId2, 'likes' => 10],
-            $result->where('photo_id', $photoId2)->first()->toArray());
+        $this->assertSame(
+            ['photo_id' => $photoId, 'likes' => 1],
+            $result->where('photo_id', $photoId)->first()->toArray()
+        );
+        $this->assertSame(
+            ['photo_id' => $photoId2, 'likes' => 10],
+            $result->where('photo_id', $photoId2)->first()->toArray()
+        );
     }
 }

@@ -1,0 +1,23 @@
+html {
+    font-family: 'Roboto', 'sans-serif';
+}
+
+body {
+    height: 100%;
+    line-height: 1.2;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/images/PC280455.jpeg");
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+ul {
+    padding-inline-start: 0;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}

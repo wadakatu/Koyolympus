@@ -1,17 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
 use Tests\TestCase;
-use App\Mail\BizInquiriesMail;
+use App\Mails\BizInquiriesMail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\BizInquiriesRequest;
 use App\Http\Controllers\v1\BizInquiriesController;
 
 class BizInquiriesControllerTest extends TestCase
 {
-
     private $bizInquiriesController;
 
     protected function setUp(): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Services\ReplaceUuid;
@@ -8,12 +9,12 @@ use Config;
 use Mockery;
 use Storage;
 use Tests\TestCase;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\UploadedFile;
+use App\Services\ReplaceUuid\BaseService;
 use App\Exceptions\S3\S3MoveFailedException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\FilesystemAdapter;
-use App\Http\Services\ReplaceUuid\BaseService;
 use App\Exceptions\Model\ModelUpdateFailedException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
@@ -46,10 +47,10 @@ class BaseServiceTest extends TestCase
      * 例外なしバージョン
      *
      * @test
-     * @dataProvider providerIncludeUuidInRecord_withoutException
+     * @dataProvider providerIncludeUuidInRecordWithoutException
      * @param $params
      */
-    public function includeUuidInRecord_withoutException($params)
+    public function includeUuidInRecordWithoutException($params)
     {
         $fileName = 'test.jpeg';
         $oldPath = 'old/' . $fileName;
@@ -92,7 +93,7 @@ class BaseServiceTest extends TestCase
      *
      * @return \array[][]
      */
-    public function providerIncludeUuidInRecord_withoutException(): array
+    public function providerIncludeUuidInRecordWithoutException(): array
     {
         return [
             'Uuidを含まないレコードが1件' => [
@@ -207,12 +208,12 @@ class BaseServiceTest extends TestCase
      * 例外ありバージョン
      *
      * @test
-     * @dataProvider providerIncludeUuidInRecord_withException
+     * @dataProvider providerIncludeUuidInRecordWithException
      * @param $params
      * @param $expected
      * @throws ModelUpdateFailedException|S3MoveFailedException|FileNotFoundException
      */
-    public function includeUuidInRecord_withException($params, $expected)
+    public function includeUuidInRecordWithException($params, $expected)
     {
         $fileName = 'exception.jpeg';
         $genre = 1;
@@ -255,7 +256,7 @@ class BaseServiceTest extends TestCase
      *
      * @return array[]
      */
-    public function providerIncludeUuidInRecord_withException(): array
+    public function providerIncludeUuidInRecordWithException(): array
     {
         return [
             'S3移動失敗' => [
@@ -300,7 +301,7 @@ class BaseServiceTest extends TestCase
      *
      * @test
      */
-    public function createLatestPhotoInfoIncludingUuid_withoutException()
+    public function createLatestPhotoInfoIncludingUuidWithoutException()
     {
         $fileName = '12345.test.jpeg';
         $oldS3Path = 'old/' . $fileName;
@@ -327,7 +328,7 @@ class BaseServiceTest extends TestCase
      *
      * @test
      */
-    public function createLatestPhotoInfoIncludingUuid_withException()
+    public function createLatestPhotoInfoIncludingUuidWithException()
     {
         $oldS3Path = 'old/test.jpeg';
         Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
@@ -397,12 +398,13 @@ class BaseServiceTest extends TestCase
      */
     public function deleteAllLocalPhoto()
     {
-        Storage::shouldReceive('disk')->with('public')->andReturn($publicDisk = Mockery::mock(FilesystemAdapter::class));
+        Storage::shouldReceive('disk')
+            ->with('public')
+            ->andReturn($publicDisk = Mockery::mock(FilesystemAdapter::class));
         $publicDisk->shouldReceive('deleteDirectory')->once()->with('local/')->andReturnTrue();
 
         $result = $this->baseService->deleteAllLocalPhoto();
 
         $this->assertTrue($result);
     }
-
 }

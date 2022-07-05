@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions\S3;
 
 use Exception;
@@ -24,5 +26,4 @@ class S3MoveFailedException extends Exception
         Log::error('new S3 Path：' . $this->newS3Path);
         Log::error('ーーーーーーーーーーーーーーーーーーーーーーーーーーーー');
     }
-
 }

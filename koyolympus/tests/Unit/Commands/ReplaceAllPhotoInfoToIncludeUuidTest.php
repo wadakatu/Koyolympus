@@ -1,13 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
-
-use App\Http\Services\ReplaceUuid\BaseService;
 use DB;
 use Mockery;
 use Tests\TestCase;
+use App\Services\ReplaceUuid\BaseService;
 
 class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 {
@@ -31,7 +31,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
      *
      * @test
      */
-    public function handle_withoutException()
+    public function handleWithoutException()
     {
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
@@ -60,7 +60,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
      *
      * @test
      */
-    public function handle_withException()
+    public function handleWithException()
     {
         //try statement.
         DB::shouldReceive('beginTransaction')->once();

@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  slack: circleci/slack@4.4.4
+  slack: circleci/slack@4.10.1
 
 commands:
   notify_slack_pass:
@@ -93,19 +93,17 @@ jobs:
   build:
     working_directory: ~/koyolympus
     docker:
-      - image: cimg/php:7.3.27-node
+      - image: cimg/php:7.4-node
     steps:
       - checkout
       - restore_cache:
           name: restore cache for node
           keys:
-            - npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json" }}
-            - npm-cache-koyolympus-
+            - npm-cache-v1-{{ checksum "koyolympus/package-lock.json" }}
       - restore_cache:
           name: restore cache for composer
           keys:
-            - composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
-            - composer-cache-koyolympus-
+            - composer-cache-v1-{{ checksum "koyolympus/composer.json" }}
       - run:
           name: npm install
           command: |
@@ -126,14 +124,14 @@ jobs:
             fi
       - save_cache:
           name: save_cache_node
-          key: npm-cache-koyolympus-{{ checksum "koyolympus/package-lock.json"}}
+          key: npm-cache-v1-{{ checksum "koyolympus/package-lock.json"}}
           paths:
             - koyolympus/node_modules
       - save_cache:
           name: save_cache_composer
           paths:
             - koyolympus/vendor
-          key: composer-cache-koyolympus-{{ checksum "koyolympus/composer.json" }}
+          key: composer-cache-v1-{{ checksum "koyolympus/composer.json" }}
       - run:
           name: npm run production
           working_directory: koyolympus
@@ -146,10 +144,36 @@ jobs:
             - vendor/
       - notify_slack_fail
 
+  style-check:
+    docker:
+      - image: cimg/php:7.4.26
+    steps:
+      - checkout
+      - attach_workspace:
+          at: koyolympus/
+      - run:
+          name: check PHP code style (PSR12)
+          working_directory: koyolympus
+          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
+      - notify_slack_fail
+
+  larastan:
+    docker:
+      - image: cimg/php:7.4.26
+    steps:
+      - checkout
+      - attach_workspace:
+          at: koyolympus/
+      - run:
+          name: analyze php code statically
+          working_directory: koyolympus
+          command: vendor/bin/phpstan analyse
+      - notify_slack_fail
+
   test:
     docker:
-      - image: circleci/php:7.3.0-node-browsers
-      - image: circleci/mariadb:10.4
+      - image: cimg/php:7.4.26
+      - image: cimg/mysql:5.7
     environment:
       - DB_CONNECTION: circle_testing
     steps:
@@ -158,17 +182,12 @@ jobs:
           name: Update apt-get
           command: sudo apt-get update
       - run:
-          name: Docker php extensiions install
-          command: sudo docker-php-ext-install pdo_mysql
-      - run:
-          name: libjpeg etc install
+          name: install wget git unzip etc...
           command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg-dev libpng-dev
       - run:
-          name: php-gd install
-          command: sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
-      - run:
-          name: add install command
-          command: sudo docker-php-ext-install gd
+          name: install pcov
+          command: |
+            sudo pecl install pcov
       - attach_workspace:
           at: koyolympus/
       - run:
@@ -202,18 +221,59 @@ jobs:
           working_directory: koyolympus
           command: |
             ./cc-test-reporter before-build
-            vendor/bin/phpunit --coverage-clover clover.xml tests/Unit/
-            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+            vendor/bin/phpunit --coverage-clover clover.xml
+            ./cc-test-reporter format-coverage clover.xml --add-prefix koyolympus -t clover -o codeclimate.json
+            ./cc-test-reporter upload-coverage -i codeclimate.json
+      - notify_slack_fail
+      - notify_slack_pass
+
+  deploy:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+      - run:
+          name: install aws cli
+          command: sudo pip install awscli
+      - run:
+          name: run shell script for deploying
+          command: .circleci/deploy.sh ${CIRCLE_TAG}
       - notify_slack_fail
       - notify_slack_pass
 
 workflows:
   version: 2
-  build_and_test:
+  build_to_deploy:
     jobs:
       - build:
           context: koyolympus
-      - test:
+      - style-check:
           context: koyolympus
           requires:
             - build
+      - larastan:
+          context: koyolympus
+          requires:
+            - style-check
+      - test:
+          context: koyolympus
+          requires:
+            - larastan
+      - approval:
+          type: approval
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              ignore: /.*/
+      - deploy:
+          context: koyolympus
+          requires:
+            - approval
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              ignore: /.*/

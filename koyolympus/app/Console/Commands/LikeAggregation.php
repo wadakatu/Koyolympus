@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
-use App\Http\Services\LikeService;
+use App\Services\LikeService;
 use App\Jobs\AggregateDailyLikeJob;
 use App\Jobs\AggregateWeeklyLikeJob;
 use App\Jobs\AggregateMonthlyLikeJob;

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
 
+use Tests\TestCase;
 use App\Http\Requests\GetPhotoRequest;
 use Illuminate\Support\Facades\Validator;
-use Tests\TestCase;
 
 class GetPhotoRequestTest extends TestCase
 {

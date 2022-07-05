@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Mail;
+namespace App\Mails;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Bus\Queueable;
@@ -9,9 +10,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ThrowableMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
-    private $_params;
+    private $params;
 
     /**
      * Create a new message instance.
@@ -20,7 +22,7 @@ class ThrowableMail extends Mailable
      */
     public function __construct(array $params)
     {
-        $this->_params = $params;
+        $this->params = $params;
     }
 
     /**
@@ -30,8 +32,8 @@ class ThrowableMail extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->_params['subject'])
-            ->with('params', $this->_params)
+        return $this->subject($this->params['subject'])
+            ->with('params', $this->params)
             ->view('mail.exception');
     }
 }

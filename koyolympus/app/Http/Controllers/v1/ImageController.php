@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
 
 use Exception;
-use App\Http\Models\Photo;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\PhotoService;
+use App\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetPhotoRequest;
@@ -22,7 +23,6 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImageController extends Controller
 {
-
     private $photoService;
 
     public function __construct(PhotoService $photoService)
@@ -78,39 +78,23 @@ class ImageController extends Controller
     {
         $file = $request->file;
         $fileName = $file->getClientOriginalName();
-        $genre = $request->input('genre');
+        $genre = (int)$request->input('genre');
 
         DB::beginTransaction();
 
         try {
             Log::debug('ファイルのアップロード開始');
-            $uniqueFileName = $this->photoService->uploadPhotoToS3($file, $fileName, $genre);
+            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, $genre);
+            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, $genre);
             DB::commit();
             Log::debug('ファイルのアップロード終了');
         } catch (Exception $e) {
-            Log::error('ファイルのアップロードに失敗しました。');
             DB::rollBack();
-            $this->removePhoto($request);
+            Log::error('ファイルのアップロードに失敗しました。');
             Log::error($e->getMessage());
             return response()->json([], 500);
         }
 
         return response()->json(['file' => $uniqueFileName]);
     }
-
-    /**
-     * 写真をS3から、写真情報をDBから削除する。
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function removePhoto(Request $request): JsonResponse
-    {
-        $file = $request->file;
-        $fileName = $file['custom'];
-        $genre = $request->input('genre');
-        $this->photoService->deletePhotoFromS3($fileName, $genre);
-
-        return response()->json([]);
-    }
-
 }

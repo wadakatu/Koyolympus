@@ -1,8 +1,9 @@
 #!/bin/sh
-set -ex
+set -eu
 
 export TAG=$1;
 export SUCCESS=200
+export STATUS=400
 
 cd /var/www/koyolympus/koyolympus && php artisan down
 git checkout . && git fetch && git checkout $TAG

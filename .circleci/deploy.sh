@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -eu
 
 export TAG=$1
 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}

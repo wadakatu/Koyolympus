@@ -251,14 +251,29 @@ workflows:
           context: koyolympus
           requires:
             - build
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              only: /.*/
       - larastan:
           context: koyolympus
           requires:
             - style-check
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              only: /.*/
       - test:
           context: koyolympus
           requires:
             - larastan
+          filters:
+            tags:
+              only: /^v*/
+            branches:
+              only: /.*/
       - approval:
           type: approval
           requires:

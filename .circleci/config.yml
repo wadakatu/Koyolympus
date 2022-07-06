@@ -247,6 +247,9 @@ workflows:
     jobs:
       - build:
           context: koyolympus
+          filters:
+            tags:
+              only: /.*/
       - style-check:
           context: koyolympus
           requires:

@@ -254,8 +254,6 @@ workflows:
           filters:
             tags:
               only: /^v*/
-            branches:
-              only: /.*/
       - larastan:
           context: koyolympus
           requires:
@@ -263,8 +261,6 @@ workflows:
           filters:
             tags:
               only: /^v*/
-            branches:
-              only: /.*/
       - test:
           context: koyolympus
           requires:
@@ -272,8 +268,6 @@ workflows:
           filters:
             tags:
               only: /^v*/
-            branches:
-              only: /.*/
       - approval:
           type: approval
           requires:

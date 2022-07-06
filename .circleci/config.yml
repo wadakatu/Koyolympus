@@ -253,8 +253,6 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v*/
-            branches:
               only: /.*/
       - larastan:
           context: koyolympus
@@ -262,8 +260,6 @@ workflows:
             - style-check
           filters:
             tags:
-              only: /^v*/
-            branches:
               only: /.*/
       - test:
           context: koyolympus
@@ -271,8 +267,6 @@ workflows:
             - larastan
           filters:
             tags:
-              only: /^v*/
-            branches:
               only: /.*/
       - approval:
           type: approval

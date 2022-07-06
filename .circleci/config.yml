@@ -253,7 +253,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v*/
+              only: /.*/
             branches:
               only: /.*/
       - larastan:
@@ -262,7 +262,7 @@ workflows:
             - style-check
           filters:
             tags:
-              only: /^v*/
+              only: /.*/
             branches:
               only: /.*/
       - test:
@@ -271,7 +271,7 @@ workflows:
             - larastan
           filters:
             tags:
-              only: /^v*/
+              only: /.*/
             branches:
               only: /.*/
       - approval:

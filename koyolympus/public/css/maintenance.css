@@ -2,10 +2,15 @@ html {
     font-size: 10px;
 }
 
+img {
+    display: block;
+}
+
 body {
     font-family: Roboto, sans-serif;
     display: flex;
     flex-direction: column;
+    line-height: 1.5;
 }
 
 .logo {

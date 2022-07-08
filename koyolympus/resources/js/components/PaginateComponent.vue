@@ -51,6 +51,10 @@ export default {
 
 <style scoped>
 
+.pagination {
+    margin-top: 5vh;
+}
+
 .button {
     color: #FFF;
     display: inline-block;

@@ -29,7 +29,7 @@
     Please feel free to enjoy visiting my website and seeing my photography.
     I hope you are going to find out something touch your heart in this site.">
 
-    <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css" />
+    <link href="{{ asset('/css/reset.css') }}" rel="stylesheet">
     @stack('css')
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 

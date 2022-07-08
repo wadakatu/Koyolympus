@@ -31,6 +31,11 @@ footer {
     text-align: center;
 }
 
+ul {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
 .sns {
     display: inline-block;
     margin-left: 5vh;

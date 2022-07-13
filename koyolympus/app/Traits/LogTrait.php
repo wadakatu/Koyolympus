@@ -12,10 +12,10 @@ trait LogTrait
      * infoログを出力
      *
      * @param string $title
-     * @param $message
+     * @param string $message
      * @return void
      */
-    public function outputLog(string $title, $message)
+    public function outputLog(string $title, string $message)
     {
         Log::info("$title $message");
     }

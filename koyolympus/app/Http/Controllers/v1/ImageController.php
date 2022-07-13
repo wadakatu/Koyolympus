@@ -58,7 +58,7 @@ class ImageController extends Controller
      * 写真パスを基にS3から写真取得
      *
      * @param Photo $photo
-     * @return Application|ResponseFactory|Response
+     * @return Response
      * @throws FileNotFoundException
      */
     public function downloadPhoto(Photo $photo): Response

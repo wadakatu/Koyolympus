@@ -34,21 +34,42 @@ class Photo extends Model
         }
     }
 
+    /**
+     * idカラムにUUIDを設定
+     *
+     * @return void
+     */
     public function setId()
     {
         $this->attributes['id'] = $this->getRandomId();
     }
 
+    /**
+     * UUID取得
+     *
+     * @return string
+     */
     public function getRandomId(): string
     {
         return Str::uuid()->toString();
     }
 
+    /**
+     * S3のURLを取得
+     *
+     * @return string
+     */
     public function getUrlAttribute(): string
     {
         return Storage::disk('s3')->url($this->attributes['file_path']);
     }
 
+    /**
+     * 全ての写真情報を取得（10件ごと）
+     *
+     * @param string|null $genre
+     * @return LengthAwarePaginator
+     */
     public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
         $query = Photo::query();
@@ -60,6 +81,11 @@ class Photo extends Model
             ->orderBy('created_at', 'desc')->paginate();
     }
 
+    /**
+     * ランダムに全ての写真情報を取得
+     *
+     * @return Collection
+     */
     public function getAllPhotoRandomly(): Collection
     {
         $query = Photo::query();
@@ -67,6 +93,14 @@ class Photo extends Model
         return $query->inRandomOrder()->get();
     }
 
+    /**
+     * 写真情報を作成
+     *
+     * @param string $fileName
+     * @param string $filePath
+     * @param int $genre
+     * @return string
+     */
     public function createPhotoInfo(string $fileName, string $filePath, int $genre): string
     {
         $photo = new Photo();
@@ -86,6 +120,13 @@ class Photo extends Model
         return $uniqueFileName;
     }
 
+    /**
+     * 写真情報を削除
+     *
+     * @param string $id
+     * @return void
+     * @throws \Exception
+     */
     public function deletePhotoInfo(string $id)
     {
         self::query()
@@ -93,6 +134,11 @@ class Photo extends Model
             ->delete();
     }
 
+    /**
+     * 作成日の降順に並べて写真情報を全て取得
+     *
+     * @return Collection
+     */
     public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {
         return self::query()->orderBy('created_at', 'desc')->get();

@@ -31,7 +31,9 @@ class ImageController extends Controller
     }
 
     /**
-     * S3内の写真のパスを全て取得する。(10件ごとのページネーション)
+     * S3内の全写真取得処理
+     * (10件ごとのページネーション)
+     *
      * @param GetPhotoRequest $request
      * @return LengthAwarePaginator
      */
@@ -42,7 +44,9 @@ class ImageController extends Controller
     }
 
     /**
-     * S3内の写真のパスをランダムに全て取得する。
+     * S3内の全写真取得処理
+     * (ランダム)
+     *
      * @return Collection
      */
     public function getRandomPhoto(): Collection
@@ -51,12 +55,13 @@ class ImageController extends Controller
     }
 
     /**
-     * 写真パスを基にS3から写真を取得
+     * 写真パスを基にS3から写真取得
+     *
      * @param Photo $photo
      * @return Application|ResponseFactory|Response
      * @throws FileNotFoundException
      */
-    public function downloadPhoto(Photo $photo)
+    public function downloadPhoto(Photo $photo): Response
     {
         $storage = Storage::disk('s3');
 
@@ -69,7 +74,7 @@ class ImageController extends Controller
     }
 
     /**
-     * 写真をS3に、写真のパス・名前・ジャンルをDBにアップロードする
+     * 写真をS3に、写真のパス・名前・ジャンルをDBにアップロード
      * @param Request $request
      * @return JsonResponse
      * @throws Exception

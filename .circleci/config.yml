@@ -40,6 +40,10 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
                     }
                   ]
                 }
@@ -83,6 +87,10 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
                     }
                   ]
                 }

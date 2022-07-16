@@ -33,7 +33,7 @@ class LikeController extends Controller
     }
 
     /**
-     * いいね数を+1する。
+     * いいね数を1増加
      *
      * @param LikeRequest $request
      * @return JsonResponse
@@ -54,7 +54,7 @@ class LikeController extends Controller
     }
 
     /**
-     * いいね数を-1する。
+     * いいね数を1減少
      *
      * @param LikeRequest $request
      * @return JsonResponse

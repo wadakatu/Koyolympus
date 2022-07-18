@@ -19,21 +19,21 @@ class LikeService
 {
     use LogTrait;
 
-    private $like;
+    private Like $like;
 
-    private $likeAggregate;
+    private LikeAggregate $likeAggregate;
 
     /* @var CarbonImmutable */
-    private $startAt;
+    private CarbonImmutable $startAt;
 
     /* @var int */
-    private $dailyType;
+    private int $dailyType;
 
     /* @var int */
-    private $weeklyType;
+    private int $weeklyType;
 
     /* @var int */
-    private $monthlyType;
+    private int $monthlyType;
 
     public function __construct(Like $like, LikeAggregate $likeAggregate)
     {
@@ -227,13 +227,13 @@ class LikeService
     /**
      * 週毎のいいね数を更新
      *
-     * @param Collection $records
+     * @param \Illuminate\Support\Collection<int, LikeAggregate> $records
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @return void
      */
     public function updateForWeeklyAggregation(
-        Collection $records,
+        \Illuminate\Support\Collection $records,
         CarbonImmutable $startAt,
         CarbonImmutable $endAt
     ): void {

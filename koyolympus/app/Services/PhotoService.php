@@ -14,8 +14,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PhotoService
 {
-    private $photo;
-    private $like;
+    private Photo $photo;
+
+    private Like $like;
 
     public function __construct(Photo $photo, Like $like)
     {
@@ -56,7 +57,7 @@ class PhotoService
      * @param string $uniqueFileName
      * @param int $genre
      */
-    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre)
+    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre): void
     {
         //保存するS3のファイルパスを取得
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
@@ -81,8 +82,9 @@ class PhotoService
     /**
      * DBから写真レコードを削除
      * @param string $id
+     * @throws Exception
      */
-    public function deletePhotoFromDB(string $id)
+    public function deletePhotoFromDB(string $id): void
     {
         //DBから写真のレコードを削除
         $this->photo->deletePhotoInfo($id);

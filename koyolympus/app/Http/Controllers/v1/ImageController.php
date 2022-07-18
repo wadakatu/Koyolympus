@@ -23,7 +23,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImageController extends Controller
 {
-    private $photoService;
+    private PhotoService $photoService;
 
     public function __construct(PhotoService $photoService)
     {

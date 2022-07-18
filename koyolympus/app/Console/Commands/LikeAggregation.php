@@ -28,10 +28,10 @@ class LikeAggregation extends Command
     protected $description = 'Command description';
 
     /* @var LikeService */
-    private $likeService;
+    private LikeService $likeService;
 
     /* @var CarbonImmutable */
-    private $startAt;
+    private CarbonImmutable $startAt;
 
     /**
      * Create a new command instance.

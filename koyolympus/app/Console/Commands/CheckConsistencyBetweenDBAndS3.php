@@ -25,7 +25,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
      */
     protected $description = 'check the consistency between DB and Aws S3 bucket';
 
-    private $photoService;
+    private PhotoService $photoService;
 
     /**
      * Create a new command instance.

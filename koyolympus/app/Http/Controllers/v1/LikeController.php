@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 
 class LikeController extends Controller
 {
-    private $like;
+    private Like $like;
 
     public function __construct(Like $like)
     {

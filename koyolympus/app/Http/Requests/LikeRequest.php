@@ -41,7 +41,8 @@ class LikeRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $id = $this->get('id');
-        Log::info("[Requested ID: $id] " . __('messages.PHOTO.INVALID_UUID'));
+        Log::info("[Requested ID: $id]");
+        Log::info(trans('messages.PHOTO.INVALID_UUID'));
         abort(404);
     }
 }

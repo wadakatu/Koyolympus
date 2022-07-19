@@ -62,7 +62,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
 
         DB::beginTransaction();
         try {
-            if (isset($fileName) && !$shouldSearchAll) {
+            if (is_string($fileName) && !$shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
                 $this->info(
                     "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n" .

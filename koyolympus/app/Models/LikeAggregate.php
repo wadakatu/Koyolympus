@@ -14,6 +14,15 @@ class LikeAggregate extends Model
 {
     protected $guarded = ['id'];
 
+    /**
+     * いいね数集計用スコープ
+     *
+     * @param Builder $query
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @param int $type
+     * @return Builder
+     */
     public function scopeForAggregation(
         Builder $query,
         CarbonImmutable $startAt,
@@ -28,6 +37,15 @@ class LikeAggregate extends Model
     }
 
 
+    /**
+     * 日次かつ集計期間が月跨ぎの場合に適用されるスコープ
+     *
+     * @param Builder $query
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @param int $type
+     * @return Builder
+     */
     public function scopeAddSelectWhenDailyAndDiffMonth(
         Builder $query,
         CarbonImmutable $startAt,
@@ -44,6 +62,8 @@ class LikeAggregate extends Model
     }
 
     /**
+     * いいね数を集計して取得
+     *
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @param int $type
@@ -63,6 +83,15 @@ class LikeAggregate extends Model
             ->get();
     }
 
+    /**
+     * 集計したいいね数を登録
+     *
+     * @param array $likeInfo
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @param int $type
+     * @return void
+     */
     public function registerForAggregation(
         array $likeInfo,
         CarbonImmutable $startAt,
@@ -78,6 +107,16 @@ class LikeAggregate extends Model
         ]);
     }
 
+    /**
+     * 集計したいいね数を更新
+     *
+     * @param string $photoId
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @param int $type
+     * @param array $value
+     * @return void
+     */
     public function updateForAggregation(
         string $photoId,
         CarbonImmutable $startAt,

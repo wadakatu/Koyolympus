@@ -10,6 +10,9 @@ use ReflectionException;
 trait PrivateTrait
 {
     /**
+     * privateプロパティを取得
+     * 通常インスタンス用
+     *
      * @throws ReflectionException
      */
     private function getPrivateProperty(object $class, string $property)
@@ -21,6 +24,9 @@ trait PrivateTrait
     }
 
     /**
+     * privateプロパティを取得
+     * モックインスタンス用
+     *
      * @throws ReflectionException
      */
     private function getPrivatePropertyForMockObject(object $class, string $property)

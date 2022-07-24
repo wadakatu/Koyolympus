@@ -46,12 +46,20 @@ class LikeService
     }
 
 
+    /**
+     * コマンド実行日をプロパティにセット
+     *
+     * @param CarbonImmutable $carbon
+     * @return void
+     */
     public function setCommandStartAt(CarbonImmutable $carbon): void
     {
         $this->startAt = $carbon;
     }
 
     /**
+     * 日毎のいいね数を修正
+     *
      * @throws Exception
      */
     public function aggregateLikeDaily(): void
@@ -83,6 +91,8 @@ class LikeService
     }
 
     /**
+     * 週毎のいいね数を集計
+     *
      * @throws Exception
      */
     public function aggregateLikeWeekly(): void
@@ -121,6 +131,8 @@ class LikeService
     }
 
     /**
+     * 月毎のいいね数を集計
+     *
      * @throws Exception
      */
     public function aggregateLikeMonthly(): void
@@ -167,6 +179,14 @@ class LikeService
         $this->outputLog('[いいね集計・月次]', '月次いいね集計 END');
     }
 
+    /**
+     * 週毎のいいね数を登録
+     *
+     * @param array $records
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @return void
+     */
     public function registerForWeeklyAggregation(
         array $records,
         CarbonImmutable $startAt,
@@ -204,6 +224,14 @@ class LikeService
         }
     }
 
+    /**
+     * 週毎のいいね数を更新
+     *
+     * @param Collection $records
+     * @param CarbonImmutable $startAt
+     * @param CarbonImmutable $endAt
+     * @return void
+     */
     public function updateForWeeklyAggregation(
         Collection $records,
         CarbonImmutable $startAt,
@@ -245,6 +273,13 @@ class LikeService
         }
     }
 
+    /**
+     * エラー・例外発生時にメールを送信
+     *
+     * @param string $subject
+     * @param string $message
+     * @return void
+     */
     public function sendThrowableMail(
         string $subject,
         string $message

@@ -30,7 +30,7 @@ class ThrowableMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): ThrowableMail
     {
         return $this->subject($this->params['subject'])
             ->with('params', $this->params)

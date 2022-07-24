@@ -15,7 +15,7 @@ class LikeRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -25,13 +25,19 @@ class LikeRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'id' => 'required|string|uuid',
         ];
     }
 
+    /**
+     * バリデーション失敗時の処理
+     *
+     * @param Validator $validator
+     * @return void
+     */
     protected function failedValidation(Validator $validator)
     {
         $id = $this->get('id');

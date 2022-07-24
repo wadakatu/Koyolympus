@@ -40,6 +40,10 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
                     }
                   ]
                 }
@@ -83,6 +87,10 @@ commands:
                     {
                       "type": "mrkdwn",
                       "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Tag:*\n${CIRCLE_TAG}"
                     }
                   ]
                 }
@@ -260,20 +268,23 @@ workflows:
       - larastan:
           context: koyolympus
           requires:
-            - style-check
+            - build
           filters:
             tags:
               only: /.*/
       - test:
           context: koyolympus
           requires:
-            - larastan
+            - build
           filters:
             tags:
               only: /.*/
       - approval:
           type: approval
           requires:
+            - build
+            - style-check
+            - larastan
             - test
           filters:
             tags:

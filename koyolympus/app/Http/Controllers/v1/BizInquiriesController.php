@@ -16,6 +16,8 @@ class BizInquiriesController extends Controller
     }
 
     /**
+     * お問い合わせメール送信処理
+     *
      * @param BizInquiriesRequest $request
      */
     public function sendBizInquiries(BizInquiriesRequest $request)

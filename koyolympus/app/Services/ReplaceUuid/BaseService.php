@@ -115,6 +115,7 @@ class BaseService
         $disk = Storage::disk('s3');
 
         //ジャンルからS3ファイルパスを取得
+        /** @var string $filePath */
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
         //古い写真をS3からローカルにダウンロード

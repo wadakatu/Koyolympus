@@ -52,13 +52,13 @@ class LikeAggregate extends Model
         CarbonImmutable $endAt,
         int $type
     ): Builder {
-        return $query->when(
-            $type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
-            && $startAt->month !== $endAt->month,
-            function (Builder $query): Builder {
-                return $query->addSelect(DB::raw('month(start_at) as carry_over'));
-            }
-        );
+
+        if($type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
+            && $startAt->month !== $endAt->month){
+            $query->addSelect(DB::raw('month(start_at) as carry_over'));
+        }
+
+        return $query;
     }
 
     /**

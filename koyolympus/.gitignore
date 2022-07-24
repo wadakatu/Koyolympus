@@ -21,7 +21,7 @@
 /public/image
 .env
 .env.backup
-.env.example
+.env.testing
 .gitattributes
 .phpunit.result.cache
 .styleci.yml

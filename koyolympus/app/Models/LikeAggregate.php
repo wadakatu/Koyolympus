@@ -53,11 +53,9 @@ class LikeAggregate extends Model
         int $type
     ): Builder {
 
-        if($type === config('const.PHOTO_AGGREGATION.TYPE.DAILY')
-            && $startAt->month !== $endAt->month){
+        if ($type === config('const.PHOTO_AGGREGATION.TYPE.DAILY') && $startAt->month !== $endAt->month) {
             $query->addSelect(DB::raw('month(start_at) as carry_over'));
         }
-
         return $query;
     }
 

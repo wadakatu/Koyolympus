@@ -13,7 +13,7 @@
 </template>
 
 <script>
-const aboutMe = require('../lang/aboutMe.json');
+import aboutMe from '../lang/aboutMe.json';
 export default {
     components: {
         'language-select-component': () => import('./LanguageSelectComponent'),

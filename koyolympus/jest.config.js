@@ -9,7 +9,8 @@ module.exports = async () => {
             "vue"
         ],
         transform: {
-            ".*\\.(vue)$": "vue-jest"
+            "^.+\\.vue$": "@vue/vue2-jest",
+            '^.+\\.js$': 'babel-jest',
         },
         collectCoverage: true,
         collectCoverageFrom: [

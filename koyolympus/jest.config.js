@@ -8,6 +8,10 @@ module.exports = async () => {
             "json",
             "vue"
         ],
+        moduleNameMapper: {
+            "^@/(.*)$": "<rootDir>/resources/js/components/$1"
+        },
+        testEnvironment: "jest-environment-jsdom",
         transform: {
             "^.+\\.vue$": "@vue/vue2-jest",
             '^.+\\.js$': 'babel-jest',

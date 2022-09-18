@@ -11,6 +11,7 @@ module.exports = async () => {
         moduleNameMapper: {
             "^@/(.*)$": "<rootDir>/resources/js/components/$1"
         },
+        snapshotSerializers: ['jest-serializer-vue'],
         testEnvironment: "jest-environment-jsdom",
         transform: {
             "^.+\\.vue$": "@vue/vue2-jest",

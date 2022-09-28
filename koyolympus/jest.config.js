@@ -23,7 +23,8 @@ module.exports = async () => {
             "!**/node_modules/**",
             "!**/vendor/**",
             "!**/public/**",
-            "!**/coverage/**"
+            "!**/coverage/**",
+            "!**/resources/js/components/CardComponent.vue",
         ]
     };
 };

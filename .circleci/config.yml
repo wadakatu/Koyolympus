@@ -1,107 +1,25 @@
 version: 2.1
-orbs:
-  slack: circleci/slack@4.10.1
 
-commands:
-  notify_slack_pass:
-    steps:
-      - slack/notify:
-          channel: D02FP5L229G
-          event: pass
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":tada::tada::tada: *Success!*"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Job:*\n${CIRCLE_JOB}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Author:*\n${CIRCLE_USERNAME}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Tag:*\n${CIRCLE_TAG}"
-                    }
-                  ]
-                }
-              ]
-            }
-
-  notify_slack_fail:
-    steps:
-      - slack/notify:
-          channel: D02FP5L229G
-          event: fail
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":japanese_ogre::japanese_ogre::japanese_ogre: *Failed* :bangbang:"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*When:*\n$(TZ=Asia/Tokyo date +'%Y/%m/%d %T')"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Job:*\n${CIRCLE_JOB}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Author:*\n${CIRCLE_USERNAME}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Tag:*\n${CIRCLE_TAG}"
-                    }
-                  ]
-                }
-              ]
-            }
+executors:
+  php:
+    docker:
+      - image: cimg/php:7.4.30
+  php-mysql:
+    docker:
+      - image: cimg/php:7.4.30
+      - image: cimg/mysql:5.7
+  php-node:
+    docker:
+      - image: cimg/php:7.4.30-node
+  ubuntu:
+    machine:
+      image: ubuntu-2004:202201-02
 
 jobs:
   build:
     working_directory: ~/koyolympus
-    docker:
-      - image: cimg/php:7.4-node
+    executor:
+      name: php-node
     steps:
       - checkout
       - restore_cache:
@@ -150,11 +68,10 @@ jobs:
           paths:
             - node_modules/
             - vendor/
-      - notify_slack_fail
 
   style-check:
-    docker:
-      - image: cimg/php:7.4.26
+    executor:
+      name: php
     steps:
       - checkout
       - attach_workspace:
@@ -163,11 +80,10 @@ jobs:
           name: check PHP code style (PSR12)
           working_directory: koyolympus
           command: vendor/bin/phpcs --standard=phpcs.xml -p ./
-      - notify_slack_fail
 
   larastan:
-    docker:
-      - image: cimg/php:7.4.26
+    executor:
+      name: php
     steps:
       - checkout
       - attach_workspace:
@@ -176,12 +92,10 @@ jobs:
           name: analyze php code statically
           working_directory: koyolympus
           command: vendor/bin/phpstan analyse
-      - notify_slack_fail
 
   test:
-    docker:
-      - image: cimg/php:7.4.26
-      - image: cimg/mysql:5.7
+    executor:
+      name: php-mysql
     environment:
       - DB_CONNECTION: circle_testing
     steps:
@@ -232,12 +146,10 @@ jobs:
             vendor/bin/phpunit --coverage-clover clover.xml
             ./cc-test-reporter format-coverage clover.xml --add-prefix koyolympus -t clover -o codeclimate.json
             ./cc-test-reporter upload-coverage -i codeclimate.json
-      - notify_slack_fail
-      - notify_slack_pass
 
   deploy:
-    machine:
-      image: ubuntu-2004:202201-02
+    executor:
+      name: ubuntu
     steps:
       - checkout
       - run:
@@ -246,8 +158,6 @@ jobs:
       - run:
           name: run shell script for deploying
           command: .circleci/deploy.sh ${CIRCLE_TAG}
-      - notify_slack_fail
-      - notify_slack_pass
 
 workflows:
   version: 2

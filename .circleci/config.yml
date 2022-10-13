@@ -1,10 +1,25 @@
 version: 2.1
 
+executors:
+  php:
+    docker:
+      - image: cimg/php:7.4.30
+  php-mysql:
+    docker:
+      - image: cimg/php:7.4.30
+      - image: cimg/mysql:5.7
+  php-node:
+    docker:
+      - image: cimg/php:7.4.30-node
+  ubuntu:
+    machine:
+      image: ubuntu-2004:202201-02
+
 jobs:
   build:
     working_directory: ~/koyolympus
-    docker:
-      - image: cimg/php:7.4-node
+    executor:
+      name: php-node
     steps:
       - checkout
       - restore_cache:
@@ -55,8 +70,8 @@ jobs:
             - vendor/
 
   style-check:
-    docker:
-      - image: cimg/php:7.4.26
+    executor:
+      name: php
     steps:
       - checkout
       - attach_workspace:
@@ -67,8 +82,8 @@ jobs:
           command: vendor/bin/phpcs --standard=phpcs.xml -p ./
 
   larastan:
-    docker:
-      - image: cimg/php:7.4.26
+    executor:
+      name: php
     steps:
       - checkout
       - attach_workspace:
@@ -79,9 +94,8 @@ jobs:
           command: vendor/bin/phpstan analyse
 
   test:
-    docker:
-      - image: cimg/php:7.4.26
-      - image: cimg/mysql:5.7
+    executor:
+      name: php-mysql
     environment:
       - DB_CONNECTION: circle_testing
     steps:
@@ -134,8 +148,8 @@ jobs:
             ./cc-test-reporter upload-coverage -i codeclimate.json
 
   deploy:
-    machine:
-      image: ubuntu-2004:202201-02
+    executor:
+      name: ubuntu
     steps:
       - checkout
       - run:

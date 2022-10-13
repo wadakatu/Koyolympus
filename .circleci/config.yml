@@ -1,5 +1,20 @@
 version: 2.1
 
+executors:
+  php:
+    docker:
+      - image: cimg/php:7.4.30
+  php-mysql:
+    docker:
+      - image: cimg/php:7.4.30
+      - image: cimg/mysql:5.7
+  php-node:
+    docker:
+      - image: cimg/php:7.4.30-node
+  ubuntu:
+    machine:
+      image: ubuntu-2004:202201-02
+
 jobs:
   build:
     working_directory: ~/koyolympus

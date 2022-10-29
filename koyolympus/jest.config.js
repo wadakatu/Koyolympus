@@ -25,6 +25,7 @@ module.exports = async () => {
             "!**/public/**",
             "!**/coverage/**",
             "!**/resources/js/components/CardComponent.vue",
+            "!**/resources/js/components/PhotoUpComponent.vue",
         ]
     };
 };

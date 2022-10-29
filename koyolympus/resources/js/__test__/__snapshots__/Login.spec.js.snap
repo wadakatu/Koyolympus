@@ -1,0 +1,233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default (no errors) 1`] = `
+<form
+  class="wrapper"
+>
+  <div
+    class="contact-form"
+  >
+    <div
+      class="input-fields"
+    >
+      <input
+        class="input"
+        name="email"
+        placeholder="Email"
+        required="required"
+        type="email"
+      />
+       
+      <!---->
+       
+      <input
+        class="input"
+        name="password"
+        placeholder="Password"
+        required="required"
+        type="password"
+      />
+       
+      <!---->
+    </div>
+     
+    <button
+      class="btn"
+      type="submit"
+    >
+      Send
+    </button>
+     
+    <a>
+      <button
+        class="btn"
+      >
+        HOME
+      </button>
+    </a>
+  </div>
+</form>
+`;
+
+exports[`Testing snapshot validation error (email & password) 1`] = `
+<form
+  class="wrapper"
+>
+  <div
+    class="contact-form"
+  >
+    <div
+      class="input-fields"
+    >
+      <input
+        class="input"
+        name="email"
+        placeholder="Email"
+        required="required"
+        type="email"
+      />
+       
+      <div
+        class="errors"
+      >
+        <div
+          class="error_text"
+        >
+          email is not valid.
+        </div>
+      </div>
+       
+      <input
+        class="input"
+        name="password"
+        placeholder="Password"
+        required="required"
+        type="password"
+      />
+       
+      <div
+        class="errors"
+      >
+        <div
+          class="error_text"
+        >
+          password is not valid.
+        </div>
+      </div>
+    </div>
+     
+    <button
+      class="btn"
+      type="submit"
+    >
+      Send
+    </button>
+     
+    <a>
+      <button
+        class="btn"
+      >
+        HOME
+      </button>
+    </a>
+  </div>
+</form>
+`;
+
+exports[`Testing snapshot validation error (email) 1`] = `
+<form
+  class="wrapper"
+>
+  <div
+    class="contact-form"
+  >
+    <div
+      class="input-fields"
+    >
+      <input
+        class="input"
+        name="email"
+        placeholder="Email"
+        required="required"
+        type="email"
+      />
+       
+      <div
+        class="errors"
+      >
+        <div
+          class="error_text"
+        >
+          email is not valid.
+        </div>
+      </div>
+       
+      <input
+        class="input"
+        name="password"
+        placeholder="Password"
+        required="required"
+        type="password"
+      />
+       
+      <div
+        class="errors"
+      />
+    </div>
+     
+    <button
+      class="btn"
+      type="submit"
+    >
+      Send
+    </button>
+     
+    <a>
+      <button
+        class="btn"
+      >
+        HOME
+      </button>
+    </a>
+  </div>
+</form>
+`;
+
+exports[`Testing snapshot validation error (password) 1`] = `
+<form
+  class="wrapper"
+>
+  <div
+    class="contact-form"
+  >
+    <div
+      class="input-fields"
+    >
+      <input
+        class="input"
+        name="email"
+        placeholder="Email"
+        required="required"
+        type="email"
+      />
+       
+      <div
+        class="errors"
+      />
+       
+      <input
+        class="input"
+        name="password"
+        placeholder="Password"
+        required="required"
+        type="password"
+      />
+       
+      <div
+        class="errors"
+      >
+        <div
+          class="error_text"
+        >
+          password is not valid.
+        </div>
+      </div>
+    </div>
+     
+    <button
+      class="btn"
+      type="submit"
+    >
+      Send
+    </button>
+     
+    <a>
+      <button
+        class="btn"
+      >
+        HOME
+      </button>
+    </a>
+  </div>
+</form>
+`;

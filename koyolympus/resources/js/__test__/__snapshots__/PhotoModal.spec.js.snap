@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing SnapShot already liked SnapShot 1`] = `
+<transition-stub
+  name="component-fade"
+>
+  <div
+    id="overlay"
+  >
+    <div
+      id="modal-content"
+    >
+      <div
+        id="modal-content-top"
+      >
+        <img
+          alt="This photo taken by Koyo Isono."
+          src="/test"
+        />
+      </div>
+       
+      <div
+        id="modal-content-bottom"
+      >
+        <button
+          class="static"
+          id="like-heart"
+        />
+         
+        <p
+          id="like-count"
+        >
+          Like：0
+        </p>
+      </div>
+    </div>
+  </div>
+</transition-stub>
+`;
+
+exports[`Testing SnapShot not liked SnapShot 1`] = `
+<transition-stub
+  name="component-fade"
+>
+  <div
+    id="overlay"
+  >
+    <div
+      id="modal-content"
+    >
+      <div
+        id="modal-content-top"
+      >
+        <img
+          alt="This photo taken by Koyo Isono."
+          src="/test"
+        />
+      </div>
+       
+      <div
+        id="modal-content-bottom"
+      >
+        <button
+          class=""
+          id="like-heart"
+        />
+         
+        <p
+          id="like-count"
+        >
+          Like：0
+        </p>
+      </div>
+    </div>
+  </div>
+</transition-stub>
+`;
+
+exports[`Testing SnapShot push button and liked 1`] = `
+<transition-stub
+  name="component-fade"
+>
+  <div
+    id="overlay"
+  >
+    <div
+      id="modal-content"
+    >
+      <div
+        id="modal-content-top"
+      >
+        <img
+          alt="This photo taken by Koyo Isono."
+          src="/test"
+        />
+      </div>
+       
+      <div
+        id="modal-content-bottom"
+      >
+        <button
+          class="press"
+          id="like-heart"
+        />
+         
+        <p
+          id="like-count"
+        >
+          Like：0
+        </p>
+      </div>
+    </div>
+  </div>
+</transition-stub>
+`;

@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<ul
+  class="language"
+  ontouchstart=""
+>
+  <li
+    class="language_title"
+  >
+    <a>
+      Language
+    </a>
+     
+    <ul
+      class="language_ul"
+    >
+      <li
+        class="lang"
+      >
+        <a
+          class="lang_detail"
+        >
+          日本語
+        </a>
+      </li>
+       
+      <li
+        class="lang"
+      >
+        <a
+          class="lang_detail"
+        >
+          English
+        </a>
+      </li>
+       
+      <li
+        class="lang"
+      >
+        <a
+          class="lang_detail"
+        >
+          French
+        </a>
+      </li>
+       
+      <li
+        class="lang"
+      >
+        <a
+          class="lang_detail"
+        >
+          한국말
+        </a>
+      </li>
+       
+      <li
+        class="lang"
+      >
+        <a
+          class="lang_detail"
+        >
+          中文
+        </a>
+      </li>
+    </ul>
+  </li>
+</ul>
+`;

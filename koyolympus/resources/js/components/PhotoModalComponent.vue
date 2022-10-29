@@ -39,25 +39,27 @@ export default {
                 .then(async function (result) {
                     if (!result) {
                         //LIKE処理
-                        await self.likePhoto(photoId).catch(
-                            e => {
+                        await self.likePhoto(photoId)
+                            .then(async () => {
+                                await self.$store.commit('photo/setLike', photoId);
+                                self.good++;
+                                self.like = true;
+                            })
+                            .catch(e => {
                                 self.$store.commit('error/setCode', e.status);
-                            }
-                        );
-                        await self.$store.commit('photo/setLike', photoId);
-                        self.good++;
-                        self.like = true;
+                            });
                     } else {
                         //LIKE解除処理
-                        await self.unlikePhoto(photoId).catch(
-                            e => {
+                        await self.unlikePhoto(photoId)
+                            .then(async () => {
+                                await self.$store.commit('photo/unsetLike', photoId);
+                                self.good <= 0 ? self.good = 0 : self.good--;
+                                self.isLiked = false;
+                                self.like = false;
+                            })
+                            .catch(e => {
                                 self.$store.commit('error/setCode', e.status);
-                            }
-                        );
-                        await self.$store.commit('photo/unsetLike', photoId);
-                        self.good < 0 ? self.good = 0 : self.good--;
-                        self.isLiked = false;
-                        self.like = false;
+                            });
                     }
                 });
             //ボタンの多重起動防止OFF
@@ -86,12 +88,12 @@ export default {
             this.getLike(photoId)
                 .then(res => {
                     self.good = res.data.all_likes;
+                    self.like = liked;
+                    self.isLiked = liked;
                 })
                 .catch(e => {
                     self.$store.commit('error/setCode', e.response.status);
                 });
-            self.like = liked;
-            self.isLiked = liked;
         }
     },
 }

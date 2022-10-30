@@ -20,7 +20,7 @@ class BizInquiriesController extends Controller
      *
      * @param BizInquiriesRequest $request
      */
-    public function sendBizInquiries(BizInquiriesRequest $request)
+    public function sendBizInquiries(BizInquiriesRequest $request): void
     {
         $params = [
             'name' => $request->input('name'),

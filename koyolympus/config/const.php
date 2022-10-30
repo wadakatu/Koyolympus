@@ -20,6 +20,7 @@ return [
         ]
     ],
     'PHOTO_AGGREGATION' => [
+        //TODO: enumで置き換える
         'TYPE' => [
             'DAILY' => 1,
             'WEEKLY' => 2,

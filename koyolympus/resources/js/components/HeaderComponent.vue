@@ -56,7 +56,7 @@ export default {
     padding: 3vh 8vw 0 8vw;
     display: flex;
     align-items: center;
-    z-index: 999;
+    z-index: 1;
 }
 
 .logo {

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class ModelUpdateFailedException extends Exception
 {
-    private $model;
+    private Model $model;
 
     public function __construct(Model $model, string $message = "")
     {
@@ -18,11 +18,11 @@ class ModelUpdateFailedException extends Exception
         $this->model = $model;
     }
 
-    public function report()
+    public function report(): void
     {
         Log::error('Model update failed.');
-        Log::error('Table Name：' . get_class($this->model));
-        Log::error('Target Record：' . $this->model);
+        Log::error('Table Name：' . $this->model->getTable());
+        Log::error('Target Record：' . $this->model->getAttribute('id'));
         Log::error('ーーーーーーーーーーーーーーーーーーーーーーーーーーーー');
     }
 }

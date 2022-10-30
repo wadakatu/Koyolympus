@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use DB;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\Model\ModelUpdateFailedException;
 
 class Like extends Model
 {
@@ -31,10 +33,10 @@ class Like extends Model
      */
     public function addLike(string $uuid): void
     {
-        Like::query()->where('photo_id', $uuid)->first()->update([
-            'likes' => DB::raw('likes + 1'),
-            'all_likes' => DB::raw('all_likes + 1'),
-        ]);
+        self::query()
+            ->firstOrNew(['photo_id' => $uuid])
+            ->fill(['likes' => DB::raw('likes + 1'), 'all_likes' => DB::raw('all_likes + 1')])
+            ->save();
     }
 
     /**
@@ -45,14 +47,17 @@ class Like extends Model
      */
     public function subLike(string $uuid): void
     {
-        $target = Like::query()->where('photo_id', $uuid)->first();
+        $target = self::query()->firstOrNew(['photo_id' => $uuid]);
 
-        $target->decrement('likes');
-        $target->decrement('all_likes');
-
-        if ($target->likes < 0) {
-            $target->fill(['likes' => 0])->save();
+        if ($target->exists) {
+            if ($target->likes <= 0) {
+                $target->fill(['likes' => 0]);
+            } else {
+                $target->fill(['likes' => DB::raw('likes - 1'), 'all_likes' => DB::raw('all_likes - 1')]);
+            }
         }
+
+        $target->save();
     }
 
     /**
@@ -64,7 +69,7 @@ class Like extends Model
      */
     public function saveByPhotoId(string $photoId, array $value): void
     {
-        self::query()->where('photo_id', $photoId)->first()->fill($value)->save();
+        self::query()->where('photo_id', $photoId)->firstOrFail()->fill($value)->save();
     }
 
     /**
@@ -72,7 +77,7 @@ class Like extends Model
      *
      * @param string $photoId
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleteByPhotoId(string $photoId): void
     {

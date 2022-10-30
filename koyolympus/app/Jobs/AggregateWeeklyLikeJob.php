@@ -26,13 +26,13 @@ class AggregateWeeklyLikeJob implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 5;
+    public int $tries = 5;
 
     /* @var LikeService */
-    private $likeService;
+    private LikeService $likeService;
 
     /* @var CarbonImmutable */
-    private $startAt;
+    private CarbonImmutable $startAt;
 
     /**
      * Create a new job instance.

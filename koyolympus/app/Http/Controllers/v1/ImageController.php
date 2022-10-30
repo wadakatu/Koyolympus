@@ -9,6 +9,7 @@ use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\PhotoService;
@@ -23,7 +24,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImageController extends Controller
 {
-    private $photoService;
+    private PhotoService $photoService;
 
     public function __construct(PhotoService $photoService)
     {
@@ -39,6 +40,7 @@ class ImageController extends Controller
      */
     public function getPhoto(GetPhotoRequest $request): LengthAwarePaginator
     {
+        /** @var string $genre */
         $genre = $request->input('genre');
         return $this->photoService->getAllPhoto($genre);
     }
@@ -81,16 +83,18 @@ class ImageController extends Controller
      */
     public function uploadPhoto(Request $request): JsonResponse
     {
+        /** @var UploadedFile $file */
         $file = $request->file;
         $fileName = $file->getClientOriginalName();
-        $genre = (int)$request->input('genre');
+        /** @var string $genre */
+        $genre = $request->input('genre');
 
         DB::beginTransaction();
 
         try {
             Log::debug('ファイルのアップロード開始');
-            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, $genre);
-            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, $genre);
+            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, (int)$genre);
+            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, (int)$genre);
             DB::commit();
             Log::debug('ファイルのアップロード終了');
         } catch (Exception $e) {

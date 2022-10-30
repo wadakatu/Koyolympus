@@ -8,6 +8,7 @@ use Str;
 use Mockery;
 use Tests\TestCase;
 use App\Models\Photo;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -169,6 +170,9 @@ class PhotoTest extends TestCase
         $this->assertSame('test2.jpeg', $photoList[0]->file_name);
         $this->assertSame('test1.jpeg', $photoList[1]->file_name);
         $this->assertSame('test3.jpeg', $photoList[2]->file_name);
+        $this->assertInstanceOf(Carbon::class, $photoList[0]->created_at);
+        $this->assertInstanceOf(Carbon::class, $photoList[1]->created_at);
+        $this->assertInstanceOf(Carbon::class, $photoList[2]->created_at);
     }
 
     /**

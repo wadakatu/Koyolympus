@@ -13,7 +13,7 @@ class BizInquiriesMail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    private $params;
+    private array $params;
 
     /**
      * Create a new message instance.

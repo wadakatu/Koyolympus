@@ -26,7 +26,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
      */
     protected $description = 'make all photo data including uuid.(id, file_name, file_path)';
 
-    private $replaceUuIdService;
+    private BaseService $replaceUuIdService;
 
     /**
      * Create a new command instance.

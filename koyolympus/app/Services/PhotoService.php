@@ -8,14 +8,17 @@ use Storage;
 use Exception;
 use App\Models\Like;
 use App\Models\Photo;
+use Illuminate\Support\Carbon;
+use PHPStan\Type\CallableType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PhotoService
 {
-    private $photo;
-    private $like;
+    private Photo $photo;
+
+    private Like $like;
 
     public function __construct(Photo $photo, Like $like)
     {
@@ -45,6 +48,7 @@ class PhotoService
     public function uploadPhotoDataToDB(string $fileName, int $genre): string
     {
         //保存するS3のファイルパスを取得
+        /** @var string $filePath */
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
         //DBに新規の写真レコード追加
         return $this->photo->createPhotoInfo($fileName, $filePath, $genre);
@@ -56,9 +60,10 @@ class PhotoService
      * @param string $uniqueFileName
      * @param int $genre
      */
-    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre)
+    public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre): void
     {
         //保存するS3のファイルパスを取得
+        /** @var string $filePath */
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
         //S3にファイルを追加
@@ -81,8 +86,9 @@ class PhotoService
     /**
      * DBから写真レコードを削除
      * @param string $id
+     * @throws Exception
      */
-    public function deletePhotoFromDB(string $id)
+    public function deletePhotoFromDB(string $id): void
     {
         //DBから写真のレコードを削除
         $this->photo->deletePhotoInfo($id);
@@ -91,7 +97,7 @@ class PhotoService
 
     /**
      * DB内に重複している写真があれば、DBとS3から削除
-     * @return Collection
+     * @return Collection<Photo>
      * @throws Exception
      */
     public function deleteMultiplePhotosIfDuplicate(): Collection
@@ -111,7 +117,7 @@ class PhotoService
 
     /**
      * 写真一覧から重複している写真データを探索（複数写真が対象）
-     * @return Collection
+     * @return Collection<Photo>
      * @throws Exception
      */
     public function searchMultipleDuplicatePhotos(): Collection
@@ -122,25 +128,27 @@ class PhotoService
         $photoNameList = [];
 
         //写真レコードから必要なデータを配列として抽出
-        foreach ($photoList as $key => $photoInfo) {
-            $fileName = explode('.', $photoInfo->file_name)[1];
+        /**
+         * @var int $key
+         * @var Photo $photo
+         */
+        foreach ($photoList as $key => $photo) {
+            $fileName = explode('.', $photo->file_name)[1];
             $photoNameList[$fileName][] = [
                 'index' => $key,
-                'id' => $photoInfo->id,
-                'created_at' => $photoInfo->created_at
+                'id' => $photo->id,
+                'created_at' => is_null($photo->created_at)
+                                ? Carbon::now()->timestamp
+                                : $photo->created_at->timestamp,
             ];
         }
 
         //重複しているレコードを残し、重複がないレコードはコレクションから削除
-        foreach ($photoNameList as $fileName => $photoInfoArray) {
+        foreach ($photoNameList as $photoInfoArray) {
             if (count($photoInfoArray) === 1) {
                 unset($photoList[$photoInfoArray[0]['index']]);
             } else {
-                // 作成日を全てUnixタイムスタンプに変換
-                $createdAtArr = array_map(
-                    "strtotime",
-                    array_column($photoInfoArray, "created_at")
-                );
+                $createdAtArr = array_column($photoInfoArray, "created_at");
                 //Unixタイムスタンプを基に写真配列を降順に並び替える
                 array_multisort(
                     $createdAtArr,
@@ -188,9 +196,9 @@ class PhotoService
     /**
      * 重複する写真を検索（１つの写真が対象）
      *
-     * @param Collection $fileList
+     * @param Collection<Photo> $fileList
      * @param string $fileName
-     * @return Collection
+     * @return Collection<Photo>
      * @throws Exception
      */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection

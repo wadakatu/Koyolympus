@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\Models\Like;
 use App\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LikeTest extends TestCase
 {
@@ -112,6 +113,26 @@ class LikeTest extends TestCase
 
     /**
      * @test
+     * @return void
+     */
+    public function addLikeNew()
+    {
+        $photoId = 'abc';
+        $this->assertDatabaseMissing(
+            Like::getModel()->getTable(),
+            ['photo_id' => $photoId, 'likes' => 1, 'all_likes' => 1]
+        );
+
+        $this->like->addLike($photoId);
+
+        $this->assertDatabaseHas(
+            Like::getModel()->getTable(),
+            ['photo_id' => $photoId, 'likes' => 1, 'all_likes' => 1]
+        );
+    }
+
+    /**
+     * @test
      */
     public function subLikeSingleRequest()
     {
@@ -179,12 +200,52 @@ class LikeTest extends TestCase
         $this->like->subLike($target->photo_id);
 
         $expectedLikes = 0;
-        $expectedAllLikes = -1;
+        $expectedAllLikes = 0;
         $this->assertDatabaseHas(
             'likes',
             ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
         );
         $this->assertDatabaseHas('likes', $notTarget->getAttributes());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function subLikeIfLikesBelowZero()
+    {
+        $target = factory(Like::class)->create(['likes' => -1, 'all_likes' => 5,]);
+        $notTarget = factory(Like::class)->create(['likes' => 100, 'all_likes' => 110,]);
+
+        $this->like->subLike($target->photo_id);
+
+        $expectedLikes = 0;
+        $expectedAllLikes = 5;
+        $this->assertDatabaseHas(
+            Like::getModel()->getTable(),
+            ['photo_id' => $target->photo_id, 'likes' => $expectedLikes, 'all_likes' => $expectedAllLikes]
+        );
+        $this->assertDatabaseHas('likes', $notTarget->getAttributes());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function subLikeNew()
+    {
+        $photoId = 'abc';
+        $this->assertDatabaseMissing(
+            Like::getModel()->getTable(),
+            ['photo_id' => $photoId, 'likes' => 0, 'all_likes' => 0]
+        );
+
+        $this->like->subLike($photoId);
+
+        $this->assertDatabaseHas(
+            Like::getModel()->getTable(),
+            ['photo_id' => $photoId, 'likes' => 0, 'all_likes' => 0]
+        );
     }
 
     /**
@@ -207,6 +268,17 @@ class LikeTest extends TestCase
         $this->assertDatabaseMissing('likes', ['likes' => 10, 'all_likes' => 100]);
         $this->assertDatabaseHas('likes', $result);
         $this->assertDatabaseHas('likes', ['likes' => 20, 'all_likes' => 200]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function saveByPhotoIdFail()
+    {
+        $this->expectException(ModelNotFoundException::class);
+
+        $this->like->saveByPhotoId('abc', ['likes' => 10]);
     }
 
     public function providerSaveById(): array

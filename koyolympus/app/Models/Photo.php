@@ -110,10 +110,10 @@ class Photo extends Model
         $uniqueFilePath = $filePath . '/' . $uniqueFileName;
 
         $photo->fill([
-            'file_name' => $uniqueFileName,
-            'file_path' => $uniqueFilePath,
-            'genre' => $genre,
-        ]);
+                         'file_name' => $uniqueFileName,
+                         'file_path' => $uniqueFilePath,
+                         'genre' => $genre,
+                     ]);
 
         $photo->save();
 
@@ -137,7 +137,7 @@ class Photo extends Model
     /**
      * 作成日の降順に並べて写真情報を全て取得
      *
-     * @return Collection
+     * @return Collection<Photo>
      */
     public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {

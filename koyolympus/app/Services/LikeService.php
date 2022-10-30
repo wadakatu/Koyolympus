@@ -19,30 +19,26 @@ class LikeService
 {
     use LogTrait;
 
-    private $like;
+    private Like $like;
 
-    private $likeAggregate;
+    private LikeAggregate $likeAggregate;
 
     /* @var CarbonImmutable */
-    private $startAt;
+    private CarbonImmutable $startAt;
 
-    /* @var int */
-    private $dailyType;
+    /* @var int $dailyType */
+    private int $dailyType = 1;
 
-    /* @var int */
-    private $weeklyType;
+    /* @var int $weeklyType */
+    private int $weeklyType = 2;
 
-    /* @var int */
-    private $monthlyType;
+    /* @var int $monthlyType */
+    private int $monthlyType = 3;
 
     public function __construct(Like $like, LikeAggregate $likeAggregate)
     {
         $this->like = $like;
         $this->likeAggregate = $likeAggregate;
-
-        $this->dailyType = config('const.PHOTO_AGGREGATION.TYPE.DAILY');
-        $this->weeklyType = config('const.PHOTO_AGGREGATION.TYPE.WEEKLY');
-        $this->monthlyType = config('const.PHOTO_AGGREGATION.TYPE.MONTHLY');
     }
 
 
@@ -73,8 +69,10 @@ class LikeService
             return;
         }
 
+        /** @var array $record */
         foreach ($targetRecords->toArray() as $record) {
             DB::beginTransaction();
+            /** @var string $photoId */
             $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerForAggregation($record, $this->startAt, $this->startAt, $this->dailyType);
@@ -110,6 +108,10 @@ class LikeService
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastWeek, $endOfLastWeek, $this->dailyType);
 
         $this->outputLog('[いいね集計・週次]', '週次いいね集計 START');
+        /**
+         * @var string $photoId
+         * @var \Illuminate\Support\Collection<int, LikeAggregate> $records
+         */
         foreach ($targetRecords->groupBy('photo_id') as $photoId => $records) {
             DB::beginTransaction();
             try {
@@ -150,8 +152,10 @@ class LikeService
 
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastMonth, $endOfLastMonth, $this->weeklyType);
 
+        /** @var array $record */
         foreach ($targetRecords->toArray() as $record) {
             DB::beginTransaction();
+            /** @var string $photoId */
             $photoId = $record['photo_id'];
             try {
                 $this->likeAggregate->registerForAggregation(
@@ -227,13 +231,13 @@ class LikeService
     /**
      * 週毎のいいね数を更新
      *
-     * @param Collection $records
+     * @param \Illuminate\Support\Collection<int, LikeAggregate> $records
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @return void
      */
     public function updateForWeeklyAggregation(
-        Collection $records,
+        \Illuminate\Support\Collection $records,
         CarbonImmutable $startAt,
         CarbonImmutable $endAt
     ): void {

@@ -2,6 +2,7 @@
     <div class="col">
         <div class="card" v-if="!isOthers && isVisible">
             <card-component v-for="(value, index) in Object.entries(this.categories).slice(0,4)"
+                            :key="index"
                             :data-image="value[1].image"
                             :title="value[0]"
                             :msg="value[1].message"
@@ -10,6 +11,7 @@
         </div>
         <div class="card" v-else-if="isOthers && isVisible">
             <card-component v-for="(value, index) in Object.entries(this.categories).slice(4,8)"
+                            :key="index"
                             :data-image="value[1].image"
                             :title="value[0]"
                             :msg="value[1].message"

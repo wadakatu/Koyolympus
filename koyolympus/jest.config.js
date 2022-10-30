@@ -26,6 +26,7 @@ module.exports = async () => {
             "!**/coverage/**",
             "!**/resources/js/components/CardComponent.vue",
             "!**/resources/js/components/PhotoUpComponent.vue",
+            "unnecessary"
         ]
     };
 };

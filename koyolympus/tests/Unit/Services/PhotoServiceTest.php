@@ -401,7 +401,7 @@ class PhotoServiceTest extends TestCase
                             [
                                 'id' => 'id04',
                                 'file_name' => '4.fake2.jpeg',
-                                'created_at' => '2021-01-01 00:00:00'
+                                'created_at' => null
                             ]
                         ),
                         //duplicate record.
@@ -459,7 +459,7 @@ class PhotoServiceTest extends TestCase
                             [
                                 'id' => 'id04',
                                 'file_name' => '4.fake1.jpeg',
-                                'created_at' => '2021-01-01 00:00:03'
+                                'created_at' => null
                             ]
                         ),
                         //duplicate record.

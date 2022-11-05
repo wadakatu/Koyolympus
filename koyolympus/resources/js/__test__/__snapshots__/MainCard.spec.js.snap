@@ -1,0 +1,263 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing SnapShot SnapShot of main cards 1`] = `
+<div
+  class="col"
+>
+  <div
+    class="card"
+  >
+    <div
+      class="card_container"
+      style="background-image: url(/images/yellow.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Landscape
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            The landscape are there, and I just take them thoroughly.
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(/images/cat.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Animal
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            If you want to be a better animal photographer, stand in front of more animals.
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(/images/portrait.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Portrait
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            The whole point of taking portraits is so that I can see how far people have come.
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(/images/wine.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Others
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            The Earth is art, The photographer is only a witness.
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Testing SnapShot SnapShot of others cards 1`] = `
+<div
+  class="col"
+>
+  <div
+    class="card"
+  >
+    <div
+      class="card_container"
+      style="background-image: url(/images/snapshot.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            SnapShot
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            It is more important to click with people than to click the shutter.
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(/images/livecomp.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Live Composite
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            Since I’m inarticulate, I express myself with images.
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(/images/film.jpeg);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            Pinhole/Film
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            Seeing is not enough, you have to feel what you photograph
+        
+        </div>
+      </div>
+    </div>
+    <div
+      class="card_container"
+      style="background-image: url(undefined);"
+    >
+      <div
+        class="overlay"
+      >
+        <div
+          class="items"
+        />
+         
+        <div
+          class="items head"
+        >
+          <p>
+            -&gt;Back
+          </p>
+           
+          <hr />
+        </div>
+         
+        <div
+          class="items cart"
+        >
+          
+            What you see is what you get.
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,916 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot chinese introduction 1`] = `
+<div
+  class="col"
+>
+  <h1
+    class="aboutMe"
+  >
+    About me
+  </h1>
+   
+  <div
+    class="select"
+    tabindex="1"
+  >
+    <input
+      checked="checked"
+      class="selectopt"
+      id="opt1"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt1"
+    >
+      日本語
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt2"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt2"
+    >
+      English
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt3"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt3"
+    >
+      French
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt4"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt4"
+    >
+      한국말
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt5"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt5"
+    >
+      中文
+    </label>
+  </div>
+   
+  <div
+    class="intro"
+  >
+    <p
+      class="question"
+    >
+      
+            我的名字
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            磯野公耀
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            我的地址
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            日本东京 埼玉县
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            年龄/标志/生日
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            22岁/白羊座/三月三十号
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            我的爱好
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            摄影/公路车/电竞游戏
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            我的相机
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            OLYMPUS PEN-F/OMD EM-1 MarkⅡ
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            我的格言
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Fake it until you make it.
+        
+    </p>
+  </div>
+   
+  <button
+    class="top_button"
+  >
+    TOPへ
+  </button>
+</div>
+`;
+
+exports[`Testing snapshot default [japanese introduction] 1`] = `
+<div
+  class="col"
+>
+  <h1
+    class="aboutMe"
+  >
+    About me
+  </h1>
+   
+  <div
+    class="select"
+    tabindex="1"
+  >
+    <input
+      checked="checked"
+      class="selectopt"
+      id="opt1"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt1"
+    >
+      日本語
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt2"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt2"
+    >
+      English
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt3"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt3"
+    >
+      French
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt4"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt4"
+    >
+      한국말
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt5"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt5"
+    >
+      中文
+    </label>
+  </div>
+   
+  <div
+    class="intro"
+  >
+    <p
+      class="question"
+    >
+      
+            名前
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            磯野 公耀
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            生息地
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            東京都と埼玉県の狭間
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            年齢/星座/誕生日
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            22歳/おひつじ座/3月30日
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            趣味
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            カメラ/ロードバイク/ゲーム
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            私のカメラ
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            OLYMPUS PEN-F/OMD EM-1 MarkⅡ
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            座右の銘
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Fake it until you make it.
+        
+    </p>
+  </div>
+   
+  <button
+    class="top_button"
+  >
+    TOPへ
+  </button>
+</div>
+`;
+
+exports[`Testing snapshot english introduction 1`] = `
+<div
+  class="col"
+>
+  <h1
+    class="aboutMe"
+  >
+    About me
+  </h1>
+   
+  <div
+    class="select"
+    tabindex="1"
+  >
+    <input
+      checked="checked"
+      class="selectopt"
+      id="opt1"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt1"
+    >
+      日本語
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt2"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt2"
+    >
+      English
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt3"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt3"
+    >
+      French
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt4"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt4"
+    >
+      한국말
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt5"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt5"
+    >
+      中文
+    </label>
+  </div>
+   
+  <div
+    class="intro"
+  >
+    <p
+      class="question"
+    >
+      
+            My Name
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Koyo Isono
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            My Address
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Japan, between Tokyo and Saitama Pref.
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            My Age/Zodiac sign/Birthday
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            22-year-old / Aries / March 30th
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            My interest
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Camera / Road Bike / Video game
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            My Camera
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            OLYMPUS PEN-F / OMD EM-1 MarkⅡ
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            My Motto
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Fake it until you make it.
+        
+    </p>
+  </div>
+   
+  <button
+    class="top_button"
+  >
+    TOPへ
+  </button>
+</div>
+`;
+
+exports[`Testing snapshot french introduction 1`] = `
+<div
+  class="col"
+>
+  <h1
+    class="aboutMe"
+  >
+    About me
+  </h1>
+   
+  <div
+    class="select"
+    tabindex="1"
+  >
+    <input
+      checked="checked"
+      class="selectopt"
+      id="opt1"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt1"
+    >
+      日本語
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt2"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt2"
+    >
+      English
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt3"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt3"
+    >
+      French
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt4"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt4"
+    >
+      한국말
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt5"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt5"
+    >
+      中文
+    </label>
+  </div>
+   
+  <div
+    class="intro"
+  >
+    <p
+      class="question"
+    >
+      
+            Mon Nom
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Koyo Isono
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            Mon Adresse
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Japan, entre Tokyo et Saitama.
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            Mon Âge/Signe du zodiaque/Anniversaire
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            22 ans / Le Bélier / Le 30 Mars
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            Mes centres d’intérêt
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Caméra / Vélo de route / Jeu vidéo
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            Ma caméra
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            OLYMPUS PEN-F / OMD EM-1 MarkⅡ
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            Ma devise
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            Tout est dans l'attitude
+        
+    </p>
+  </div>
+   
+  <button
+    class="top_button"
+  >
+    TOPへ
+  </button>
+</div>
+`;
+
+exports[`Testing snapshot korean introduction 1`] = `
+<div
+  class="col"
+>
+  <h1
+    class="aboutMe"
+  >
+    About me
+  </h1>
+   
+  <div
+    class="select"
+    tabindex="1"
+  >
+    <input
+      checked="checked"
+      class="selectopt"
+      id="opt1"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt1"
+    >
+      日本語
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt2"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt2"
+    >
+      English
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt3"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt3"
+    >
+      French
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt4"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt4"
+    >
+      한국말
+    </label>
+     
+    <input
+      class="selectopt"
+      id="opt5"
+      name="test"
+      type="radio"
+    />
+     
+    <label
+      class="option"
+      for="opt5"
+    >
+      中文
+    </label>
+  </div>
+   
+  <div
+    class="intro"
+  >
+    <p
+      class="question"
+    >
+      
+            이르
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            코요 이소노
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            주소
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            일본, 도쿄와 사이타마 현 사이
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            나이/ 별자리/ 생일
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            22살 / 양자리 / 3월 30일
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            취미
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            사진 찍기 / 로드 바이킹 / 비디오 게임
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            내 카메라
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            올림푸스 PEN-F/ OMD EM-1 MarkⅡ
+        
+    </p>
+    <p
+      class="question"
+    >
+      
+            내 좌우명
+        
+    </p>
+    <p
+      class="answer"
+    >
+      
+            될 때까지 부딫혀보자.
+        
+    </p>
+  </div>
+   
+  <button
+    class="top_button"
+  >
+    TOPへ
+  </button>
+</div>
+`;

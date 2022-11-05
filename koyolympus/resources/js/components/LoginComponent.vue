@@ -1,14 +1,14 @@
 <template>
-    <form action="/api/login" method="post" class="wrapper" @submit.prevent="login">
+    <form class="wrapper" @submit.prevent="login">
         <div class="contact-form">
             <div class="input-fields">
                 <input type="email" class="input" name="email" placeholder="Email" v-model="loginForm.email" required>
-                <div v-if="loginErrors" class="errors">
-                    <div class="error_text" v-for="msg in loginErrors.email" :key="msg">{{ msg }}}</div>
+                <div v-if="Object.keys(loginErrors).length" class="errors">
+                    <div class="error_text" v-for="msg in loginErrors.email" :key="msg">{{ msg }}</div>
                 </div>
                 <input type="password" class="input" name="password" placeholder="Password"
                        v-model="loginForm.password" required>
-                <div v-if="loginErrors" class="errors">
+                <div v-if="Object.keys(loginErrors).length" class="errors">
                     <div class="error_text" v-for="msg in loginErrors.password" :key="msg">{{ msg }}</div>
                 </div>
             </div>
@@ -25,7 +25,6 @@ export default {
     name: "LoginComponent.vue",
     data() {
         return {
-            errors: {},
             loginForm: {
                 email: '',
                 password: '',
@@ -45,7 +44,6 @@ export default {
             await this.$router.push('/login')
         },
         reset() {
-            console.log('reset done.');
             Object.assign(this.$data, this.$options.data.call(this));
         },
         clearError() {

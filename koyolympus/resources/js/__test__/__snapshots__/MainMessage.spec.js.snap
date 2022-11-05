@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing SnapShot Default 1`] = `
+<div
+  class="col"
+>
+  <div
+    class="profile"
+  >
+    <h1
+      class="title"
+    >
+      Koyolympus
+    </h1>
+     
+    <p
+      class="description"
+    >
+      
+            Photography is a means of capturing and preserving the instant that doesn't come twice.
+            That's why I cannot stop exploring the world with my camera gear to cut out the exact moment
+            that I would like to keep as it is.
+        
+    </p>
+     
+    <button
+      class="photo_button"
+    >
+      Explore My Photo
+    </button>
+  </div>
+</div>
+`;

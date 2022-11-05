@@ -15,7 +15,7 @@ class LikeRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -25,17 +25,25 @@ class LikeRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'id' => 'required|string|uuid',
         ];
     }
 
+    /**
+     * バリデーション失敗時の処理
+     *
+     * @param Validator $validator
+     * @return void
+     */
     protected function failedValidation(Validator $validator)
     {
+        /** @var string $id */
         $id = $this->get('id');
-        Log::info("[Requested ID: $id] " . __('messages.PHOTO.INVALID_UUID'));
+        Log::info("[Requested ID: $id]");
+        Log::info(trans('messages.PHOTO.INVALID_UUID'));
         abort(404);
     }
 }

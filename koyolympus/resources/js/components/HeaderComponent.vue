@@ -39,21 +39,12 @@ export default {
     components: {
         'hamburger-menu-component': () => import('./HamburgerMenuComponent'),
     },
-    data: () => {
-        return {
-            showSidebars: false,
-        }
-    },
     methods: {
-        showNav() {
-            this.showSidebars = this.showSidebars === false;
-        },
         photo() {
             let url = '/photo/random';
             this.$store.commit('photo/setUrl', url);
             this.$store.commit('photo/setGenre', null);
-            this.$router.push({name: 'photo.random'}).catch(err => {
-            });
+            this.$router.push({name: 'photo.random'}).catch(err => {});
         },
     },
 }
@@ -65,7 +56,7 @@ export default {
     padding: 3vh 8vw 0 8vw;
     display: flex;
     align-items: center;
-    z-index: 999;
+    z-index: 1;
 }
 
 .logo {

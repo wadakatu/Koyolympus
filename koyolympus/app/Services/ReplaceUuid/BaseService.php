@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\ReplaceUuid;
 
+use Illuminate\Database\Eloquent\Collection;
 use App\Exceptions\Model\ModelUpdateFailedException;
 use App\Exceptions\S3\S3MoveFailedException;
 use App\Models\Photo;
@@ -14,8 +15,9 @@ use Storage;
 
 class BaseService
 {
-    private $photo;
-    private $publicDir;
+    private Photo $photo;
+
+    private string $publicDir;
 
     public function __construct(Photo $photo)
     {
@@ -34,6 +36,7 @@ class BaseService
     public function includeUuidInRecord(): void
     {
         //写真情報を全件取得
+        /** @var Collection<Photo> $photoList */
         $photoList = $this->photo::all();
 
         //一件ずつ写真情報を取り出す。
@@ -112,6 +115,7 @@ class BaseService
         $disk = Storage::disk('s3');
 
         //ジャンルからS3ファイルパスを取得
+        /** @var string $filePath */
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
         //古い写真をS3からローカルにダウンロード

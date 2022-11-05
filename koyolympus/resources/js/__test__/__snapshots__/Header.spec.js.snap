@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<div
+  class="navbar"
+>
+  <a>
+    <img
+      alt="myLogo"
+      class="logo"
+      src="/images/mylogo_white.png"
+    />
+  </a>
+   
+  <nav>
+    <ul>
+      <li
+        class="about_me"
+      >
+        <a
+          href=""
+        >
+          <a>
+            About Me
+          </a>
+        </a>
+      </li>
+       
+      <li
+        class="photo"
+      >
+        <a
+          href=""
+        >
+          <a>
+            Photography
+          </a>
+        </a>
+      </li>
+       
+      <li
+        class="biz"
+      >
+        <a>
+          <a>
+            Biz Inquiries
+          </a>
+        </a>
+      </li>
+       
+      <li
+        class="more_menu"
+      >
+        <div
+          class="dropdown"
+        >
+          <a
+            class="dropbtn"
+          >
+            More
+            <i
+              class="fa fa-caret-down"
+            />
+          </a>
+           
+          <div
+            class="dropdown-content"
+          >
+            <a
+              href="https://koyolympus.thebase.in/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              E-Commerce
+            </a>
+             
+            <a
+              href="https://www.facebook.com/koyolympus/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Facebook
+            </a>
+             
+            <a
+              href="https://github.com/wadakatu/koyolympus"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              GitHub
+            </a>
+             
+            <a
+              href="https://www.instagram.com/wadakatu1234/?hl=ja"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Instagram
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </nav>
+   
+  <div
+    class="hamburger"
+    id="menuArea"
+  >
+    <input
+      id="menuToggle"
+      type="checkbox"
+    />
+     
+    <label
+      class="menuOpen"
+      for="menuToggle"
+    >
+      <span
+        class="open"
+      />
+    </label>
+     
+    <div
+      class="menu menuEffects"
+    >
+      <label
+        for="menuToggle"
+      />
+       
+      <div
+        class="menuContent"
+      >
+        <ul>
+          <li>
+            <a>
+              About Me
+            </a>
+          </li>
+           
+          <li>
+            <a>
+              Photography
+            </a>
+          </li>
+           
+          <li>
+            <a>
+              Biz Inquiries
+            </a>
+          </li>
+           
+          <li>
+            <a
+              href="https://koyolympus.thebase.in/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              E-Commerce
+                    
+            </a>
+          </li>
+           
+          <li>
+            <a
+              href="https://www.facebook.com/koyolympus/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              
+                        Facebook
+                    
+            </a>
+          </li>
+           
+          <li>
+            <a
+              href="https://github.com/wadakatu/koyolympus"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              GitHub
+                    
+            </a>
+          </li>
+           
+          <li>
+            <a
+              href="https://www.instagram.com/wadakatu1234/?hl=ja"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Instagram
+                    
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+`;

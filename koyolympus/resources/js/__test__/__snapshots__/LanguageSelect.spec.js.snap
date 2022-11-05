@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<div
+  class="select"
+  tabindex="1"
+>
+  <input
+    checked="checked"
+    class="selectopt"
+    id="opt1"
+    name="test"
+    type="radio"
+  />
+   
+  <label
+    class="option"
+    for="opt1"
+  >
+    日本語
+  </label>
+   
+  <input
+    class="selectopt"
+    id="opt2"
+    name="test"
+    type="radio"
+  />
+   
+  <label
+    class="option"
+    for="opt2"
+  >
+    English
+  </label>
+   
+  <input
+    class="selectopt"
+    id="opt3"
+    name="test"
+    type="radio"
+  />
+   
+  <label
+    class="option"
+    for="opt3"
+  >
+    French
+  </label>
+   
+  <input
+    class="selectopt"
+    id="opt4"
+    name="test"
+    type="radio"
+  />
+   
+  <label
+    class="option"
+    for="opt4"
+  >
+    한국말
+  </label>
+   
+  <input
+    class="selectopt"
+    id="opt5"
+    name="test"
+    type="radio"
+  />
+   
+  <label
+    class="option"
+    for="opt5"
+  >
+    中文
+  </label>
+</div>
+`;

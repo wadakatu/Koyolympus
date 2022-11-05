@@ -1,4 +1,5 @@
 .idea/
+/coverage/*
 /node_modules
 /public/js
 /public/css/app.css.gz
@@ -21,7 +22,6 @@
 /public/image
 .env
 .env.backup
-.env.example
 .gitattributes
 .phpunit.result.cache
 .styleci.yml

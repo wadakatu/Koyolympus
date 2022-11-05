@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<div
+  id="menuArea"
+>
+  <input
+    id="menuToggle"
+    type="checkbox"
+  />
+   
+  <label
+    class="menuOpen"
+    for="menuToggle"
+  >
+    <span
+      class="open"
+    />
+  </label>
+   
+  <div
+    class="menu menuEffects"
+  >
+    <label
+      for="menuToggle"
+    />
+     
+    <div
+      class="menuContent"
+    >
+      <ul>
+        <li>
+          <a>
+            About Me
+          </a>
+        </li>
+         
+        <li>
+          <a>
+            Photography
+          </a>
+        </li>
+         
+        <li>
+          <a>
+            Biz Inquiries
+          </a>
+        </li>
+         
+        <li>
+          <a
+            href="https://koyolympus.thebase.in/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            E-Commerce
+                    
+          </a>
+        </li>
+         
+        <li>
+          <a
+            href="https://www.facebook.com/koyolympus/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            
+                        Facebook
+                    
+          </a>
+        </li>
+         
+        <li>
+          <a
+            href="https://github.com/wadakatu/koyolympus"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            GitHub
+                    
+          </a>
+        </li>
+         
+        <li>
+          <a
+            href="https://www.instagram.com/wadakatu1234/?hl=ja"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Instagram
+                    
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

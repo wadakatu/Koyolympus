@@ -1,0 +1,359 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<section
+  class="contact"
+>
+  <div
+    class="container"
+  >
+    <div
+      class="contactForm"
+    >
+      <form
+        action="./api/bizinq/send"
+        method="post"
+      >
+        <input
+          name="_token"
+          type="hidden"
+          value="abc"
+        />
+         
+        <h1
+          class="biz_title"
+        >
+          Biz Inquiries
+        </h1>
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="name"
+            placeholder=" "
+            required="required"
+            type="text"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Your name
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="email"
+            placeholder=" "
+            required="required"
+            type="email"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Email
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <div
+          class="inputBox"
+        >
+          <textarea
+            class="params_textarea"
+            name="opinion"
+            placeholder=" "
+            required="required"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Type your thoughts...
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <!---->
+         
+        <!---->
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="sub_inq"
+            type="submit"
+            value="Send"
+          />
+           
+          <input
+            class="mov_home"
+            type="button"
+            value="Home"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Testing snapshot fail to send inquiry with validation error 1`] = `
+<section
+  class="contact"
+>
+  <div
+    class="container"
+  >
+    <div
+      class="contactForm"
+    >
+      <form
+        action="./api/bizinq/send"
+        method="post"
+      >
+        <input
+          name="_token"
+          type="hidden"
+          value="abc"
+        />
+         
+        <h1
+          class="biz_title"
+        >
+          Biz Inquiries
+        </h1>
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="name"
+            placeholder=" "
+            required="required"
+            type="text"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Your name
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        >
+          name is required.
+        </div>
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="email"
+            placeholder=" "
+            required="required"
+            type="email"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Email
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        >
+          email should be valid format.
+        </div>
+         
+        <div
+          class="inputBox"
+        >
+          <textarea
+            class="params_textarea"
+            name="opinion"
+            placeholder=" "
+            required="required"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Type your thoughts...
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        >
+          opinion should be string.
+        </div>
+         
+        <!---->
+         
+        <!---->
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="sub_inq"
+            type="submit"
+            value="Send"
+          />
+           
+          <input
+            class="mov_home"
+            type="button"
+            value="Home"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`Testing snapshot succeed to send inquiry 1`] = `
+<section
+  class="contact"
+>
+  <div
+    class="container"
+  >
+    <div
+      class="contactForm"
+    >
+      <form
+        action="./api/bizinq/send"
+        method="post"
+      >
+        <input
+          name="_token"
+          type="hidden"
+          value="abc"
+        />
+         
+        <h1
+          class="biz_title"
+        >
+          Biz Inquiries
+        </h1>
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="name"
+            placeholder=" "
+            required="required"
+            type="text"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Your name
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="params_input"
+            name="email"
+            placeholder=" "
+            required="required"
+            type="email"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Email
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <div
+          class="inputBox"
+        >
+          <textarea
+            class="params_textarea"
+            name="opinion"
+            placeholder=" "
+            required="required"
+          />
+           
+          <span
+            class="params_name"
+          >
+            Type your thoughts...
+          </span>
+        </div>
+         
+        <div
+          class="error_text"
+        />
+         
+        <!---->
+         
+        <div
+          class="alert-success"
+        >
+          Thank you for getting in touch!
+        </div>
+         
+        <div
+          class="inputBox"
+        >
+          <input
+            class="sub_inq"
+            type="submit"
+            value="Send"
+          />
+           
+          <input
+            class="mov_home"
+            type="button"
+            value="Home"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+`;

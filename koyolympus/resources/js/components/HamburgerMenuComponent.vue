@@ -3,13 +3,13 @@
         <input type="checkbox" id="menuToggle"/>
 
         <label for="menuToggle" class="menuOpen">
-            <div class="open"></div>
+            <span class="open"></span>
         </label>
 
         <div class="menu menuEffects">
             <label for="menuToggle"></label>
-            <div class="menuContent">
-                <ul @click="close">
+            <div class="menuContent" @click="close">
+                <ul>
                     <li>
                         <router-link v-bind:to="{name: 'about.me'}">About Me</router-link>
                     </li>
@@ -52,18 +52,10 @@ export default {
             let url = '/photo/random';
             this.$store.commit('photo/setUrl', url);
             this.$store.commit('photo/setGenre', null);
-            this.$router.push({name: 'photo.random'}).catch(err => {
-            });
-            this.close();
+            this.$router.push({name: 'photo.random'}).catch(err => {});
         },
         close() {
-            const target = document.getElementById('menuToggle');
-            const menus = document.querySelectorAll('.menuContent ul li');
-            menus.forEach(function (menu) {
-                menu.addEventListener('click', function () {
-                    target.checked = false;
-                });
-            });
+            document.getElementById('menuToggle').checked = false;
         }
     },
 }

@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing SnapShot all three button exist 1`] = `
+<div
+  class="pagination"
+>
+  <a>
+    <button
+      class="button prev"
+    >
+      « prev
+    </button>
+  </a>
+   
+  <button
+    class="button home"
+    style="background-color: transparent;"
+  >
+    HOME
+    
+  </button>
+   
+  <a>
+    <button
+      class="button next"
+    >
+      next »
+    </button>
+  </a>
+</div>
+`;
+
+exports[`Testing SnapShot home and next button exist 1`] = `
+<div
+  class="pagination"
+>
+  <!---->
+   
+  <button
+    class="button home"
+    style="background-color: transparent;"
+  >
+    HOME
+    
+  </button>
+   
+  <a>
+    <button
+      class="button next"
+    >
+      next »
+    </button>
+  </a>
+</div>
+`;
+
+exports[`Testing SnapShot home and prev button exist 1`] = `
+<div
+  class="pagination"
+>
+  <a>
+    <button
+      class="button prev"
+    >
+      « prev
+    </button>
+  </a>
+   
+  <button
+    class="button home"
+    style="background-color: transparent;"
+  >
+    HOME
+    
+  </button>
+   
+  <!---->
+</div>
+`;
+
+exports[`Testing SnapShot only home button exist 1`] = `
+<div
+  class="pagination"
+>
+  <!---->
+   
+  <button
+    class="button home"
+    style="background-color: transparent;"
+  >
+    HOME
+    
+  </button>
+   
+  <!---->
+</div>
+`;

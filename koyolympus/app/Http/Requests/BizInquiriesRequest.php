@@ -15,7 +15,7 @@ class BizInquiriesRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -25,7 +25,7 @@ class BizInquiriesRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => 'required|string|max:20',
@@ -34,6 +34,12 @@ class BizInquiriesRequest extends FormRequest
         ];
     }
 
+    /**
+     * バリデーション失敗時の処理
+     *
+     * @param Validator $validator
+     * @return void
+     */
     protected function failedValidation(Validator $validator)
     {
         $response['status'] = 400;

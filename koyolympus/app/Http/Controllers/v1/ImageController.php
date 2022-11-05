@@ -9,6 +9,7 @@ use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\PhotoService;
@@ -23,7 +24,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImageController extends Controller
 {
-    private $photoService;
+    private PhotoService $photoService;
 
     public function __construct(PhotoService $photoService)
     {
@@ -31,18 +32,23 @@ class ImageController extends Controller
     }
 
     /**
-     * S3内の写真のパスを全て取得する。(10件ごとのページネーション)
+     * S3内の全写真取得処理
+     * (10件ごとのページネーション)
+     *
      * @param GetPhotoRequest $request
      * @return LengthAwarePaginator
      */
     public function getPhoto(GetPhotoRequest $request): LengthAwarePaginator
     {
+        /** @var string $genre */
         $genre = $request->input('genre');
         return $this->photoService->getAllPhoto($genre);
     }
 
     /**
-     * S3内の写真のパスをランダムに全て取得する。
+     * S3内の全写真取得処理
+     * (ランダム)
+     *
      * @return Collection
      */
     public function getRandomPhoto(): Collection
@@ -51,12 +57,13 @@ class ImageController extends Controller
     }
 
     /**
-     * 写真パスを基にS3から写真を取得
+     * 写真パスを基にS3から写真取得
+     *
      * @param Photo $photo
-     * @return Application|ResponseFactory|Response
+     * @return Response
      * @throws FileNotFoundException
      */
-    public function downloadPhoto(Photo $photo)
+    public function downloadPhoto(Photo $photo): Response
     {
         $storage = Storage::disk('s3');
 
@@ -69,23 +76,25 @@ class ImageController extends Controller
     }
 
     /**
-     * 写真をS3に、写真のパス・名前・ジャンルをDBにアップロードする
+     * 写真をS3に、写真のパス・名前・ジャンルをDBにアップロード
      * @param Request $request
      * @return JsonResponse
      * @throws Exception
      */
     public function uploadPhoto(Request $request): JsonResponse
     {
+        /** @var UploadedFile $file */
         $file = $request->file;
         $fileName = $file->getClientOriginalName();
-        $genre = (int)$request->input('genre');
+        /** @var string $genre */
+        $genre = $request->input('genre');
 
         DB::beginTransaction();
 
         try {
             Log::debug('ファイルのアップロード開始');
-            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, $genre);
-            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, $genre);
+            $uniqueFileName = $this->photoService->uploadPhotoDataToDB($fileName, (int)$genre);
+            $this->photoService->uploadPhotoToS3($file, $uniqueFileName, (int)$genre);
             DB::commit();
             Log::debug('ファイルのアップロード終了');
         } catch (Exception $e) {

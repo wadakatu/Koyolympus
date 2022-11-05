@@ -1,0 +1,51 @@
+{
+    "Landscape": {
+        "genre": 1,
+        "name": "photo.landscape",
+        "url": "/photo/landscape",
+        "message": "The landscape are there, and I just take them thoroughly.",
+        "image": "/images/yellow.jpeg"
+    },
+    "Animal": {
+        "genre": 2,
+        "name": "photo.animal",
+        "url": "/photo/animal",
+        "message": "If you want to be a better animal photographer, stand in front of more animals.",
+        "image": "/images/cat.jpeg"
+    },
+    "Portrait": {
+        "genre": 3,
+        "name": "photo.portrait",
+        "url": "/photo/portrait",
+        "message": "The whole point of taking portraits is so that I can see how far people have come.",
+        "image": "/images/portrait.jpeg"
+    },
+    "Others": {
+        "message": "The Earth is art, The photographer is only a witness.",
+        "image": "/images/wine.jpeg"
+    },
+    "SnapShot": {
+        "genre": 4,
+        "name": "photo.snapshot",
+        "url": "/photo/others/snapshot",
+        "message": "It is more important to click with people than to click the shutter.",
+        "image": "/images/snapshot.jpeg"
+    },
+    "Live Composite": {
+        "genre": 5,
+        "name": "photo.livecomposite",
+        "url": "/photo/others/livecomposite",
+        "message": "Since I’m inarticulate, I express myself with images.",
+        "image": "/images/livecomp.jpeg"
+    },
+    "Pinhole/Film": {
+        "genre": 6,
+        "name": "photo.pinfilm",
+        "url": "/photo/others/pinfilm",
+        "message": "Seeing is not enough, you have to feel what you photograph",
+        "image": "/images/film.jpeg"
+    },
+    "->Back": {
+        "message": "What you see is what you get."
+    }
+}

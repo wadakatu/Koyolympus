@@ -13,39 +13,36 @@ describe('Testing method', () => {
 describe('Testing click', () => {
     let wrapper;
     let selects;
+    let inputs;
     beforeEach(() => {
         wrapper = shallowMount(Component);
         wrapper.vm.changeLang = jest.fn();
-        selects = wrapper.findAll('a.lang_detail');
+        inputs = wrapper.findAll('input.selectopt');
+        selects = wrapper.findAll('label.option');
     });
     test('click Japanese', () => {
-        const target = selects.at(0);
-        target.trigger('click');
-        expect(target.text()).toBe('日本語');
+        inputs.at(0).trigger('click');
+        expect(selects.at(0).text()).toBe('日本語');
         expect(wrapper.vm.changeLang).toHaveBeenCalled();
     });
     test('click English', () => {
-        const target = selects.at(1);
-        target.trigger('click');
-        expect(target.text()).toBe('English');
+        inputs.at(1).trigger('click');
+        expect(selects.at(1).text()).toBe('English');
         expect(wrapper.vm.changeLang).toHaveBeenCalled();
     });
     test('click French', () => {
-        const target = selects.at(2);
-        target.trigger('click');
-        expect(target.text()).toBe('French');
+        inputs.at(2).trigger('click');
+        expect(selects.at(2).text()).toBe('French');
         expect(wrapper.vm.changeLang).toHaveBeenCalled();
     });
     test('click Korean', () => {
-        const target = selects.at(3);
-        target.trigger('click');
-        expect(target.text()).toBe('한국말');
+        inputs.at(3).trigger('click');
+        expect(selects.at(3).text()).toBe('한국말');
         expect(wrapper.vm.changeLang).toHaveBeenCalled();
     });
     test('click Chinese', () => {
-        const target = selects.at(4);
-        target.trigger('click');
-        expect(target.text()).toBe('中文');
+        inputs.at(4).trigger('click');
+        expect(selects.at(4).text()).toBe('中文');
         expect(wrapper.vm.changeLang).toHaveBeenCalled();
     });
 });

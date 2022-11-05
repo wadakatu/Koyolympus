@@ -1,15 +1,16 @@
 <template>
-    <ul class="language" ontouchstart="">
-        <li class="language_title"><a>Language</a>
-            <ul class="language_ul">
-                <li class="lang"><a @click="changeLang('japanese')" class="lang_detail">日本語</a></li>
-                <li class="lang"><a @click="changeLang('english')" class="lang_detail">English</a></li>
-                <li class="lang"><a @click="changeLang('french')" class="lang_detail">French</a></li>
-                <li class="lang"><a @click="changeLang('korean')" class="lang_detail">한국말</a></li>
-                <li class="lang"><a @click="changeLang('chinese')" class="lang_detail">中文</a></li>
-            </ul>
-        </li>
-    </ul>
+    <div class="select" tabindex="1">
+        <input class="selectopt" name="test" type="radio" id="opt1" checked>
+        <label for="opt1" class="option" @click="changeLang('japanese')">日本語</label>
+        <input class="selectopt" name="test" type="radio" id="opt2">
+        <label for="opt2" class="option" @click="changeLang('english')">English</label>
+        <input class="selectopt" name="test" type="radio" id="opt3">
+        <label for="opt3" class="option" @click="changeLang('french')">French</label>
+        <input class="selectopt" name="test" type="radio" id="opt4">
+        <label for="opt4" class="option" @click="changeLang('korean')">Korean</label>
+        <input class="selectopt" name="test" type="radio" id="opt5">
+        <label for="opt5" class="option" @click="changeLang('chinese')">Chinese</label>
+    </div>
 </template>
 
 <script>
@@ -25,77 +26,79 @@ export default {
 
 <style scoped>
 
-.language {
-    margin-right: 0;
-    margin-left: auto;
-    width: 75px;
-    background-color: #1a5293;
-    color: #fff;
+.select {
+    display: flex;
+    flex-direction: column;
     position: relative;
-    list-style-type: none;
-    font-size: 15px;
-    padding: 5px;
-    z-index: 990;
+    width: 120px;
+    height: 40px;
+    margin-left: auto;
+    border-radius: 20px;
 }
 
-.language_title {
-    width: 25%;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-.lang_detail {
-    display: block;
-    margin: 0;
-    color: #fff;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 1;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 13px 15px;
-    background: #1a5293;
-    text-align: center;
-}
-
-.language_ul {
-    list-style: none;
+.option {
+    padding: 0 30px 0 10px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    background: #3f3e3e;
+    border-top: white solid 1px;
     position: absolute;
-    top: 100%;
-    left: 0;
-    margin: 0;
-    padding: 0;
-}
-
-.lang {
+    top: 0;
+    width: 100%;
+    pointer-events: none;
+    order: 2;
+    z-index: 1;
+    transition: background .4s ease-in-out;
+    box-sizing: border-box;
     overflow: hidden;
-    width: 75px;
+    white-space: nowrap;
+    color: white;
+}
+
+.option:hover {
+    background: #1f1f1f;
+}
+
+.select:focus .option {
+    position: relative;
+    pointer-events: all;
+}
+
+input {
+    opacity: 0;
+    position: absolute;
+    left: -99999px;
+}
+
+input:checked + label {
+    order: 1;
+    z-index: 2;
+    background: #3f3e3e;
+    border-top: none;
+    position: relative;
+}
+
+input:checked + label:after {
+    content: '';
+    width: 0;
     height: 0;
-    color: #fff;
-    -moz-transition: .2s;
-    -webkit-transition: .2s;
-    -o-transition: .2s;
-    -ms-transition: .2s;
-    transition: .2s;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid white;
+    position: absolute;
+    right: 10px;
+    top: calc(50% - 2.5px);
+    pointer-events: none;
+    z-index: 3;
 }
 
-.language_title:hover > a {
-    background: #1a5293;
-    color: #e0dc62;
-}
-
-.language_title:hover .lang {
-    overflow: visible;
-    height: 38px;
-    border-bottom: 1px solid #fff;
-}
-
-.language_title:hover .lang:first-child {
-    border-top: 0;
-}
-
-.language_title:hover .lang:last-child {
-    border-bottom: 0;
+input:checked + label:before {
+    position: absolute;
+    right: 0;
+    height: 40px;
+    width: 40px;
+    content: '';
+    background: #3f3e3e;
 }
 </style>

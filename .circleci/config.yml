@@ -157,7 +157,7 @@ jobs:
       - run:
           name: run jest
           working_directory: koyolympus
-          command: npm test
+          command: node_modules/jest/bin/jest.js
 
   deploy:
     executor:

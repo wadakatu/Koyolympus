@@ -147,7 +147,7 @@ jobs:
             ./cc-test-reporter format-coverage clover.xml --add-prefix koyolympus -t clover -o codeclimate.json
             ./cc-test-reporter upload-coverage -i codeclimate.json
   jest:
-    excutor:
+    executor:
       name: php-node
     steps:
       - checkout

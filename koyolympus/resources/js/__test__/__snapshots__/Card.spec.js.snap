@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing snapshot default 1`] = `
+<div
+  class="card_container"
+  style="background-image: url(/images/snapshot.jpeg);"
+>
+  <div
+    class="overlay"
+  >
+    <div
+      class="items"
+    />
+     
+    <div
+      class="items head"
+    >
+      <p>
+        snapshot_title
+      </p>
+       
+      <hr />
+    </div>
+     
+    <div
+      class="items cart"
+    >
+      
+            snapshot_msg
+        
+    </div>
+  </div>
+</div>
+`;

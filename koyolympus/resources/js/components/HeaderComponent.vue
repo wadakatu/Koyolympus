@@ -39,21 +39,12 @@ export default {
     components: {
         'hamburger-menu-component': () => import('./HamburgerMenuComponent'),
     },
-    data: () => {
-        return {
-            showSidebars: false,
-        }
-    },
     methods: {
-        showNav() {
-            this.showSidebars = this.showSidebars === false;
-        },
         photo() {
             let url = '/photo/random';
             this.$store.commit('photo/setUrl', url);
             this.$store.commit('photo/setGenre', null);
-            this.$router.push({name: 'photo.random'}).catch(err => {
-            });
+            this.$router.push({name: 'photo.random'}).catch(err => {});
         },
     },
 }

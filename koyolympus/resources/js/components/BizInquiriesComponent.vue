@@ -78,15 +78,16 @@ export default {
                             }
                         }
                         self.errors = errors;
+                        self.isPush = false;
                     });
             }
         },
         reset() {
             Object.assign(this.$data, this.$options.data.call(this));
         },
-        mounted() {
-            this.reset();
-        }
+    },
+    mounted() {
+        this.reset();
     }
 }
 </script>

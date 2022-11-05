@@ -29,7 +29,7 @@ jobs:
       - restore_cache:
           name: restore cache for composer
           keys:
-            - composer-cache-v1-{{ checksum "koyolympus/composer.json" }}
+            - composer-cache-v1-{{ checksum "koyolympus/composer.lock" }}
       - run:
           name: npm install
           command: |
@@ -93,7 +93,7 @@ jobs:
           working_directory: koyolympus
           command: vendor/bin/phpstan analyse
 
-  test:
+  phpunit:
     executor:
       name: php-mysql
     environment:
@@ -146,6 +146,20 @@ jobs:
             vendor/bin/phpunit --coverage-clover clover.xml
             ./cc-test-reporter format-coverage clover.xml --add-prefix koyolympus -t clover -o codeclimate.json
             ./cc-test-reporter upload-coverage -i codeclimate.json
+  jest:
+    executor:
+      name: php-node
+    steps:
+      - checkout
+      - run:
+          name: check npm
+          command: npm -v
+      - attach_workspace:
+          at: koyolympus/
+      - run:
+          name: run jest
+          working_directory: koyolympus
+          command: node_modules/jest/bin/jest.js
 
   deploy:
     executor:
@@ -182,7 +196,14 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test:
+      - phpunit:
+          context: koyolympus
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+      - jest:
           context: koyolympus
           requires:
             - build
@@ -195,7 +216,8 @@ workflows:
             - build
             - style-check
             - larastan
-            - test
+            - phpunit
+            - jest
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/

@@ -14,10 +14,12 @@
 </template>
 
 <script>
+import LikeComponent from './LikeComponent';
+
 export default {
     name: "PhotoModalComponent.vue",
     components: {
-        'like-component': () => import('./LikeComponent'),
+        'like-component': LikeComponent
     },
     props: {
         val: Object,

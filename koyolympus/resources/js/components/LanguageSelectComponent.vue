@@ -1,15 +1,15 @@
 <template>
     <div class="select" tabindex="1">
-        <input class="selectopt" name="test" type="radio" id="opt1" checked>
-        <label for="opt1" class="option" @click="changeLang('japanese')">日本語</label>
-        <input class="selectopt" name="test" type="radio" id="opt2">
-        <label for="opt2" class="option" @click="changeLang('english')">English</label>
-        <input class="selectopt" name="test" type="radio" id="opt3">
-        <label for="opt3" class="option" @click="changeLang('french')">French</label>
-        <input class="selectopt" name="test" type="radio" id="opt4">
-        <label for="opt4" class="option" @click="changeLang('korean')">Korean</label>
-        <input class="selectopt" name="test" type="radio" id="opt5">
-        <label for="opt5" class="option" @click="changeLang('chinese')">Chinese</label>
+        <input class="selectopt" name="test" type="radio" id="opt1" @click="changeLang('japanese')" checked>
+        <label for="opt1" class="option">日本語</label>
+        <input class="selectopt" name="test" type="radio" id="opt2" @click="changeLang('english')">
+        <label for="opt2" class="option">English</label>
+        <input class="selectopt" name="test" type="radio" id="opt3" @click="changeLang('french')">
+        <label for="opt3" class="option">French</label>
+        <input class="selectopt" name="test" type="radio" id="opt4" @click="changeLang('korean')">
+        <label for="opt4" class="option">한국말</label>
+        <input class="selectopt" name="test" type="radio" id="opt5" @click="changeLang('chinese')">
+        <label for="opt5" class="option">中文</label>
     </div>
 </template>
 

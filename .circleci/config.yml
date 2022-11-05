@@ -154,6 +154,8 @@ jobs:
       - run:
           name: check npm
           command: npm -v
+      - attach_workspace:
+          at: koyolympus/
       - run:
           name: run jest
           working_directory: koyolympus

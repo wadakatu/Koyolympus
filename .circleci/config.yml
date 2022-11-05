@@ -29,7 +29,7 @@ jobs:
       - restore_cache:
           name: restore cache for composer
           keys:
-            - composer-cache-v1-{{ checksum "koyolympus/composer.json" }}
+            - composer-cache-v1-{{ checksum "koyolympus/composer.lock" }}
       - run:
           name: npm install
           command: |

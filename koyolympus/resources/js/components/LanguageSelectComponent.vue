@@ -1,6 +1,6 @@
 <template>
     <div class="select-dropdown">
-        <select v-model="language" @change="changeLang">
+        <select v-model="language" @change="changeLang()">
             <option value="japanese">日本語</option>
             <option value="english">English</option>
             <option value="french">French</option>

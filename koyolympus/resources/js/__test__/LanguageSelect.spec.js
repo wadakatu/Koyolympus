@@ -4,46 +4,47 @@ import Component from '@/LanguageSelectComponent.vue';
 describe('Testing method', () => {
     test('Testing changeLang method', () => {
         const wrapper = shallowMount(Component);
-        wrapper.vm.changeLang('japanese');
+        wrapper.vm.changeLang();
         expect(wrapper.emitted('update')).not.toBeUndefined();
         expect(wrapper.emitted('update')[0][0]).toBe('japanese');
     });
 });
 
-describe('Testing click', () => {
+describe('Testing @ event', () => {
     let wrapper;
-    let selects;
-    let inputs;
+    let options;
     beforeEach(() => {
         wrapper = shallowMount(Component);
         wrapper.vm.changeLang = jest.fn();
-        inputs = wrapper.findAll('input.selectopt');
-        selects = wrapper.findAll('label.option');
+        options = wrapper.find('select').findAll('option');
     });
-    test('click Japanese', () => {
-        inputs.at(0).trigger('click');
-        expect(selects.at(0).text()).toBe('日本語');
-        expect(wrapper.vm.changeLang).toHaveBeenCalled();
-    });
-    test('click English', () => {
-        inputs.at(1).trigger('click');
-        expect(selects.at(1).text()).toBe('English');
-        expect(wrapper.vm.changeLang).toHaveBeenCalled();
-    });
-    test('click French', () => {
-        inputs.at(2).trigger('click');
-        expect(selects.at(2).text()).toBe('French');
-        expect(wrapper.vm.changeLang).toHaveBeenCalled();
-    });
-    test('click Korean', () => {
-        inputs.at(3).trigger('click');
-        expect(selects.at(3).text()).toBe('한국말');
-        expect(wrapper.vm.changeLang).toHaveBeenCalled();
-    });
-    test('click Chinese', () => {
-        inputs.at(4).trigger('click');
-        expect(selects.at(4).text()).toBe('中文');
-        expect(wrapper.vm.changeLang).toHaveBeenCalled();
+    describe('Testing change event', () => {
+        test('click Japanese', async () => {
+            await options.at(1).setSelected();
+            await options.at(0).setSelected();
+            expect(wrapper.vm.language).toBe('japanese');
+            expect(wrapper.vm.changeLang).toHaveBeenCalled();
+        });
+        test('click English', async () => {
+            await options.at(1).setSelected();
+            expect(wrapper.vm.language).toBe('english');
+            expect(wrapper.vm.changeLang).toHaveBeenCalled();
+        });
+        test('click French', async () => {
+            await options.at(2).setSelected();
+            expect(wrapper.vm.language).toBe('french');
+            expect(wrapper.vm.changeLang).toHaveBeenCalled();
+        });
+        test('click Korean', async () => {
+            await options.at(3).setSelected();
+            expect(wrapper.vm.language).toBe('korean');
+            expect(wrapper.vm.changeLang).toHaveBeenCalled();
+        });
+        test('click Chinese', async () => {
+            await options.at(4).setSelected();
+            expect(wrapper.vm.language).toBe('chinese');
+            expect(wrapper.vm.changeLang).toHaveBeenCalled();
+        });
     });
 });
 

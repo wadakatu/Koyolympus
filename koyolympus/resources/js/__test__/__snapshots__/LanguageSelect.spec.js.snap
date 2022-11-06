@@ -2,78 +2,38 @@
 
 exports[`Testing snapshot default 1`] = `
 <div
-  class="select"
-  tabindex="1"
+  class="select-dropdown"
 >
-  <input
-    checked="checked"
-    class="selectopt"
-    id="opt1"
-    name="test"
-    type="radio"
-  />
-   
-  <label
-    class="option"
-    for="opt1"
-  >
-    日本語
-  </label>
-   
-  <input
-    class="selectopt"
-    id="opt2"
-    name="test"
-    type="radio"
-  />
-   
-  <label
-    class="option"
-    for="opt2"
-  >
-    English
-  </label>
-   
-  <input
-    class="selectopt"
-    id="opt3"
-    name="test"
-    type="radio"
-  />
-   
-  <label
-    class="option"
-    for="opt3"
-  >
-    French
-  </label>
-   
-  <input
-    class="selectopt"
-    id="opt4"
-    name="test"
-    type="radio"
-  />
-   
-  <label
-    class="option"
-    for="opt4"
-  >
-    한국말
-  </label>
-   
-  <input
-    class="selectopt"
-    id="opt5"
-    name="test"
-    type="radio"
-  />
-   
-  <label
-    class="option"
-    for="opt5"
-  >
-    中文
-  </label>
+  <select>
+    <option
+      value="japanese"
+    >
+      日本語
+    </option>
+     
+    <option
+      value="english"
+    >
+      English
+    </option>
+     
+    <option
+      value="french"
+    >
+      French
+    </option>
+     
+    <option
+      value="korean"
+    >
+      한국말
+    </option>
+     
+    <option
+      value="chinese"
+    >
+      中文
+    </option>
+  </select>
 </div>
 `;

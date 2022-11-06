@@ -1,104 +1,84 @@
 <template>
-    <div class="select" tabindex="1">
-        <input class="selectopt" name="test" type="radio" id="opt1" @click="changeLang('japanese')" checked>
-        <label for="opt1" class="option">日本語</label>
-        <input class="selectopt" name="test" type="radio" id="opt2" @click="changeLang('english')">
-        <label for="opt2" class="option">English</label>
-        <input class="selectopt" name="test" type="radio" id="opt3" @click="changeLang('french')">
-        <label for="opt3" class="option">French</label>
-        <input class="selectopt" name="test" type="radio" id="opt4" @click="changeLang('korean')">
-        <label for="opt4" class="option">한국말</label>
-        <input class="selectopt" name="test" type="radio" id="opt5" @click="changeLang('chinese')">
-        <label for="opt5" class="option">中文</label>
+    <div class="select-dropdown">
+        <select v-model="language" @change="changeLang()">
+            <option value="japanese">日本語</option>
+            <option value="english">English</option>
+            <option value="french">French</option>
+            <option value="korean">한국말</option>
+            <option value="chinese">中文</option>
+        </select>
     </div>
 </template>
 
 <script>
 export default {
     name: "LanguageSelectComponent.vue",
+    data: () => ({
+        language: 'japanese'
+    }),
     methods: {
-        changeLang(lang) {
-            this.$emit('update', lang);
+        changeLang() {
+            this.$emit('update', this.language);
         }
     },
 }
 </script>
 
 <style scoped>
-
-.select {
-    display: flex;
-    flex-direction: column;
+.select-dropdown,
+.select-dropdown * {
+    margin: 0;
+    padding: 0;
     position: relative;
-    width: 120px;
-    height: 40px;
-    margin-left: auto;
-    border-radius: 20px;
-}
-
-.option {
-    padding: 0 30px 0 10px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    background: #3f3e3e;
-    border-top: white solid 1px;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    pointer-events: none;
-    order: 2;
-    z-index: 1;
-    transition: background .4s ease-in-out;
     box-sizing: border-box;
-    overflow: hidden;
-    white-space: nowrap;
-    color: white;
 }
 
-.option:hover {
-    background: #1f1f1f;
-}
-
-.select:focus .option {
+.select-dropdown {
+    width: 100px;
+    margin-left: auto;
     position: relative;
-    pointer-events: all;
+    background-color: #E6E6E6;
+    border-radius: 4px;
 }
 
-input {
-    opacity: 0;
+.select-dropdown select {
+    font-size: 1rem;
+    font-weight: normal;
+    min-width: 100%;
+    padding: 8px 24px 8px 10px;
+    border: none;
+    background-color: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.select-dropdown select:active, .select-dropdown select:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.select-dropdown:after {
+    content: "";
     position: absolute;
-    left: -99999px;
-}
-
-input:checked + label {
-    order: 1;
-    z-index: 2;
-    background: #3f3e3e;
-    border-top: none;
-    position: relative;
-}
-
-input:checked + label:after {
-    content: '';
+    top: 50%;
+    right: 8px;
     width: 0;
     height: 0;
-    border-left: 5px solid transparent;
+    margin-top: -2px;
+    border-top: 5px solid #aaa;
     border-right: 5px solid transparent;
-    border-top: 5px solid white;
-    position: absolute;
-    right: 10px;
-    top: calc(50% - 2.5px);
-    pointer-events: none;
-    z-index: 3;
+    border-left: 5px solid transparent;
 }
 
-input:checked + label:before {
-    position: absolute;
-    right: 0;
-    height: 40px;
-    width: 40px;
-    content: '';
-    background: #3f3e3e;
+@media screen and (max-width: 810px) {
+    .select-dropdown {
+        width: 80px;
+        height: 25px;
+    }
+
+    .select-dropdown select {
+        padding: 4px 8px 0 10px;
+    }
 }
 </style>

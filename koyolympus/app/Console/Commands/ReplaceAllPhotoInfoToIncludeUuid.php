@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\ReplaceUuid\BaseService;
-use Error;
+use Throwable;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Services\ReplaceUuid\BaseService;
 
 class ReplaceAllPhotoInfoToIncludeUuid extends Command
 {
@@ -54,7 +54,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
             $this->replaceUuIdService->includeUuidInRecord();
             DB::commit();
             return;
-        } catch (Error | Exception $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             report($e);
             $this->error(get_class($e) . '：' . $e->getMessage());

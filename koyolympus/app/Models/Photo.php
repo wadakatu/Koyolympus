@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\Traits\DateFormat;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class Photo extends Model
 {
+    use DateFormat;
+
     protected $guarded = [];
     protected $appends = [
         'url',

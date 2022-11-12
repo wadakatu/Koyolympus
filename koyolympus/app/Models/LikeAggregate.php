@@ -6,12 +6,15 @@ namespace App\Models;
 
 use DB;
 use Carbon\CarbonImmutable;
+use App\Models\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class LikeAggregate extends Model
 {
+    use DateFormat;
+
     protected $guarded = ['id'];
 
     /**
@@ -52,7 +55,6 @@ class LikeAggregate extends Model
         CarbonImmutable $endAt,
         int $type
     ): Builder {
-
         if ($type === config('const.PHOTO_AGGREGATION.TYPE.DAILY') && $startAt->month !== $endAt->month) {
             $query->addSelect(DB::raw('month(start_at) as carry_over'));
         }
@@ -73,9 +75,9 @@ class LikeAggregate extends Model
             ->join('likes', 'likes.photo_id', '=', 'like_aggregates.photo_id')
             ->forAggregation($startAt, $endAt, $type)
             ->select([
-                'like_aggregates.photo_id',
-                DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
-            ])
+                         'like_aggregates.photo_id',
+                         DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
+                     ])
             ->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)
             ->groupBy(['like_aggregates.photo_id', DB::raw("month(start_at)")])
             ->get();
@@ -97,12 +99,12 @@ class LikeAggregate extends Model
         int $type
     ): void {
         self::query()->create([
-            'photo_id' => $likeInfo['photo_id'],
-            'aggregate_type' => $type,
-            'likes' => $likeInfo['likes'],
-            'start_at' => $startAt,
-            'end_at' => $endAt
-        ]);
+                                  'photo_id' => $likeInfo['photo_id'],
+                                  'aggregate_type' => $type,
+                                  'likes' => $likeInfo['likes'],
+                                  'start_at' => $startAt,
+                                  'end_at' => $endAt
+                              ]);
     }
 
     /**

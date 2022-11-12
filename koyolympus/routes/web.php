@@ -15,7 +15,7 @@ Route::get('/{any}', function () {
     return view('index');
 })->where('any', '.*');
 
-Auth::routes();
+//Auth::routes();
 
 Route::get('/photos/{photo}/download', 'v1\ImageController@downloadPhoto')->name('download.photo');
 

@@ -6,12 +6,14 @@ namespace App\Models;
 
 use DB;
 use Exception;
+use App\Models\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use App\Exceptions\Model\ModelUpdateFailedException;
 
 class Like extends Model
 {
+    use DateFormat;
+
     protected $guarded = ['id'];
 
     /**

@@ -10,10 +10,12 @@ use App\Models\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LikeAggregate extends Model
 {
     use DateFormat;
+    use HasFactory;
 
     protected $guarded = ['id'];
 

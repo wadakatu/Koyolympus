@@ -1,17 +1,28 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+declare(strict_types=1);
 
-use Faker\Generator as Faker;
-use App\Models\LikeAggregate;
+namespace Database\Factories;
 
-$factory->define(LikeAggregate::class, function (Faker $faker) {
-    return [
-        'photo_id' => Str::random(12),
-        'aggregate_type' => $faker->numberBetween(1, 3),
-        'likes' => $faker->numberBetween(0, 500),
-        'status' => $faker->numberBetween(0, 1),
-        'start_at' => $faker->date(),
-        'end_at' => $faker->date()
-    ];
-});
+use Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class LikeAggregateFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'photo_id' => Str::random(12),
+            'aggregate_type' => $this->faker->numberBetween(1, 3),
+            'likes' => $this->faker->numberBetween(0, 500),
+            'status' => $this->faker->numberBetween(0, 1),
+            'start_at' => $this->faker->date(),
+            'end_at' => $this->faker->date()
+        ];
+    }
+}

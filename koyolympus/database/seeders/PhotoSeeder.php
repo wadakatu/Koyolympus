@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Database\Seeders;
+
+use DB;
+use Storage;
+use Exception;
+use Throwable;
 use App\Models\Photo;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;

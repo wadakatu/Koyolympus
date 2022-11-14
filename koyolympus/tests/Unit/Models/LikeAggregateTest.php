@@ -34,7 +34,7 @@ class LikeAggregateTest extends TestCase
      */
     public function scopeForAggregation($params, $expected)
     {
-        factory(LikeAggregate::class)->create($params['like_aggregates']);
+        LikeAggregate::factory()->create($params['like_aggregates']);
 
         $result = $this->likeAggregate
             ->query()
@@ -191,7 +191,7 @@ class LikeAggregateTest extends TestCase
         $endAt = CarbonImmutable::parse('2021-02-06');
         $type = 1;
 
-        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+        LikeAggregate::factory()->create(['start_at' => '2021-05-01']);
 
         $query = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type);
 
@@ -212,7 +212,7 @@ class LikeAggregateTest extends TestCase
         $startAt = CarbonImmutable::parse($params['start_at']);
         $endAt = CarbonImmutable::parse($params['end_at']);
 
-        factory(LikeAggregate::class)->create(['start_at' => '2021-05-01']);
+        LikeAggregate::factory()->create(['start_at' => '2021-05-01']);
 
         $result = $this->likeAggregate->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $params['type'])->get();
 
@@ -266,8 +266,8 @@ class LikeAggregateTest extends TestCase
      */
     public function getForAggregationSingle($params, $expected)
     {
-        factory(Like::class)->create($params['likes']);
-        factory(LikeAggregate::class)->create($params['like_aggregates']);
+        Like::factory()->create($params['likes']);
+        LikeAggregate::factory()->create($params['like_aggregates']);
 
         $result = $this->likeAggregate->getForAggregation(
             CarbonImmutable::parse($params['start_at']),
@@ -426,10 +426,10 @@ class LikeAggregateTest extends TestCase
     {
         $photoIdForSum = 'test_sum';
 
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photoIdForSum,
                                      ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photoIdForSum,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -437,7 +437,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => '2021-01-08',
                                                   'end_at' => '2021-01-14',
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photoIdForSum,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -469,16 +469,16 @@ class LikeAggregateTest extends TestCase
         $photo2 = 'photo2';
         $photo3 = 'photo3';
 
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photo1
                                      ]);
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photo2
                                      ]);
 
         //１週間全部のレコード
         for ($i = 1; $i <= 7; $i++) {
-            factory(LikeAggregate::class)->create([
+            LikeAggregate::factory()->create([
                                                       'photo_id' => $photo1,
                                                       'aggregate_type' => 1,
                                                       'status' => 0,
@@ -489,7 +489,7 @@ class LikeAggregateTest extends TestCase
         }
 
         //1週間の内三日分
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -497,7 +497,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => '2021-01-01',
                                                   'end_at' => '2021-01-01',
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -505,7 +505,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => '2021-01-04',
                                                   'end_at' => '2021-01-04',
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -515,7 +515,7 @@ class LikeAggregateTest extends TestCase
                                               ]);
 
         //取得できない（join先なし）
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo3,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -551,12 +551,12 @@ class LikeAggregateTest extends TestCase
     {
         $photo1 = 'photo1';
 
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photo1
                                      ]);
 
         //１週間全部のレコード
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -564,7 +564,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => '2021-02-27',
                                                   'end_at' => '2021-02-27',
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 1,
                                                   'status' => 0,
@@ -573,7 +573,7 @@ class LikeAggregateTest extends TestCase
                                                   'end_at' => '2021-02-28',
                                               ]);
         for ($i = 1; $i <= 5; $i++) {
-            factory(LikeAggregate::class)->create([
+            LikeAggregate::factory()->create([
                                                       'photo_id' => $photo1,
                                                       'aggregate_type' => 1,
                                                       'status' => 0,
@@ -607,15 +607,15 @@ class LikeAggregateTest extends TestCase
         $photo2 = 'photo2';
         $photo3 = 'photo3';
 
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photo1
                                      ]);
-        factory(Like::class)->create([
+        Like::factory()->create([
                                          'photo_id' => $photo2
                                      ]);
 
         //1ヶ月分の全週間レコード（週の初め1日パターン）
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -623,7 +623,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-01",
                                                   'end_at' => "2021-01-07",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -631,7 +631,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-08",
                                                   'end_at' => "2021-01-14",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -639,7 +639,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-15",
                                                   'end_at' => "2021-01-21",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -647,7 +647,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-22",
                                                   'end_at' => "2021-01-28",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo1,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -657,7 +657,7 @@ class LikeAggregateTest extends TestCase
                                               ]);
 
         //３週間弱分レコード（週の初めが前月パターン）
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -665,7 +665,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-01",
                                                   'end_at' => "2021-01-03",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -673,7 +673,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => "2021-01-04",
                                                   'end_at' => "2021-01-10",
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo2,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -683,7 +683,7 @@ class LikeAggregateTest extends TestCase
                                               ]);
 
         //取得できない（join先なし）
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $photo3,
                                                   'aggregate_type' => 2,
                                                   'status' => 0,
@@ -717,10 +717,10 @@ class LikeAggregateTest extends TestCase
      */
     public function getForAggregationGroupBy()
     {
-        $photo1 = factory(Like::class)->create();
-        $photo2 = factory(Like::class)->create();
+        $photo1 = Like::factory()->create();
+        $photo2 = Like::factory()->create();
 
-        factory(LikeAggregate::class, 2)->create(
+        LikeAggregate::factory()->count(2)->create(
             [
                 'photo_id' => $photo1->photo_id,
                 'start_at' => '2021-01-01',
@@ -730,7 +730,7 @@ class LikeAggregateTest extends TestCase
                 'status' => 0
             ]
         );
-        factory(LikeAggregate::class)->create(
+        LikeAggregate::factory()->create(
             [
                 'photo_id' => $photo2->photo_id,
                 'start_at' => '2021-02-01',
@@ -740,7 +740,7 @@ class LikeAggregateTest extends TestCase
                 'status' => 0
             ]
         );
-        factory(LikeAggregate::class)->create(
+        LikeAggregate::factory()->create(
             [
                 'photo_id' => $photo2->photo_id,
                 'start_at' => '2021-03-01',
@@ -806,7 +806,7 @@ class LikeAggregateTest extends TestCase
         $endAt = CarbonImmutable::parse('2021-01-01');
         $type = 1;
 
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $targetId,
                                                   'aggregate_type' => 1,
                                                   'likes' => 10,
@@ -814,7 +814,7 @@ class LikeAggregateTest extends TestCase
                                                   'start_at' => '2021-01-01',
                                                   'end_at' => '2021-01-01',
                                               ]);
-        factory(LikeAggregate::class)->create([
+        LikeAggregate::factory()->create([
                                                   'photo_id' => $notTargetId,
                                                   'aggregate_type' => 1,
                                                   'likes' => 10,

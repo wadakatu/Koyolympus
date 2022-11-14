@@ -197,7 +197,7 @@ class PhotoServiceTest extends TestCase
         $genre = 1;
         $expected = new Collection(
             [
-                factory(Photo::class)->make(
+                Photo::factory()->make(
                     [
                         'file_name' => $fileName,
                         'genre' => $genre
@@ -233,7 +233,7 @@ class PhotoServiceTest extends TestCase
     {
         $fileName = 'id1.fake.jpeg';
         $genre = 1;
-        $expected = factory(Photo::class, 2)->make(
+        $expected = Photo::factory()->count(2)->make(
             [
                 'file_name' => $fileName,
                 'genre' => $genre
@@ -269,7 +269,7 @@ class PhotoServiceTest extends TestCase
             ->andReturn(
                 new Collection(
                     [
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id01',
                                 'file_name' => 'id01.fake1.jpeg',
@@ -277,21 +277,21 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget = factory(Photo::class)->make(
+                        $duplicateTarget = Photo::factory()->make(
                             [
                                 'id' => 'id02',
                                 'file_name' => 'id02.fake1.jpeg',
                                 'created_at' => '2021-01-01 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id03',
                                 'file_name' => 'id03.fake2.jpeg',
                                 'created_at' => '2021-01-01 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id04',
                                 'file_name' => 'id04.fake3.jpeg',
@@ -318,7 +318,7 @@ class PhotoServiceTest extends TestCase
             ->andReturn(
                 new Collection(
                     [
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id01',
                                 'file_name' => '1.fake1.jpeg',
@@ -326,7 +326,7 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget1 = factory(Photo::class)->make(
+                        $duplicateTarget1 = Photo::factory()->make(
                             [
                                 'id' => 'id02',
                                 'file_name' => '2.fake1.jpeg',
@@ -334,21 +334,21 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget2 = factory(Photo::class)->make(
+                        $duplicateTarget2 = Photo::factory()->make(
                             [
                                 'id' => 'id03',
                                 'file_name' => '3.fake1.jpeg',
                                 'created_at' => '2021-01-01 00:00:01'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id04',
                                 'file_name' => '4.fake2.jpeg',
                                 'created_at' => '2021-01-01 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id05',
                                 'file_name' => '5.fake3.jpeg',
@@ -375,14 +375,14 @@ class PhotoServiceTest extends TestCase
             ->andReturn(
                 new Collection(
                     [
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id01',
                                 'file_name' => '1.fake3.jpeg',
                                 'created_at' => '2021-01-02 00:00:01'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id02',
                                 'file_name' => '2.fake1.jpeg',
@@ -390,14 +390,14 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget1 = factory(Photo::class)->make(
+                        $duplicateTarget1 = Photo::factory()->make(
                             [
                                 'id' => 'id03',
                                 'file_name' => '3.fake1.jpeg',
                                 'created_at' => '2021-01-01 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id04',
                                 'file_name' => '4.fake2.jpeg',
@@ -405,7 +405,7 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget2 = factory(Photo::class)->make(
+                        $duplicateTarget2 = Photo::factory()->make(
                             [
                                 'id' => 'id05',
                                 'file_name' => '5.fake3.jpeg',
@@ -432,7 +432,7 @@ class PhotoServiceTest extends TestCase
             ->andReturn(
                 new Collection(
                     [
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id01',
                                 'file_name' => '1.fake2.jpeg',
@@ -440,7 +440,7 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget1 = factory(Photo::class)->make(
+                        $duplicateTarget1 = Photo::factory()->make(
                             [
                                 'id' => 'id02',
                                 'file_name' => '2.fake2.jpeg',
@@ -448,14 +448,14 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget2 = factory(Photo::class)->make(
+                        $duplicateTarget2 = Photo::factory()->make(
                             [
                                 'id' => 'id03',
                                 'file_name' => '3.fake2.jpeg',
                                 'created_at' => '2021-01-02 00:00:02'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id04',
                                 'file_name' => '4.fake1.jpeg',
@@ -463,7 +463,7 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget3 = factory(Photo::class)->make(
+                        $duplicateTarget3 = Photo::factory()->make(
                             [
                                 'id' => 'id05',
                                 'file_name' => '5.fake1.jpeg',
@@ -471,14 +471,14 @@ class PhotoServiceTest extends TestCase
                             ]
                         ),
                         //duplicate record.
-                        $duplicateTarget4 = factory(Photo::class)->make(
+                        $duplicateTarget4 = Photo::factory()->make(
                             [
                                 'id' => 'id06',
                                 'file_name' => '6.fake1.jpeg',
                                 'created_at' => '2021-01-01 00:00:01'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id07',
                                 'file_name' => '7.fake3.jpeg',
@@ -512,21 +512,21 @@ class PhotoServiceTest extends TestCase
             ->andReturn(
                 new Collection(
                     [
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id01',
                                 'file_name' => '1.fake2.jpeg',
                                 'created_at' => '2021-01-05 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id02',
                                 'file_name' => '2.fake1.jpeg',
                                 'created_at' => '2021-01-01 00:00:00'
                             ]
                         ),
-                        factory(Photo::class)->make(
+                        Photo::factory()->make(
                             [
                                 'id' => 'id03',
                                 'file_name' => '3.fake3.jpeg',
@@ -552,14 +552,14 @@ class PhotoServiceTest extends TestCase
         $genre = 1;
         $allPhotos = new Collection(
             [
-                $duplicateTarget = factory(Photo::class)->make(
+                $duplicateTarget = Photo::factory()->make(
                     [
                         'id' => 'id01',
                         'file_name' => $fileName,
                         'genre' => $genre
                     ]
                 ),
-                factory(Photo::class)->make(
+                Photo::factory()->make(
                     [
                         'id' => 'id02',
                         'file_name' => 'id2.fake2.jpeg',
@@ -607,28 +607,28 @@ class PhotoServiceTest extends TestCase
         $genre = 1;
         $allPhotos = new Collection(
             [
-                $duplicateTarget1 = factory(Photo::class)->make(
+                $duplicateTarget1 = Photo::factory()->make(
                     [
                         'id' => 'id01',
                         'file_name' => $fileName,
                         'genre' => $genre,
                     ]
                 ),
-                factory(Photo::class)->make(
+                Photo::factory()->make(
                     [
                         'id' => 'id02',
                         'file_name' => 'fake2.jpeg',
                         'genre' => 2
                     ]
                 ),
-                $duplicateTarget2 = factory(Photo::class)->make(
+                $duplicateTarget2 = Photo::factory()->make(
                     [
                         'id' => 'id03',
                         'file_name' => $fileName,
                         'genre' => $genre,
                     ]
                 ),
-                $duplicateTarget3 = factory(Photo::class)->make(
+                $duplicateTarget3 = Photo::factory()->make(
                     [
                         'id' => 'id04',
                         'file_name' => $fileName,
@@ -672,21 +672,21 @@ class PhotoServiceTest extends TestCase
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection(
                 [
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id01',
                             'file_name' => 'id01.fake1.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id02',
                             'file_name' => 'id02.fake2.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id03',
                             'file_name' => 'id03.fake3.jpeg',
@@ -694,7 +694,7 @@ class PhotoServiceTest extends TestCase
                         ]
                     ),
                     //duplicate record.
-                    $duplicateTarget = factory(Photo::class)->make(
+                    $duplicateTarget = Photo::factory()->make(
                         [
                             'id' => 'id04',
                             'file_name' => 'id04.fake1.jpeg',
@@ -717,35 +717,35 @@ class PhotoServiceTest extends TestCase
         $actual = $this->photoService->searchDuplicatePhoto(
             new Collection(
                 [
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id01',
                             'file_name' => 'id01.fake1.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id02',
                             'file_name' => 'id02.fake2.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id03',
                             'file_name' => 'id03.fake3.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    $duplicateTarget1 = factory(Photo::class)->make(
+                    $duplicateTarget1 = Photo::factory()->make(
                         [
                             'id' => 'id04',
                             'file_name' => 'id04.fake1.jpeg',
                             'created_at' => '2021-01-01 00:00:00'
                         ]
                     ),
-                    $duplicateTarget2 = factory(Photo::class)->make(
+                    $duplicateTarget2 = Photo::factory()->make(
                         [
                             'id' => 'id05',
                             'file_name' => 'id05.fake1.jpeg',
@@ -779,21 +779,21 @@ class PhotoServiceTest extends TestCase
         $this->photoService->searchDuplicatePhoto(
             new Collection(
                 [
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id01',
                             'file_name' => 'id01.fake1.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id02',
                             'file_name' => 'id02.fake2.jpeg',
                             'created_at' => '2021-01-02 00:00:00'
                         ]
                     ),
-                    factory(Photo::class)->make(
+                    Photo::factory()->make(
                         [
                             'id' => 'id03',
                             'file_name' => 'id03.fake3.jpeg',

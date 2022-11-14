@@ -10,11 +10,13 @@ use App\Models\Traits\DateFormat;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class Photo extends Model
 {
     use DateFormat;
+    use HasFactory;
 
     protected $guarded = [];
     protected $appends = [

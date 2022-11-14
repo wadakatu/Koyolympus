@@ -1,16 +1,27 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+declare(strict_types=1);
 
-use App\Models\Like;
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(Like::class, function (Faker $faker) {
-    return [
-        'photo_id' => Str::random(12),
-        'likes' => $faker->numberBetween(1, 100),
-        'week_likes' => $faker->numberBetween(1, 100),
-        'month_likes' => $faker->numberBetween(1, 100),
-        'all_likes' => $faker->numberBetween(1, 100)
-    ];
-});
+use Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class LikeFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'photo_id' => Str::random(12),
+            'likes' => $this->faker->numberBetween(1, 100),
+            'week_likes' => $this->faker->numberBetween(1, 100),
+            'month_likes' => $this->faker->numberBetween(1, 100),
+            'all_likes' => $this->faker->numberBetween(1, 100)
+        ];
+    }
+}

@@ -34,7 +34,7 @@ class LikeTest extends TestCase
     public function getAllLikeFirst()
     {
         $allLikes = 500;
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'all_likes' => $allLikes
         ]);
 
@@ -46,7 +46,7 @@ class LikeTest extends TestCase
      */
     public function getAllLikeCreate()
     {
-        $likeRecord = factory(Like::class)->create([
+        $likeRecord = Like::factory()->create([
             'photo_id' => 'abc',
             'likes' => 100,
         ]);
@@ -64,11 +64,11 @@ class LikeTest extends TestCase
      */
     public function addLikeSingleRequest()
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 10,
             'all_likes' => 11,
         ]);
-        $notTarget = factory(Like::class)->create([
+        $notTarget = Like::factory()->create([
             'likes' => 100,
             'all_likes' => 110,
         ]);
@@ -89,11 +89,11 @@ class LikeTest extends TestCase
      */
     public function addLikeMultipleRequest()
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 10,
             'all_likes' => 11,
         ]);
-        $notTarget = factory(Like::class)->create([
+        $notTarget = Like::factory()->create([
             'likes' => 100,
             'all_likes' => 110,
         ]);
@@ -136,11 +136,11 @@ class LikeTest extends TestCase
      */
     public function subLikeSingleRequest()
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 11,
             'all_likes' => 12,
         ]);
-        $notTarget = factory(Like::class)->create([
+        $notTarget = Like::factory()->create([
             'likes' => 100,
             'all_likes' => 110,
         ]);
@@ -161,11 +161,11 @@ class LikeTest extends TestCase
      */
     public function subLikeMultipleRequest()
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 13,
             'all_likes' => 14,
         ]);
-        $notTarget = factory(Like::class)->create([
+        $notTarget = Like::factory()->create([
             'likes' => 100,
             'all_likes' => 110,
         ]);
@@ -188,11 +188,11 @@ class LikeTest extends TestCase
      */
     public function subLikeIfLikesZero()
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 0,
             'all_likes' => 0,
         ]);
-        $notTarget = factory(Like::class)->create([
+        $notTarget = Like::factory()->create([
             'likes' => 100,
             'all_likes' => 110,
         ]);
@@ -214,8 +214,8 @@ class LikeTest extends TestCase
      */
     public function subLikeIfLikesBelowZero()
     {
-        $target = factory(Like::class)->create(['likes' => -1, 'all_likes' => 5,]);
-        $notTarget = factory(Like::class)->create(['likes' => 100, 'all_likes' => 110,]);
+        $target = Like::factory()->create(['likes' => -1, 'all_likes' => 5,]);
+        $notTarget = Like::factory()->create(['likes' => 100, 'all_likes' => 110,]);
 
         $this->like->subLike($target->photo_id);
 
@@ -254,11 +254,11 @@ class LikeTest extends TestCase
      */
     public function saveByPhotoId($column, $result)
     {
-        $target = factory(Like::class)->create([
+        $target = Like::factory()->create([
             'likes' => 10,
             'all_likes' => 100,
         ]);
-        factory(Like::class)->create([
+        Like::factory()->create([
             'likes' => 20,
             'all_likes' => 200,
         ]);
@@ -323,8 +323,8 @@ class LikeTest extends TestCase
             'all_likes' => 250
         ];
 
-        factory(Like::class)->create($delete);
-        factory(Like::class)->create($notDelete);
+        Like::factory()->create($delete);
+        Like::factory()->create($notDelete);
 
         $this->assertDatabaseHas('likes', $delete);
         $this->assertDatabaseHas('likes', $notDelete);
@@ -343,14 +343,14 @@ class LikeTest extends TestCase
         $photoId = 'test_photo_id_1';
         $photoId2 = 'test_photo_id_2';
 
-        factory(Photo::class)->create(['id' => $photoId]);
-        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 0]);
-        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 1]);
-        factory(Like::class)->create(['photo_id' => $photoId, 'likes' => 1]);
-        factory(Like::class)->create(['photo_id' => 'abc', 'likes' => 1]);
+        Photo::factory()->create(['id' => $photoId]);
+        Like::factory()->create(['photo_id' => $photoId, 'likes' => 0]);
+        Like::factory()->create(['photo_id' => $photoId, 'likes' => 1]);
+        Like::factory()->create(['photo_id' => $photoId, 'likes' => 1]);
+        Like::factory()->create(['photo_id' => 'abc', 'likes' => 1]);
 
-        factory(Photo::class)->create(['id' => $photoId2]);
-        factory(Like::class)->create(['photo_id' => $photoId2, 'likes' => 10]);
+        Photo::factory()->create(['id' => $photoId2]);
+        Like::factory()->create(['photo_id' => $photoId2, 'likes' => 10]);
 
         $result = $this->like->getForDailyAggregation();
 

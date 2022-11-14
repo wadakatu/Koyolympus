@@ -78,13 +78,13 @@ class PhotoTest extends TestCase
      */
     public function getAllPhoto()
     {
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'genre' => '1',
         ]);
-        factory(Photo::class, 2)->create([
+        Photo::factory()->count(2)->create([
             'genre' => '2',
         ]);
-        factory(Photo::class, 3)->create([
+        Photo::factory()->count(3)->create([
             'genre' => '3',
         ]);
 
@@ -127,12 +127,12 @@ class PhotoTest extends TestCase
     {
         $id = 'abcdefghiasw';
         $fakeId = 'abcdefghijkl';
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'id' => $id,
             'file_name' => 'test.jpeg',
             'genre' => 1,
         ]);
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'id' => $fakeId,
             'file_name' => 'test2.jpeg',
             'genre' => 2,
@@ -152,15 +152,15 @@ class PhotoTest extends TestCase
      */
     public function getAllPhotoOrderByCreatedAtDesc()
     {
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'file_name' => 'test3.jpeg',
             'created_at' => '2021-01-01 00:00:00'
         ]);
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'file_name' => 'test2.jpeg',
             'created_at' => '2021-01-02 00:00:00'
         ]);
-        factory(Photo::class)->create([
+        Photo::factory()->create([
             'file_name' => 'test1.jpeg',
             'created_at' => '2021-01-01 00:00:01'
         ]);
@@ -180,7 +180,7 @@ class PhotoTest extends TestCase
      */
     public function getAllPhotoRandomly()
     {
-        factory(Photo::class, 5)->create();
+        Photo::factory()->count(5)->create();
 
         $result1 = $this->photo->getAllPhotoRandomly();
         $result2 = $this->photo->getAllPhotoRandomly();

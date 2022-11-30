@@ -7,7 +7,7 @@ export STATUS=400
 
 cd /var/www/koyolympus/koyolympus && php artisan down
 git checkout . && git fetch && git checkout $TAG
-composer install
+composer install --no-dev
 npm install && npm run prod
 sudo systemctl reload nginx && php artisan up && STATUS=`curl -LI https://koyolympus.gallery -o /dev/null -w '%{http_code}\n' -s`
 

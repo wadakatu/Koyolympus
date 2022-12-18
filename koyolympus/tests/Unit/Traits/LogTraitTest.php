@@ -23,11 +23,6 @@ class LogTraitTest extends TestCase
         };
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      */

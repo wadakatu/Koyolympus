@@ -9,8 +9,8 @@ use App\Mails\ThrowableMail;
 
 class ThrowableMailTest extends TestCase
 {
-    private $mail;
-    private $params;
+    private ThrowableMail $mail;
+    private array $params;
 
     protected function setUp(): void
     {
@@ -19,11 +19,6 @@ class ThrowableMailTest extends TestCase
         $this->params = ['subject' => 'test_mail', 'date' => '2021-01-01'];
 
         $this->mail = new ThrowableMail($this->params);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

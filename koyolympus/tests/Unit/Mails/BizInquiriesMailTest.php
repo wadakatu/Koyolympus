@@ -9,8 +9,8 @@ use App\Mails\BizInquiriesMail;
 
 class BizInquiriesMailTest extends TestCase
 {
-    private $mail;
-    private $params;
+    private BizInquiriesMail $mail;
+    private array $params;
 
     protected function setUp(): void
     {
@@ -19,11 +19,6 @@ class BizInquiriesMailTest extends TestCase
         $this->params = ['subject' => 'test_mail', 'date' => '2021-01-01'];
 
         $this->mail = new BizInquiriesMail($this->params);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

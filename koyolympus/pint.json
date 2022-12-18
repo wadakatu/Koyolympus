@@ -1,0 +1,10 @@
+{
+    "rules": {
+        "concat_space": {
+            "spacing": "one"
+        },
+        "binary_operator_spaces": {
+            "default": "align_single_space_minimal"
+        }
+    }
+}

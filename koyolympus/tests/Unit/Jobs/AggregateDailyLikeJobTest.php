@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Jobs;
 
-use Error;
-use Mockery;
-use Exception;
-use Tests\TestCase;
-use Carbon\CarbonImmutable;
-use App\Services\LikeService;
 use App\Jobs\AggregateDailyLikeJob;
+use App\Services\LikeService;
+use Carbon\CarbonImmutable;
+use Error;
+use Exception;
+use Mockery;
+use Tests\TestCase;
 
 class AggregateDailyLikeJobTest extends TestCase
 {
     private $job;
 
     private $likeService;
+
     private $startAt;
 
     protected function setUp(): void
@@ -26,30 +27,24 @@ class AggregateDailyLikeJobTest extends TestCase
         CarbonImmutable::setTestNow('2021-01-01 00:00:05');
 
         $this->likeService = Mockery::mock(LikeService::class);
-        $this->startAt = CarbonImmutable::now();
+        $this->startAt     = CarbonImmutable::now();
 
         $this->job = new AggregateDailyLikeJob($this->likeService, $this->startAt);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
+     *
      * @throws Exception
      */
     public function handle()
     {
         $this->likeService
-            ->shouldReceive('setCommandStartAt')
-            ->once()
+            ->expects('setCommandStartAt')
             ->with($this->startAt);
 
         $this->likeService
-            ->shouldReceive('aggregateLikeDaily')
-            ->once();
+            ->expects('aggregateLikeDaily');
 
         $this->job->handle();
     }
@@ -62,13 +57,11 @@ class AggregateDailyLikeJobTest extends TestCase
         $throwable = new Exception('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
-            ->once()
+            ->expects('outputThrowableLog')
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendThrowableMail')
-            ->once()
+            ->expects('sendThrowableMail')
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()
@@ -85,13 +78,11 @@ class AggregateDailyLikeJobTest extends TestCase
         $throwable = new Error('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
-            ->once()
+            ->expects('outputThrowableLog')
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendthrowableMail')
-            ->once()
+            ->expects('sendThrowableMail')
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()

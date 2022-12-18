@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use Throwable;
+use App\Services\ReplaceUuid\BaseService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Services\ReplaceUuid\BaseService;
+use Throwable;
 
 class ReplaceAllPhotoInfoToIncludeUuid extends Command
 {
@@ -43,6 +43,7 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
      * Execute the console command.
      *
      * @return void
+     *
      * @throws Exception
      */
     public function handle()
@@ -53,12 +54,14 @@ class ReplaceAllPhotoInfoToIncludeUuid extends Command
             DB::beginTransaction();
             $this->replaceUuIdService->includeUuidInRecord();
             DB::commit();
+
             return;
         } catch (Throwable $e) {
             DB::rollBack();
             report($e);
             $this->error(get_class($e) . '：' . $e->getMessage());
             $this->error('例外発生');
+
             return;
         } finally {
             $this->replaceUuIdService->deleteAllLocalPhoto();

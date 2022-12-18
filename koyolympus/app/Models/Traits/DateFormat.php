@@ -11,7 +11,7 @@ trait DateFormat
     /**
      * 配列／JSONシリアライズのためデータを準備する
      *
-     * @param \DateTimeInterface $date
+     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date): string

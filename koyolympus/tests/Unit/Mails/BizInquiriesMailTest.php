@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Mails;
 
-use Tests\TestCase;
 use App\Mails\BizInquiriesMail;
+use Tests\TestCase;
 
 class BizInquiriesMailTest extends TestCase
 {
-    private $mail;
-    private $params;
+    private BizInquiriesMail $mail;
+
+    private array $params;
 
     protected function setUp(): void
     {
@@ -19,11 +20,6 @@ class BizInquiriesMailTest extends TestCase
         $this->params = ['subject' => 'test_mail', 'date' => '2021-01-01'];
 
         $this->mail = new BizInquiriesMail($this->params);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

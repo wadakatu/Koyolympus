@@ -4,28 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Traits;
 
-use Tests\TestCase;
 use App\Traits\LogTrait;
 use Illuminate\Support\Facades\Log;
+use Tests\TestCase;
 
 class LogTraitTest extends TestCase
 {
     private $class;
+
     private $title = 'title';
+
     private $message = 'message';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->class = new class {
+        $this->class = new class
+        {
             use LogTrait;
         };
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

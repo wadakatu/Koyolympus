@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Log;
 class S3MoveFailedException extends Exception
 {
     private string $s3Path;
+
     private string $newS3Path;
 
-    public function __construct(string $s3Path, string $newS3Path, string $message = "")
+    public function __construct(string $s3Path, string $newS3Path, string $message = '')
     {
         parent::__construct($message);
-        $this->s3Path = $s3Path;
+        $this->s3Path    = $s3Path;
         $this->newS3Path = $newS3Path;
     }
 

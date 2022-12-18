@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Models\Traits\DateFormat;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class Photo extends Model
 {
@@ -19,22 +19,27 @@ class Photo extends Model
     use HasFactory;
 
     protected $guarded = [];
+
     protected $appends = [
         'url',
     ];
+
     protected $visible = [
         'id',
         'genre',
         'url',
     ];
+
     protected $perPage = 10;
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        if (!Arr::get($this->attributes, 'id')) {
+        if (! Arr::get($this->attributes, 'id')) {
             $this->setId();
         }
     }
@@ -72,8 +77,8 @@ class Photo extends Model
     /**
      * 全ての写真情報を取得（10件ごと）
      *
-     * @param string|null $genre
-     * @return LengthAwarePaginator
+     * @param  string|null  $genre
+     * @return LengthAwarePaginator<Photo>
      */
     public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
@@ -82,6 +87,7 @@ class Photo extends Model
         if (isset($genre)) {
             return $query->where('genre', $genre)->orderBy('created_at', 'desc')->paginate();
         }
+
         return $query
             ->orderBy('created_at', 'desc')->paginate();
     }
@@ -89,7 +95,7 @@ class Photo extends Model
     /**
      * ランダムに全ての写真情報を取得
      *
-     * @return Collection
+     * @return Collection<int, Photo>
      */
     public function getAllPhotoRandomly(): Collection
     {
@@ -101,9 +107,9 @@ class Photo extends Model
     /**
      * 写真情報を作成
      *
-     * @param string $fileName
-     * @param string $filePath
-     * @param int $genre
+     * @param  string  $fileName
+     * @param  string  $filePath
+     * @param  int  $genre
      * @return string
      */
     public function createPhotoInfo(string $fileName, string $filePath, int $genre): string
@@ -115,10 +121,10 @@ class Photo extends Model
         $uniqueFilePath = $filePath . '/' . $uniqueFileName;
 
         $photo->fill([
-                         'file_name' => $uniqueFileName,
-                         'file_path' => $uniqueFilePath,
-                         'genre' => $genre,
-                     ]);
+            'file_name' => $uniqueFileName,
+            'file_path' => $uniqueFilePath,
+            'genre'     => $genre,
+        ]);
 
         $photo->save();
 
@@ -128,8 +134,9 @@ class Photo extends Model
     /**
      * 写真情報を削除
      *
-     * @param string $id
+     * @param  string  $id
      * @return void
+     *
      * @throws \Exception
      */
     public function deletePhotoInfo(string $id)
@@ -142,7 +149,7 @@ class Photo extends Model
     /**
      * 作成日の降順に並べて写真情報を全て取得
      *
-     * @return Collection<Photo>
+     * @return Collection<int, Photo>
      */
     public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {

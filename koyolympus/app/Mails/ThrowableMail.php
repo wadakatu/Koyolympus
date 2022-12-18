@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Mails;
 
-use Illuminate\Mail\Mailable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class ThrowableMail extends Mailable
@@ -18,7 +18,7 @@ class ThrowableMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param array $params
+     * @param  array  $params
      */
     public function __construct(array $params)
     {

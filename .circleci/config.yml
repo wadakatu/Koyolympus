@@ -77,9 +77,9 @@ jobs:
       - attach_workspace:
           at: koyolympus/
       - run:
-          name: check PHP code style (PSR12)
+          name: check PHP code style
           working_directory: koyolympus
-          command: vendor/bin/phpcs --standard=phpcs.xml -p ./
+          command: vendor/bin/pint --test
 
   larastan:
     executor:

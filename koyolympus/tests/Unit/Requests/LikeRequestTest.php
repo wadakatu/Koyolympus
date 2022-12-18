@@ -4,26 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
 
-use Validator;
-use Exception;
-use Tests\TestCase;
-use Ramsey\Uuid\Uuid;
 use App\Http\Requests\LikeRequest;
+use Exception;
+use Ramsey\Uuid\Uuid;
+use Tests\TestCase;
+use Validator;
 
 class LikeRequestTest extends TestCase
 {
-    private $request;
+    private LikeRequest $request;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->request = new LikeRequest();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**
@@ -36,6 +31,7 @@ class LikeRequestTest extends TestCase
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function validationSuccess()
@@ -45,7 +41,7 @@ class LikeRequestTest extends TestCase
 
         $validation = Validator::make($data, $rule);
 
-        $result = $validation->passes();
+        $result   = $validation->passes();
         $messages = $validation->messages();
 
         $this->assertTrue($result);
@@ -55,6 +51,7 @@ class LikeRequestTest extends TestCase
     /**
      * @test
      * @dataProvider providerValidationError
+     *
      * @param $data
      * @param $expected
      */
@@ -64,7 +61,7 @@ class LikeRequestTest extends TestCase
 
         $validator = Validator::make($data, $rules);
 
-        $result = $validator->passes();
+        $result   = $validator->passes();
         $messages = $validator->messages();
 
         $this->assertFalse($result);
@@ -75,24 +72,24 @@ class LikeRequestTest extends TestCase
     {
         return [
             'idがnull' => [
-                'data' => ['id' => null],
+                'data'   => ['id' => null],
                 'expect' => [
                     'messageKey' => 'id',
-                    'message' => "The id field is required.",
+                    'message'    => 'The id field is required.',
                 ],
             ],
             'idが数字' => [
-                'data' => ['id' => 1],
+                'data'   => ['id' => 1],
                 'expect' => [
                     'messageKey' => 'id',
-                    'message' => "The id must be a string.",
+                    'message'    => 'The id must be a string.',
                 ],
             ],
             'idが文字列だがUUIDじゃない' => [
-                'data' => ['id' => 'abc'],
+                'data'   => ['id' => 'abc'],
                 'expect' => [
                     'messageKey' => 'id',
-                    'message' => "The id must be a valid UUID.",
+                    'message'    => 'The id must be a valid UUID.',
                 ],
             ],
         ];

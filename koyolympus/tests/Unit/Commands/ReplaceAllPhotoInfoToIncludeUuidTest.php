@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
+use App\Services\ReplaceUuid\BaseService;
 use DB;
 use Mockery;
 use Tests\TestCase;
-use App\Services\ReplaceUuid\BaseService;
 
 class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 {
@@ -21,11 +21,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         $this->app->instance(BaseService::class, $this->replaceUuidService);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * 例外なしの場合、サービスクラスが適切に呼び出されているかテスト
      *
@@ -36,8 +31,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
-            ->shouldReceive('includeUuidInRecord')
-            ->once();
+            ->expects('includeUuidInRecord');
         DB::shouldReceive('commit')->once();
 
         //catch statement.
@@ -45,15 +39,13 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 
         //finally statement.
         $this->replaceUuidService
-            ->shouldReceive('deleteAllLocalPhoto')
-            ->once()
+            ->expects('deleteAllLocalPhoto')
             ->andReturnTrue();
 
         $this->artisan('command:includeUuid')
             ->expectsOutput('UUID置換処理開始')
             ->expectsOutput('UUID置換処理終了');
     }
-
 
     /**
      * 例外ありの場合、その例外をcatchできているかテスト
@@ -65,8 +57,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
-            ->shouldReceive('includeUuidInRecord')
-            ->once()
+            ->expects('includeUuidInRecord')
             ->andThrow(new \Exception('エラー！'));
         DB::shouldReceive('commit')->never();
 
@@ -75,8 +66,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 
         //finally statement.
         $this->replaceUuidService
-            ->shouldReceive('deleteAllLocalPhoto')
-            ->once()
+            ->expects('deleteAllLocalPhoto')
             ->andReturnTrue();
 
         $this->artisan('command:includeUuid')

@@ -4,46 +4,44 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
-use DB;
-use Mockery;
-use Exception;
-use Carbon\Carbon;
-use Tests\TestCase;
-use App\Models\Like;
-use ReflectionException;
-use Carbon\CarbonImmutable;
 use App\Mails\ThrowableMail;
-use App\Traits\PrivateTrait;
+use App\Models\Like;
 use App\Models\LikeAggregate;
 use App\Services\LikeService;
-use Illuminate\Support\Facades\Mail;
+use App\Traits\PrivateTrait;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
+use DB;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
+use Mockery;
+use ReflectionException;
+use Tests\TestCase;
 
 class LikeServiceTest extends TestCase
 {
     use PrivateTrait;
 
     private $likeService;
+
     private $like;
+
     private $likeAggregate;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->like = Mockery::mock(Like::class);
+        $this->like          = Mockery::mock(Like::class);
         $this->likeAggregate = Mockery::mock(LikeAggregate::class);
 
         $this->likeService = Mockery::mock(LikeService::class, [$this->like, $this->likeAggregate])->makePartial();
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function setCommandStartAt()
@@ -60,6 +58,7 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeDailySingle()
@@ -70,17 +69,15 @@ class LikeServiceTest extends TestCase
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
-            ->shouldReceive('getForDailyAggregation')
-            ->once()
-            ->andReturn(new Collection([$like = new Like(['photo_id' => $photoId])]));
+            ->expects('getForDailyAggregation')
+            ->andReturns(new Collection([$like = new Like(['photo_id' => $photoId])]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
@@ -89,35 +86,34 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 [
-                    "photo_id" => "test_id"
+                    'photo_id' => 'test_id',
                 ],
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId, ['likes' => 0]);
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 END');
 
         $this->likeService->aggregateLikeDaily();
@@ -133,18 +129,15 @@ class LikeServiceTest extends TestCase
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
-            ->shouldReceive('getForDailyAggregation')
-            ->once()
-            ->andReturn(new Collection());
+            ->expects('getForDailyAggregation')
+            ->andReturns(new Collection());
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
         DB::shouldReceive('beginTransaction')->never();
@@ -152,19 +145,19 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->never();
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->allows('saveByPhotoId')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '日次いいね集計 END');
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never();
 
         $this->likeService->aggregateLikeDaily();
@@ -175,11 +168,11 @@ class LikeServiceTest extends TestCase
      */
     public function aggregateLikeDailyMultiple()
     {
-        $photoId1 = 'photo1';
+        $photoId1       = 'photo1';
         $likeAggregate1 = new Like(['photo_id' => $photoId1]);
-        $photoId2 = 'photo2';
+        $photoId2       = 'photo2';
         $likeAggregate2 = new Like(['photo_id' => $photoId2]);
-        $photoId3 = 'photo3';
+        $photoId3       = 'photo3';
         $likeAggregate3 = new Like(['photo_id' => $photoId3]);
 
         $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
@@ -187,17 +180,15 @@ class LikeServiceTest extends TestCase
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
-            ->shouldReceive('getForDailyAggregation')
-            ->once()
-            ->andReturn(new Collection([$likeAggregate1, $likeAggregate2, $likeAggregate3]));
+            ->expects('getForDailyAggregation')
+            ->andReturns(new Collection([$likeAggregate1, $likeAggregate2, $likeAggregate3]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
@@ -206,71 +197,70 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId1, ['likes' => 0]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId2, ['likes' => 0]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId3, ['likes' => 0]);
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 END');
 
         $this->likeService->aggregateLikeDaily();
@@ -281,24 +271,22 @@ class LikeServiceTest extends TestCase
      */
     public function aggregateLikeDailySingleException()
     {
-        $photoId = 'test_id';
-        $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
+        $photoId   = 'test_id';
+        $startAt   = CarbonImmutable::parse('2021-01-01 00:00:01');
         $exception = new Exception('例外発生！');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
-            ->shouldReceive('getForDailyAggregation')
-            ->once()
-            ->andReturn(new Collection([$likeAggregate = new Like(['photo_id' => $photoId])]));
+            ->expects('getForDailyAggregation')
+            ->andReturns(new Collection([$likeAggregate = new Like(['photo_id' => $photoId])]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
@@ -307,16 +295,17 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
@@ -324,17 +313,16 @@ class LikeServiceTest extends TestCase
             ->andThrow($exception);
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId, ['likes' => 0]);
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・日次]', "例外発生　対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '日次いいね集計 END');
 
@@ -346,34 +334,33 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeDailyMultipleException()
     {
-        $photoId1 = 'photo1';
-        $likeAggregate1 = new Like(['photo_id' => $photoId1]);
-        $photoId2 = 'photo2';
+        $photoId1                = 'photo1';
+        $likeAggregate1          = new Like(['photo_id' => $photoId1]);
+        $photoId2                = 'photo2';
         $likeAggregate_exception = new Like(['photo_id' => $photoId2]);
-        $photoId3 = 'photo3';
-        $likeAggregate3 = new Like(['photo_id' => $photoId3]);
-        $exception = new Exception('例外発生！');
+        $photoId3                = 'photo3';
+        $likeAggregate3          = new Like(['photo_id' => $photoId3]);
+        $exception               = new Exception('例外発生！');
 
         $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
-            ->shouldReceive('getForDailyAggregation')
-            ->once()
+            ->expects('getForDailyAggregation')
             ->andReturn(new Collection([$likeAggregate1, $likeAggregate_exception, $likeAggregate3]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
@@ -382,72 +369,74 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate_exception->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             )
             ->andThrow($exception);
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->never()
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId1, ['likes' => 0]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId2, ['likes' => 0]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId3, ['likes' => 0]);
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・日次]', "例外発生　対象：$photoId2");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・日次]', '日次いいね集計 END');
 
@@ -459,34 +448,36 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeWeeklySingle()
     {
-        $photoId = 'test_id';
-        $likeAggregate = new LikeAggregate(['photo_id' => $photoId, 'likes' => 10]);
-        $startAt = CarbonImmutable::parse('2021-01-03 00:00:01');
+        $photoId         = 'test_id';
+        $likeAggregate   = new LikeAggregate(['photo_id' => $photoId, 'likes' => 10]);
+        $startAt         = CarbonImmutable::parse('2021-01-03 00:00:01');
         $startOfLastWeek = Carbon::startOfLastWeek($startAt);
-        $endOfLastWeek = Carbon::endOfLastWeek($startAt);
-        $dayOfWeek = $startAt->isoFormat('dddd');
+        $endOfLastWeek   = Carbon::endOfLastWeek($startAt);
+        $dayOfWeek       = $startAt->isoFormat('dddd');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
@@ -494,8 +485,7 @@ class LikeServiceTest extends TestCase
             ->andReturn(new Collection([$likeAggregate]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->once();
@@ -503,54 +493,56 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId, ['weekly_likes' => 10]);
 
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
-            ->once()
+            ->expects('updateForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never()
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
         $this->likeService->aggregateLikeWeekly();
@@ -567,16 +559,15 @@ class LikeServiceTest extends TestCase
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
+            ->expects('getForAggregation')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
@@ -585,24 +576,24 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
+            ->expects('registerForWeeklyAggregation')
             ->never();
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never();
 
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
+            ->expects('updateForWeeklyAggregation')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never()
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
@@ -613,65 +604,67 @@ class LikeServiceTest extends TestCase
     {
         return [
             'Monday' => [
-                'date' => '2021-01-04',
-                'dayOfWeek' => '月曜日'
+                'date'      => '2021-01-04',
+                'dayOfWeek' => '月曜日',
             ],
             'Tuesday' => [
-                'date' => '2021-01-05',
-                'dayOfWeek' => '火曜日'
+                'date'      => '2021-01-05',
+                'dayOfWeek' => '火曜日',
             ],
             'Wednesday' => [
-                'date' => '2021-01-06',
-                'dayOfWeek' => '水曜日'
+                'date'      => '2021-01-06',
+                'dayOfWeek' => '水曜日',
             ],
             'Thursday' => [
-                'date' => '2021-01-07',
-                'dayOfWeek' => '木曜日'
+                'date'      => '2021-01-07',
+                'dayOfWeek' => '木曜日',
             ],
             'Friday' => [
-                'date' => '2021-01-08',
-                'dayOfWeek' => '金曜日'
+                'date'      => '2021-01-08',
+                'dayOfWeek' => '金曜日',
             ],
             'Saturday' => [
-                'date' => '2021-01-09',
-                'dayOfWeek' => '土曜日'
-            ]
+                'date'      => '2021-01-09',
+                'dayOfWeek' => '土曜日',
+            ],
         ];
     }
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeWeeklyMultiple()
     {
-        $photoId1 = 'photo1';
-        $likeAggregate1 = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 10]);
-        $photoId2 = 'photo2';
-        $likeAggregate2 = new LikeAggregate(['photo_id' => $photoId2, 'likes' => 15]);
-        $likeAggregate3 = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 20]);
-        $startAt = CarbonImmutable::parse('2021-01-03 00:00:01');
+        $photoId1        = 'photo1';
+        $likeAggregate1  = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 10]);
+        $photoId2        = 'photo2';
+        $likeAggregate2  = new LikeAggregate(['photo_id' => $photoId2, 'likes' => 15]);
+        $likeAggregate3  = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 20]);
+        $startAt         = CarbonImmutable::parse('2021-01-03 00:00:01');
         $startOfLastWeek = Carbon::startOfLastWeek($startAt);
-        $endOfLastWeek = Carbon::endOfLastWeek($startAt);
-        $dayOfWeek = $startAt->isoFormat('dddd');
+        $endOfLastWeek   = Carbon::endOfLastWeek($startAt);
+        $dayOfWeek       = $startAt->isoFormat('dddd');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
@@ -679,8 +672,7 @@ class LikeServiceTest extends TestCase
             ->andReturn(new Collection([$likeAggregate1, $likeAggregate2, $likeAggregate3]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->times(2);
@@ -688,93 +680,98 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1, $likeAggregate3) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]);
                     $this->assertSame($likeAggregate3->toArray(), $actual[1]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId1, ['weekly_likes' => 30]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId2, ['weekly_likes' => 15]);
 
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
-            ->once()
+            ->expects('updateForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1, $likeAggregate3) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]->toArray());
                     $this->assertSame($likeAggregate3->toArray(), $actual[1]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
-            ->once()
+            ->expects('updateForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
         $this->likeService->aggregateLikeWeekly();
@@ -782,35 +779,37 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeWeeklySingleException()
     {
-        $photoId = 'test_id';
-        $likeAggregate = new LikeAggregate(['photo_id' => $photoId, 'likes' => 10]);
-        $startAt = CarbonImmutable::parse('2021-01-03 00:00:01');
+        $photoId         = 'test_id';
+        $likeAggregate   = new LikeAggregate(['photo_id' => $photoId, 'likes' => 10]);
+        $startAt         = CarbonImmutable::parse('2021-01-03 00:00:01');
         $startOfLastWeek = Carbon::startOfLastWeek($startAt);
-        $endOfLastWeek = Carbon::endOfLastWeek($startAt);
-        $dayOfWeek = $startAt->isoFormat('dddd');
-        $exception = new Exception('例外発生！');
+        $endOfLastWeek   = Carbon::endOfLastWeek($startAt);
+        $dayOfWeek       = $startAt->isoFormat('dddd');
+        $exception       = new Exception('例外発生！');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
@@ -818,8 +817,7 @@ class LikeServiceTest extends TestCase
             ->andReturn(new Collection([$likeAggregate]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->once();
@@ -827,50 +825,53 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             )->andThrow($exception);
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId, ['weekly_likes' => 10]);
 
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
+            ->expects('updateForWeeklyAggregation')
             ->never()
             ->with(
                 $photoId,
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
@@ -882,39 +883,41 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeWeeklyMultipleException()
     {
-        $photoId1 = 'photo1';
-        $likeAggregate1 = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 10]);
-        $photoId2 = 'photo2';
-        $likeAggregate2 = new LikeAggregate(['photo_id' => $photoId2, 'likes' => 15]);
-        $photoId3 = 'photo3';
-        $likeAggregate3 = new LikeAggregate(['photo_id' => $photoId3, 'likes' => 20]);
-        $startAt = CarbonImmutable::parse('2021-01-03 00:00:01');
+        $photoId1        = 'photo1';
+        $likeAggregate1  = new LikeAggregate(['photo_id' => $photoId1, 'likes' => 10]);
+        $photoId2        = 'photo2';
+        $likeAggregate2  = new LikeAggregate(['photo_id' => $photoId2, 'likes' => 15]);
+        $photoId3        = 'photo3';
+        $likeAggregate3  = new LikeAggregate(['photo_id' => $photoId3, 'likes' => 20]);
+        $startAt         = CarbonImmutable::parse('2021-01-03 00:00:01');
         $startOfLastWeek = Carbon::startOfLastWeek($startAt);
-        $endOfLastWeek = Carbon::endOfLastWeek($startAt);
-        $dayOfWeek = $startAt->isoFormat('dddd');
-        $exception = new Exception('例外発生！');
+        $endOfLastWeek   = Carbon::endOfLastWeek($startAt);
+        $dayOfWeek       = $startAt->isoFormat('dddd');
+        $exception       = new Exception('例外発生！');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType')
@@ -922,8 +925,7 @@ class LikeServiceTest extends TestCase
             ->andReturn(new Collection([$likeAggregate1, $likeAggregate2, $likeAggregate3]));
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->times(2);
@@ -931,129 +933,142 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
-            ->once()
+            ->expects('registerForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             )->andThrow($exception);
         $this->likeService
-            ->shouldReceive('registerForWeeklyAggregation')
+            ->expects('registerForWeeklyAggregation')
             ->never()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate3) {
                     $this->assertSame($likeAggregate3->toArray(), $actual[0]);
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId1, ['weekly_likes' => 10]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId2, ['weekly_likes' => 15]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId2, ['weekly_likes' => 20]);
 
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
-            ->once()
+            ->expects('updateForWeeklyAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
+            ->expects('updateForWeeklyAggregation')
             ->never()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
         $this->likeService
-            ->shouldReceive('updateForWeeklyAggregation')
+            ->expects('updateForWeeklyAggregation')
             ->never()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate3) {
                     $this->assertSame($likeAggregate3->toArray(), $actual[0]->toArray());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastWeek) {
                     $this->assertSame($endOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 })
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId2");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
@@ -1065,39 +1080,40 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeMonthlySingle()
     {
-        $photoId = 'test_id';
-        $likeAggregate = new LikeAggregate(['photo_id' => $photoId, 'likes' => 15]);
-        $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
-        $day = $startAt->day;
+        $photoId          = 'test_id';
+        $likeAggregate    = new LikeAggregate(['photo_id' => $photoId, 'likes' => 15]);
+        $startAt          = CarbonImmutable::parse('2021-01-01 00:00:01');
+        $day              = $startAt->day;
         $startOfLastMonth = Carbon::startOfLastMonth($startAt);
-        $endOfLastMonth = Carbon::endOfLastMonth($startAt);
+        $endOfLastMonth   = Carbon::endOfLastMonth($startAt);
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
@@ -1109,37 +1125,38 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photoId, ['month_likes' => 15]);
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photoId,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
@@ -1147,13 +1164,12 @@ class LikeServiceTest extends TestCase
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never()
             ->with('[いいね集計・月次]', "例外発生　対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
         $this->likeService->aggregateLikeMonthly();
@@ -1167,22 +1183,21 @@ class LikeServiceTest extends TestCase
     {
         $photoId = 'test_id';
         $startAt = CarbonImmutable::parse($carbon);
-        $day = $startAt->day;
+        $day     = $startAt->day;
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
+            ->expects('getForAggregation')
             ->never();
 
         DB::shouldReceive('beginTransaction')->never();
@@ -1190,24 +1205,24 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->never();
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never();
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
+            ->expects('updateForAggregation')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never()
             ->with('[いいね集計・月次]', "例外発生　対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
@@ -1218,94 +1233,94 @@ class LikeServiceTest extends TestCase
     {
         return [
             '2日' => [
-                'carbon' => '2021-01-02'
+                'carbon' => '2021-01-02',
             ],
             '3日' => [
-                'carbon' => '2021-01-03'
+                'carbon' => '2021-01-03',
             ],
             '4日' => [
-                'carbon' => '2021-01-04'
+                'carbon' => '2021-01-04',
             ],
             '5日' => [
-                'carbon' => '2021-01-05'
+                'carbon' => '2021-01-05',
             ],
             '6日' => [
-                'carbon' => '2021-01-06'
+                'carbon' => '2021-01-06',
             ],
             '7日' => [
-                'carbon' => '2021-01-07'
+                'carbon' => '2021-01-07',
             ],
             '8日' => [
-                'carbon' => '2021-01-08'
+                'carbon' => '2021-01-08',
             ],
             '9日' => [
-                'carbon' => '2021-01-09'
+                'carbon' => '2021-01-09',
             ],
             '10日' => [
-                'carbon' => '2021-01-10'
+                'carbon' => '2021-01-10',
             ],
             '11日' => [
-                'carbon' => '2021-01-11'
+                'carbon' => '2021-01-11',
             ],
             '12日' => [
-                'carbon' => '2021-01-12'
+                'carbon' => '2021-01-12',
             ],
             '13日' => [
-                'carbon' => '2021-01-13'
+                'carbon' => '2021-01-13',
             ],
             '14日' => [
-                'carbon' => '2021-01-14'
+                'carbon' => '2021-01-14',
             ],
             '15日' => [
-                'carbon' => '2021-01-15'
+                'carbon' => '2021-01-15',
             ],
             '16日' => [
-                'carbon' => '2021-01-16'
+                'carbon' => '2021-01-16',
             ],
             '17日' => [
-                'carbon' => '2021-01-17'
+                'carbon' => '2021-01-17',
             ],
             '18日' => [
-                'carbon' => '2021-01-18'
+                'carbon' => '2021-01-18',
             ],
             '19日' => [
-                'carbon' => '2021-01-19'
+                'carbon' => '2021-01-19',
             ],
             '20日' => [
-                'carbon' => '2021-01-20'
+                'carbon' => '2021-01-20',
             ],
             '21日' => [
-                'carbon' => '2021-01-21'
+                'carbon' => '2021-01-21',
             ],
             '22日' => [
-                'carbon' => '2021-01-22'
+                'carbon' => '2021-01-22',
             ],
             '23日' => [
-                'carbon' => '2021-01-23'
+                'carbon' => '2021-01-23',
             ],
             '24日' => [
-                'carbon' => '2021-01-24'
+                'carbon' => '2021-01-24',
             ],
             '25日' => [
-                'carbon' => '2021-01-25'
+                'carbon' => '2021-01-25',
             ],
             '26日' => [
-                'carbon' => '2021-01-26'
+                'carbon' => '2021-01-26',
             ],
             '27日' => [
-                'carbon' => '2021-01-27'
+                'carbon' => '2021-01-27',
             ],
             '28日' => [
-                'carbon' => '2021-01-18'
+                'carbon' => '2021-01-18',
             ],
             '29日' => [
-                'carbon' => '2021-01-29'
+                'carbon' => '2021-01-29',
             ],
             '30日' => [
-                'carbon' => '2021-01-30'
+                'carbon' => '2021-01-30',
             ],
             '31日' => [
-                'carbon' => '2021-01-31'
+                'carbon' => '2021-01-31',
             ],
         ];
     }
@@ -1315,39 +1330,39 @@ class LikeServiceTest extends TestCase
      */
     public function aggregateLikeMonthlyMultiple()
     {
-        $photo1 = 'test_id1';
-        $likeAggregate1 = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
-        $photo2 = 'test_id2';
-        $likeAggregate2 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
-        $photo3 = 'test_id3';
-        $likeAggregate3 = new LikeAggregate(['photo_id' => $photo3, 'likes' => 15]);
-        $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
-        $day = $startAt->day;
+        $photo1           = 'test_id1';
+        $likeAggregate1   = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
+        $photo2           = 'test_id2';
+        $likeAggregate2   = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
+        $photo3           = 'test_id3';
+        $likeAggregate3   = new LikeAggregate(['photo_id' => $photo3, 'likes' => 15]);
+        $startAt          = CarbonImmutable::parse('2021-01-01 00:00:01');
+        $day              = $startAt->day;
         $startOfLastMonth = Carbon::startOfLastMonth($startAt);
-        $endOfLastMonth = Carbon::endOfLastMonth($startAt);
+        $endOfLastMonth   = Carbon::endOfLastMonth($startAt);
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
@@ -1359,107 +1374,110 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->never();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photo1, ['month_likes' => 5]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photo2, ['month_likes' => 10]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photo3, ['month_likes' => 15]);
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
@@ -1467,12 +1485,11 @@ class LikeServiceTest extends TestCase
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
+            ->expects('outputErrorLog')
             ->never();
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
         $this->likeService->aggregateLikeMonthly();
@@ -1480,40 +1497,41 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeMonthlySingleException()
     {
-        $photoId = 'test_id';
-        $likeAggregate = new LikeAggregate(['photo_id' => $photoId, 'likes' => 15]);
-        $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
-        $day = $startAt->day;
+        $photoId          = 'test_id';
+        $likeAggregate    = new LikeAggregate(['photo_id' => $photoId, 'likes' => 15]);
+        $startAt          = CarbonImmutable::parse('2021-01-01 00:00:01');
+        $day              = $startAt->day;
         $startOfLastMonth = Carbon::startOfLastMonth($startAt);
-        $endOfLastMonth = Carbon::endOfLastMonth($startAt);
-        $exception = new Exception('例外発生！');
+        $endOfLastMonth   = Carbon::endOfLastMonth($startAt);
+        $exception        = new Exception('例外発生！');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
@@ -1525,16 +1543,17 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
@@ -1542,21 +1561,23 @@ class LikeServiceTest extends TestCase
             ->andThrow($exception);
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photoId, ['month_likes' => 15]);
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
+            ->expects('updateForAggregation')
             ->never()
             ->with(
                 $photoId,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
@@ -1564,12 +1585,11 @@ class LikeServiceTest extends TestCase
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・月次]', "例外発生　対象：$photoId");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
@@ -1581,44 +1601,45 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function aggregateLikeMonthlyMultipleException()
     {
-        $photo1 = 'test_id1';
-        $likeAggregate1 = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
-        $photo2 = 'test_id2';
-        $likeAggregate2 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
-        $photo3 = 'test_id3';
-        $likeAggregate3 = new LikeAggregate(['photo_id' => $photo3, 'likes' => 15]);
-        $startAt = CarbonImmutable::parse('2021-01-01 00:00:01');
-        $day = $startAt->day;
+        $photo1           = 'test_id1';
+        $likeAggregate1   = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
+        $photo2           = 'test_id2';
+        $likeAggregate2   = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
+        $photo3           = 'test_id3';
+        $likeAggregate3   = new LikeAggregate(['photo_id' => $photo3, 'likes' => 15]);
+        $startAt          = CarbonImmutable::parse('2021-01-01 00:00:01');
+        $day              = $startAt->day;
         $startOfLastMonth = Carbon::startOfLastMonth($startAt);
-        $endOfLastMonth = Carbon::endOfLastMonth($startAt);
-        $exception = new Exception('例外発生！');
+        $endOfLastMonth   = Carbon::endOfLastMonth($startAt);
+        $exception        = new Exception('例外発生！');
 
         $this->likeService->setCommandStartAt($startAt);
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
-            ->shouldReceive('outputLog')
-            ->once()
+            ->expects('outputLog')
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
-            ->shouldReceive('getForAggregation')
-            ->once()
+            ->expects('getForAggregation')
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
@@ -1630,108 +1651,116 @@ class LikeServiceTest extends TestCase
         DB::shouldReceive('rollBack')->once();
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             )
             ->andThrow($exception);
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->never()
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'monthlyType')
             );
 
         $this->like
-            ->shouldReceive('saveByPhotoId')
-            ->once()
+            ->expects('saveByPhotoId')
             ->with($photo1, ['month_likes' => 5]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photo2, ['month_likes' => 10]);
         $this->like
-            ->shouldReceive('saveByPhotoId')
+            ->expects('saveByPhotoId')
             ->never()
             ->with($photo3, ['month_likes' => 15]);
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
+            ->expects('updateForAggregation')
             ->never()
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
+            ->expects('updateForAggregation')
             ->never()
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endOfLastMonth) {
                     $this->assertSame($endOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType'),
@@ -1739,12 +1768,11 @@ class LikeServiceTest extends TestCase
             );
 
         $this->likeService
-            ->shouldReceive('outputErrorLog')
-            ->once()
+            ->expects('outputErrorLog')
             ->with('[いいね集計・月次]', "例外発生　対象：$photo2");
 
         $this->likeService
-            ->shouldReceive('outputLog')
+            ->expects('outputLog')
             ->never()
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
@@ -1756,13 +1784,14 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function registerForWeeklyAggregation()
     {
-        $photo1 = 'not_carry_over';
+        $photo1         = 'not_carry_over';
         $likeAggregate1 = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
-        $photo2 = 'carry_over';
+        $photo2         = 'carry_over';
         $likeAggregate2 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
         $likeAggregate2->setAttribute('carry_over', 1);
         $likeAggregate3 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 15]);
@@ -1777,49 +1806,54 @@ class LikeServiceTest extends TestCase
         ];
 
         $startAt = CarbonImmutable::parse('2021-01-29');
-        $endAt = CarbonImmutable::parse('2021-02-04');
+        $endAt   = CarbonImmutable::parse('2021-02-04');
 
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
-            ->once()
+            ->expects('registerForAggregation')
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->twice()
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->endOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
             );
         $this->likeAggregate
-            ->shouldReceive('registerForAggregation')
+            ->expects('registerForAggregation')
             ->twice()
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->startOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'weeklyType')
@@ -1830,109 +1864,115 @@ class LikeServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function updateForWeeklyAggregation()
     {
-        $photo1 = 'not_set_carry_over';
+        $photo1         = 'not_set_carry_over';
         $likeAggregate1 = new LikeAggregate(['photo_id' => $photo1, 'likes' => 5]);
-        $photo2 = 'carry_over_1';
+        $photo2         = 'carry_over_1';
         $likeAggregate2 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 10]);
         $likeAggregate2->setAttribute('carry_over', 1);
         $likeAggregate3 = new LikeAggregate(['photo_id' => $photo2, 'likes' => 15]);
         $likeAggregate3->setAttribute('carry_over', 2);
-        $photo3 = 'carry_over_2';
+        $photo3         = 'carry_over_2';
         $likeAggregate4 = new LikeAggregate(['photo_id' => $photo3, 'likes' => 20]);
         $likeAggregate4->setAttribute('carry_over', 1);
         $likeAggregate5 = new LikeAggregate(['photo_id' => $photo3, 'likes' => 25]);
         $likeAggregate5->setAttribute('carry_over', 2);
 
         $collection = new Collection([
-                                         $likeAggregate1,
-                                         $likeAggregate2,
-                                         $likeAggregate3,
-                                         $likeAggregate4,
-                                         $likeAggregate5
-                                     ]);
+            $likeAggregate1,
+            $likeAggregate2,
+            $likeAggregate3,
+            $likeAggregate4,
+            $likeAggregate5,
+        ]);
 
         $startAt = CarbonImmutable::parse('2021-01-29');
-        $endAt = CarbonImmutable::parse('2021-02-04');
+        $endAt   = CarbonImmutable::parse('2021-02-04');
 
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->endOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->startOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($startAt) {
                     $this->assertSame($startAt->endOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType'),
                 ['status' => config('const.PHOTO_AGGREGATION.STATUS.COMPLETE')]
             );
         $this->likeAggregate
-            ->shouldReceive('updateForAggregation')
-            ->once()
+            ->expects('updateForAggregation')
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->startOfMonth()->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 Mockery::on(function ($actual) use ($endAt) {
                     $this->assertSame($endAt->toDateTimeString(), $actual->toDateTimeString());
+
                     return true;
                 }),
                 $this->getPrivatePropertyForMockObject($this->likeService, 'dailyType'),

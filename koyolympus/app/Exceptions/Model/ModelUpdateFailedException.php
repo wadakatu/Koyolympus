@@ -12,7 +12,7 @@ class ModelUpdateFailedException extends Exception
 {
     private Model $model;
 
-    public function __construct(Model $model, string $message = "")
+    public function __construct(Model $model, string $message = '')
     {
         parent::__construct($message);
         $this->model = $model;

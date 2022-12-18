@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use Throwable;
+use App\Services\LikeService;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
-use App\Services\LikeService;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class AggregateMonthlyLikeJob implements ShouldQueue
 {
@@ -41,13 +41,14 @@ class AggregateMonthlyLikeJob implements ShouldQueue
     public function __construct(LikeService $likeService, CarbonImmutable $startAt)
     {
         $this->likeService = $likeService;
-        $this->startAt = $startAt;
+        $this->startAt     = $startAt;
     }
 
     /**
      * Execute the job.
      *
      * @return void
+     *
      * @throws \Exception
      */
     public function handle()
@@ -59,7 +60,7 @@ class AggregateMonthlyLikeJob implements ShouldQueue
     /**
      * 失敗したジョブの処理
      *
-     * @param Throwable $throwable
+     * @param  Throwable  $throwable
      * @return void
      */
     public function failed(Throwable $throwable)

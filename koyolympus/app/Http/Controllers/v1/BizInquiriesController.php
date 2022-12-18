@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\v1;
 
-use App\Mails\BizInquiriesMail;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\BizInquiriesRequest;
+use App\Mails\BizInquiriesMail;
+use Illuminate\Support\Facades\Mail;
 
 class BizInquiriesController extends Controller
 {
@@ -18,13 +18,13 @@ class BizInquiriesController extends Controller
     /**
      * お問い合わせメール送信処理
      *
-     * @param BizInquiriesRequest $request
+     * @param  BizInquiriesRequest  $request
      */
     public function sendBizInquiries(BizInquiriesRequest $request): void
     {
         $params = [
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
+            'name'    => $request->input('name'),
+            'email'   => $request->input('email'),
             'opinion' => $request->input('opinion'),
         ];
 

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use DB;
-use Carbon\CarbonImmutable;
 use App\Models\Traits\DateFormat;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\CarbonImmutable;
+use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class LikeAggregate extends Model
 {
@@ -22,11 +22,11 @@ class LikeAggregate extends Model
     /**
      * いいね数集計用スコープ
      *
-     * @param Builder $query
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
-     * @param int $type
-     * @return Builder
+     * @param  Builder<LikeAggregate>  $query
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
+     * @param  int  $type
+     * @return Builder<LikeAggregate>
      */
     public function scopeForAggregation(
         Builder $query,
@@ -41,15 +41,14 @@ class LikeAggregate extends Model
             ->whereDate('end_at', '<=', $endAt);
     }
 
-
     /**
      * 日次かつ集計期間が月跨ぎの場合に適用されるスコープ
      *
-     * @param Builder $query
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
-     * @param int $type
-     * @return Builder
+     * @param  Builder<LikeAggregate>  $query
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
+     * @param  int  $type
+     * @return Builder<LikeAggregate>
      */
     public function scopeAddSelectWhenDailyAndDiffMonth(
         Builder $query,
@@ -60,16 +59,17 @@ class LikeAggregate extends Model
         if ($type === config('const.PHOTO_AGGREGATION.TYPE.DAILY') && $startAt->month !== $endAt->month) {
             $query->addSelect(DB::raw('month(start_at) as carry_over'));
         }
+
         return $query;
     }
 
     /**
      * いいね数を集計して取得
      *
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
-     * @param int $type
-     * @return Collection
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
+     * @param  int  $type
+     * @return Collection<int, LikeAggregate>
      */
     public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type): Collection
     {
@@ -77,21 +77,21 @@ class LikeAggregate extends Model
             ->join('likes', 'likes.photo_id', '=', 'like_aggregates.photo_id')
             ->forAggregation($startAt, $endAt, $type)
             ->select([
-                         'like_aggregates.photo_id',
-                         DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes')
-                     ])
+                'like_aggregates.photo_id',
+                DB::raw('CAST(sum(like_aggregates.likes) AS SIGNED) as likes'),
+            ])
             ->addSelectWhenDailyAndDiffMonth($startAt, $endAt, $type)
-            ->groupBy(['like_aggregates.photo_id', DB::raw("month(start_at)")])
+            ->groupBy(['like_aggregates.photo_id', DB::raw('month(start_at)')])
             ->get();
     }
 
     /**
      * 集計したいいね数を登録
      *
-     * @param array $likeInfo
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
-     * @param int $type
+     * @param  array  $likeInfo
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
+     * @param  int  $type
      * @return void
      */
     public function registerForAggregation(
@@ -101,22 +101,22 @@ class LikeAggregate extends Model
         int $type
     ): void {
         self::query()->create([
-                                  'photo_id' => $likeInfo['photo_id'],
-                                  'aggregate_type' => $type,
-                                  'likes' => $likeInfo['likes'],
-                                  'start_at' => $startAt,
-                                  'end_at' => $endAt
-                              ]);
+            'photo_id'       => $likeInfo['photo_id'],
+            'aggregate_type' => $type,
+            'likes'          => $likeInfo['likes'],
+            'start_at'       => $startAt,
+            'end_at'         => $endAt,
+        ]);
     }
 
     /**
      * 集計したいいね数を更新
      *
-     * @param string $photoId
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
-     * @param int $type
-     * @param array $value
+     * @param  string  $photoId
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
+     * @param  int  $type
+     * @param  array  $value
      * @return void
      */
     public function updateForAggregation(

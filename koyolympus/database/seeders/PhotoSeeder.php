@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use DB;
-use Storage;
-use Exception;
-use Throwable;
 use App\Models\Photo;
+use DB;
+use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
+use Storage;
+use Throwable;
 
 class PhotoSeeder extends Seeder
 {
@@ -18,17 +18,18 @@ class PhotoSeeder extends Seeder
 
     /**
      * @return void
+     *
      * @throws Exception
      */
     public function run()
     {
         $this->command->getOutput()->progressStart($this->number);
         for ($i = 1; $i <= $this->number; $i++) {
-            $genre = $this->getPhotoGenre($i);
+            $genre   = $this->getPhotoGenre($i);
             $fileUrl = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
-            $photo = factory(Photo::class)->make(['genre' => $genre]);
-            $fileName = $photo->id . "-test.jpeg";
+            $photo            = Photo::factory()->make(['genre' => $genre]);
+            $fileName         = $photo->id . '-test.jpeg';
             $photo->file_path = $fileUrl . '/' . $fileName;
 
             DB::beginTransaction();
@@ -39,6 +40,7 @@ class PhotoSeeder extends Seeder
             } catch (Throwable $e) {
                 DB::rollBack();
                 $this->deletePhotoFromS3($fileUrl, $fileName);
+
                 continue;
             } finally {
                 $this->command->getOutput()->progressAdvance();
@@ -52,7 +54,7 @@ class PhotoSeeder extends Seeder
         $remainder = $index % 10;
 
         switch ($remainder) {
-            case $remainder < 7;
+            case $remainder < 7:
                 $genre = $remainder;
                 break;
             default:

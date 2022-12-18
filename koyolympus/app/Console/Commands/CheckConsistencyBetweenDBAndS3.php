@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Services\PhotoService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Services\PhotoService;
 
 class CheckConsistencyBetweenDBAndS3 extends Command
 {
@@ -30,7 +30,7 @@ class CheckConsistencyBetweenDBAndS3 extends Command
     /**
      * Create a new command instance.
      *
-     * @param PhotoService $photoService
+     * @param  PhotoService  $photoService
      */
     public function __construct(PhotoService $photoService)
     {
@@ -43,26 +43,29 @@ class CheckConsistencyBetweenDBAndS3 extends Command
      * Execute the console command.
      *
      * @return int
+     *
      * @throws Exception
      */
     public function handle()
     {
-        $fileName = $this->argument('fileName');
+        $fileName        = $this->argument('fileName');
         $shouldSearchAll = $this->option('all');
 
         if (isset($fileName) && $shouldSearchAll) {
             $this->error("You cannot select specific file name when you put '--all' option.");
+
             return 1;
         }
 
-        if (!isset($fileName) && !$shouldSearchAll) {
+        if (! isset($fileName) && ! $shouldSearchAll) {
             $this->error("You have to choose either putting 'fileName' or '--all' option in the command.");
+
             return 1;
         }
 
         DB::beginTransaction();
         try {
-            if (is_string($fileName) && !$shouldSearchAll) {
+            if (is_string($fileName) && ! $shouldSearchAll) {
                 $deletedFileInfo = $this->photoService->deletePhotoIfDuplicate($fileName);
                 $this->info(
                     "The duplicate file '$deletedFileInfo[deleteFile]' is successfully deleted.\n" .
@@ -70,8 +73,8 @@ class CheckConsistencyBetweenDBAndS3 extends Command
                 );
             }
 
-            if (!isset($fileName) && $shouldSearchAll) {
-                $deletedFile = $this->photoService->deleteMultiplePhotosIfDuplicate();
+            if (! isset($fileName) && $shouldSearchAll) {
+                $deletedFile    = $this->photoService->deleteMultiplePhotosIfDuplicate();
                 $deletedFileNum = $deletedFile->count();
                 $this->info("The $deletedFileNum files are completely deleted from S3 and DB because of duplication.");
                 foreach ($deletedFile as $photoInfo) {
@@ -80,10 +83,12 @@ class CheckConsistencyBetweenDBAndS3 extends Command
             }
 
             DB::commit();
+
             return 0;
         } catch (Exception $e) {
             DB::rollBack();
             $this->error($e->getMessage());
+
             return 1;
         }
     }

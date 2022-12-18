@@ -373,6 +373,35 @@ class BaseServiceTest extends TestCase
     }
 
     /**
+     * FileがS3に存在しない場合、例外を適切に吐くかテスト
+     *
+     * @test
+     * @return void
+     */
+    public function movePhotoToNewFolder_fileNotFoundException(): void
+    {
+        Config::set('const.PHOTO.GENRE_FILE_URL.1', 'new/');
+
+        $fileName = 'test.jpeg';
+        $oldS3Path = 'old/' . $fileName;
+        $genre = 1;
+
+        Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
+
+        $s3Disk->expects('get')->once()->with($oldS3Path)->andReturnNull();
+        $s3Disk->expects('putFileAs')->never();
+        $s3Disk->expects('delete')->never();
+
+        $this->baseService
+            ->expects('downloadS3PhotoToLocal')
+            ->never();
+
+        $this->expectException(FileNotFoundException::class);
+
+        $this->baseService->movePhotoToNewFolder($oldS3Path, $fileName, $genre);
+    }
+
+    /**
      * ローカルにファイルをダウンロードし、そのファイルを適切に返却できるかテスト
      *
      * @test

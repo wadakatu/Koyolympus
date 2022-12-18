@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use Log;
+use Lang;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 
@@ -43,7 +44,7 @@ class LikeRequest extends FormRequest
         /** @var string $id */
         $id = $this->get('id');
         Log::info("[Requested ID: $id]");
-        Log::info(trans('messages.PHOTO.INVALID_UUID'));
+        Log::info(Lang::get('messages.PHOTO.INVALID_UUID'));
         abort(404);
     }
 }

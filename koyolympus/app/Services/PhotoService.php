@@ -29,7 +29,7 @@ class PhotoService
     /**
      * DBから写真のパスを全て取得
      * @param string|null $genre
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<Photo>
      */
     public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
@@ -38,13 +38,20 @@ class PhotoService
 
     /**
      * DBから写真のパスをランダムで全て取得
-     * @return Collection
+     * @return Collection<int, Photo>
      */
     public function getAllPhotoRandomly(): Collection
     {
         return $this->photo->getAllPhotoRandomly();
     }
 
+    /**
+     * 写真情報をデータベースにアップロード
+     *
+     * @param string $fileName
+     * @param int $genre
+     * @return string
+     */
     public function uploadPhotoDataToDB(string $fileName, int $genre): string
     {
         //保存するS3のファイルパスを取得
@@ -97,7 +104,7 @@ class PhotoService
 
     /**
      * DB内に重複している写真があれば、DBとS3から削除
-     * @return Collection<Photo>
+     * @return Collection<int, Photo>
      * @throws Exception
      */
     public function deleteMultiplePhotosIfDuplicate(): Collection
@@ -117,7 +124,7 @@ class PhotoService
 
     /**
      * 写真一覧から重複している写真データを探索（複数写真が対象）
-     * @return Collection<Photo>
+     * @return Collection<int, Photo>
      * @throws Exception
      */
     public function searchMultipleDuplicatePhotos(): Collection
@@ -138,8 +145,8 @@ class PhotoService
                 'index' => $key,
                 'id' => $photo->id,
                 'created_at' => is_null($photo->created_at)
-                                ? Carbon::now()->timestamp
-                                : $photo->created_at->timestamp,
+                    ? Carbon::now()->timestamp
+                    : $photo->created_at->timestamp,
             ];
         }
 
@@ -196,9 +203,9 @@ class PhotoService
     /**
      * 重複する写真を検索（１つの写真が対象）
      *
-     * @param Collection<Photo> $fileList
+     * @param Collection<int, Photo> $fileList
      * @param string $fileName
-     * @return Collection<Photo>
+     * @return Collection<int, Photo>
      * @throws Exception
      */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection

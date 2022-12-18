@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\ReplaceUuid;
 
-use Illuminate\Database\Eloquent\Collection;
-use App\Exceptions\Model\ModelUpdateFailedException;
-use App\Exceptions\S3\S3MoveFailedException;
-use App\Models\Photo;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 use Storage;
+use App\Models\Photo;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\S3\S3MoveFailedException;
+use App\Exceptions\Model\ModelUpdateFailedException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class BaseService
 {
@@ -36,7 +36,7 @@ class BaseService
     public function includeUuidInRecord(): void
     {
         //写真情報を全件取得
-        /** @var Collection<Photo> $photoList */
+        /** @var Collection<int, Photo> $photoList */
         $photoList = $this->photo::all();
 
         //一件ずつ写真情報を取り出す。
@@ -118,8 +118,12 @@ class BaseService
         /** @var string $filePath */
         $filePath = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
+        if (is_null($file = $disk->get($oldS3Path))) {
+            throw new FileNotFoundException();
+        }
+
         //古い写真をS3からローカルにダウンロード
-        $file = $this->downloadS3PhotoToLocal($fileName, $disk->get($oldS3Path));
+        $file = $this->downloadS3PhotoToLocal($fileName, $file);
 
         //S3に写真をアップロード（新しいS3パス）
         $disk->putFileAs($filePath, $file, $fileName, 'public');

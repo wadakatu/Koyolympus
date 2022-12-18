@@ -8,17 +8,15 @@ use Exception;
 use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\PhotoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Services\PhotoService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetPhotoRequest;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
@@ -36,7 +34,7 @@ class ImageController extends Controller
      * (10件ごとのページネーション)
      *
      * @param GetPhotoRequest $request
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<Photo>
      */
     public function getPhoto(GetPhotoRequest $request): LengthAwarePaginator
     {
@@ -49,7 +47,7 @@ class ImageController extends Controller
      * S3内の全写真取得処理
      * (ランダム)
      *
-     * @return Collection
+     * @return Collection<int, Photo>
      */
     public function getRandomPhoto(): Collection
     {

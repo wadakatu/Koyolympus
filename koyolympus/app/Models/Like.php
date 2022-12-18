@@ -16,6 +16,7 @@ class Like extends Model
     use DateFormat;
     use HasFactory;
 
+
     protected $guarded = ['id'];
 
     /**
@@ -93,7 +94,7 @@ class Like extends Model
     /**
      * 日毎のいいね数をまとめて返却
      *
-     * @return Collection
+     * @return Collection<int, Like>
      */
     public function getForDailyAggregation(): Collection
     {

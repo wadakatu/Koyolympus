@@ -22,11 +22,11 @@ class LikeAggregate extends Model
     /**
      * いいね数集計用スコープ
      *
-     * @param Builder $query
+     * @param Builder<LikeAggregate> $query
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @param int $type
-     * @return Builder
+     * @return Builder<LikeAggregate>
      */
     public function scopeForAggregation(
         Builder $query,
@@ -45,11 +45,11 @@ class LikeAggregate extends Model
     /**
      * 日次かつ集計期間が月跨ぎの場合に適用されるスコープ
      *
-     * @param Builder $query
+     * @param Builder<LikeAggregate> $query
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @param int $type
-     * @return Builder
+     * @return Builder<LikeAggregate>
      */
     public function scopeAddSelectWhenDailyAndDiffMonth(
         Builder $query,
@@ -69,7 +69,7 @@ class LikeAggregate extends Model
      * @param CarbonImmutable $startAt
      * @param CarbonImmutable $endAt
      * @param int $type
-     * @return Collection
+     * @return Collection<int, LikeAggregate>
      */
     public function getForAggregation(CarbonImmutable $startAt, CarbonImmutable $endAt, int $type): Collection
     {

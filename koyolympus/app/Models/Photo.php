@@ -73,7 +73,7 @@ class Photo extends Model
      * 全ての写真情報を取得（10件ごと）
      *
      * @param string|null $genre
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<Photo>
      */
     public function getAllPhoto(?string $genre): LengthAwarePaginator
     {
@@ -89,7 +89,7 @@ class Photo extends Model
     /**
      * ランダムに全ての写真情報を取得
      *
-     * @return Collection
+     * @return Collection<int, Photo>
      */
     public function getAllPhotoRandomly(): Collection
     {
@@ -142,7 +142,7 @@ class Photo extends Model
     /**
      * 作成日の降順に並べて写真情報を全て取得
      *
-     * @return Collection<Photo>
+     * @return Collection<int, Photo>
      */
     public function getAllPhotoOrderByCreatedAtDesc(): Collection
     {

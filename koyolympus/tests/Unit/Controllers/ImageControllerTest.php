@@ -32,11 +32,6 @@ class ImageControllerTest extends TestCase
         $this->imageController = Mockery::mock(ImageController::class, [$this->photoService])->makePartial();
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      */
@@ -44,16 +39,16 @@ class ImageControllerTest extends TestCase
     {
         $genre = '1';
         $request = Mockery::mock(GetPhotoRequest::class);
-        $request->shouldReceive('input')
+        $request->expects('input')
             ->once()
             ->with('genre')
-            ->andReturn($genre);
+            ->andReturns($genre);
 
         $this->photoService
-            ->shouldReceive('getAllPhoto')
+            ->expects('getAllPhoto')
             ->once()
             ->with($genre)
-            ->andReturn(new LengthAwarePaginator([], 2, 10));
+            ->andReturns(new LengthAwarePaginator([], 2, 10));
 
         $result = $this->imageController->getPhoto($request);
 
@@ -67,10 +62,10 @@ class ImageControllerTest extends TestCase
     public function getRandomPhoto()
     {
         $this->photoService
-            ->shouldReceive('getAllPhotoRandomly')
+            ->expects('getAllPhotoRandomly')
             ->once()
             ->withNoArgs()
-            ->andReturn(Collect([]));
+            ->andReturns(Collect([]));
 
         $this->imageController->getRandomPhoto();
     }
@@ -90,15 +85,16 @@ class ImageControllerTest extends TestCase
             ->andReturn($fileSystemAdapter);
 
         $fileSystemAdapter
-            ->shouldReceive('exists')
+            ->expects('exists')
+            ->once()
             ->with('/photo/landscape')
             ->andReturnTrue();
 
         $fileSystemAdapter
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with($filePath)
-            ->andReturn('success');
+            ->andReturns('success');
 
         Log::shouldReceive('debug')->never();
 
@@ -122,7 +118,8 @@ class ImageControllerTest extends TestCase
             ->andReturn($fileSystemAdapter);
 
         $fileSystemAdapter
-            ->shouldReceive('exists')
+            ->expects('exists')
+            ->once()
             ->with('/photo/landscape')
             ->andReturnFalse();
 
@@ -163,13 +160,13 @@ class ImageControllerTest extends TestCase
         Log::shouldReceive('error')->never();
 
         $this->photoService
-            ->shouldReceive('uploadPhotoDataToDB')
+            ->expects('uploadPhotoDataToDB')
             ->once()
             ->with($fileName, 1)
-            ->andReturn($uniqueFileName = 'noError.jpeg');
+            ->andReturns($uniqueFileName = 'noError.jpeg');
 
         $this->photoService
-            ->shouldReceive('uploadPhotoToS3')
+            ->expects('uploadPhotoToS3')
             ->once()
             ->with($file, $uniqueFileName, 1);
 
@@ -208,13 +205,13 @@ class ImageControllerTest extends TestCase
             ->with("");
 
         $this->photoService
-            ->shouldReceive('uploadPhotoDataToDB')
+            ->expects('uploadPhotoDataToDB')
             ->once()
             ->with($fileName, 1)
             ->andThrow(Exception::class);
 
         $this->photoService
-            ->shouldReceive('uploadPhotoToS3')
+            ->expects('uploadPhotoToS3')
             ->never();
 
         $response = $this->imageController->uploadPhoto($request);

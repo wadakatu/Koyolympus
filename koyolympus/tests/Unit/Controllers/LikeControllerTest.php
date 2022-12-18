@@ -28,11 +28,6 @@ class LikeControllerTest extends TestCase
         $this->likeController = new LikeController($this->like);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      */
@@ -42,16 +37,16 @@ class LikeControllerTest extends TestCase
         $allLikes = 100;
 
         $this->request
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with('id')
-            ->andReturn($id);
+            ->andReturns($id);
 
         $this->like
-            ->shouldReceive('getAllLike')
+            ->expects('getAllLike')
             ->once()
             ->with($id)
-            ->andReturn($allLikes);
+            ->andReturns($allLikes);
 
         $response = $this->likeController->getLikeSum($this->request);
 
@@ -73,13 +68,13 @@ class LikeControllerTest extends TestCase
         Log::shouldReceive('error')->never();
 
         $this->request
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with('id')
-            ->andReturn($id);
+            ->andReturns($id);
 
         $this->like
-            ->shouldReceive('addLike')
+            ->expects('addLike')
             ->once()
             ->with($id);
 
@@ -105,13 +100,13 @@ class LikeControllerTest extends TestCase
         Log::shouldReceive('error')->once()->with('[LIKE PHOTO]:' . $exception->getMessage());
 
         $this->request
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with('id')
-            ->andReturn($id);
+            ->andReturns($id);
 
         $this->like
-            ->shouldReceive('addLike')
+            ->expects('addLike')
             ->once()
             ->with($id)
             ->andThrow($exception);
@@ -137,13 +132,13 @@ class LikeControllerTest extends TestCase
         Log::shouldReceive('error')->never();
 
         $this->request
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with('id')
-            ->andReturn($id);
+            ->andReturns($id);
 
         $this->like
-            ->shouldReceive('subLike')
+            ->expects('subLike')
             ->once()
             ->with($id);
 
@@ -169,13 +164,13 @@ class LikeControllerTest extends TestCase
         Log::shouldReceive('error')->once()->with('[UNLIKE PHOTO]:' . $exception->getMessage());
 
         $this->request
-            ->shouldReceive('get')
+            ->expects('get')
             ->once()
             ->with('id')
-            ->andReturn($id);
+            ->andReturns($id);
 
         $this->like
-            ->shouldReceive('subLike')
+            ->expects('subLike')
             ->once()
             ->with($id)
             ->andThrow($exception);

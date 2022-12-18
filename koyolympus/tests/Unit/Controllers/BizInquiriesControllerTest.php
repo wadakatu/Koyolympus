@@ -20,11 +20,6 @@ class BizInquiriesControllerTest extends TestCase
         $this->bizInquiriesController = new BizInquiriesController();
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      */
@@ -32,10 +27,10 @@ class BizInquiriesControllerTest extends TestCase
     {
         $request = new BizInquiriesRequest();
         $request->merge([
-            'name' => 'test',
-            'email' => 'test@gmail.com',
-            'opinion' => 'test,test,test',
-        ]);
+                            'name' => 'test',
+                            'email' => 'test@gmail.com',
+                            'opinion' => 'test,test,test',
+                        ]);
 
         Mail::fake();
 

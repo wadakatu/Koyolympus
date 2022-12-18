@@ -17,7 +17,7 @@ class PhotoTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $photo;
+    private Photo $photo;
     public $mockConsoleOutput = false;
 
     protected function setUp(): void
@@ -39,9 +39,9 @@ class PhotoTest extends TestCase
     {
         $this->photo = Mockery::mock(Photo::class)->makePartial();
 
-        $this->photo->shouldReceive('getRandomId')
+        $this->photo->expects('getRandomId')
             ->once()
-            ->andReturn('uuid');
+            ->andReturns('uuid');
 
         $this->photo->setId();
 
@@ -79,14 +79,14 @@ class PhotoTest extends TestCase
     public function getAllPhoto()
     {
         Photo::factory()->create([
-            'genre' => '1',
-        ]);
+                                     'genre' => '1',
+                                 ]);
         Photo::factory()->count(2)->create([
-            'genre' => '2',
-        ]);
+                                               'genre' => '2',
+                                           ]);
         Photo::factory()->count(3)->create([
-            'genre' => '3',
-        ]);
+                                               'genre' => '3',
+                                           ]);
 
         //ジャンルなし
         $records = $this->photo->getAllPhoto(null);
@@ -122,21 +122,22 @@ class PhotoTest extends TestCase
 
     /**
      * @test
+     * @throws \Exception
      */
     public function deletePhotoInfo()
     {
         $id = 'abcdefghiasw';
         $fakeId = 'abcdefghijkl';
         Photo::factory()->create([
-            'id' => $id,
-            'file_name' => 'test.jpeg',
-            'genre' => 1,
-        ]);
+                                     'id' => $id,
+                                     'file_name' => 'test.jpeg',
+                                     'genre' => 1,
+                                 ]);
         Photo::factory()->create([
-            'id' => $fakeId,
-            'file_name' => 'test2.jpeg',
-            'genre' => 2,
-        ]);
+                                     'id' => $fakeId,
+                                     'file_name' => 'test2.jpeg',
+                                     'genre' => 2,
+                                 ]);
 
         $this->photo->deletePhotoInfo($id);
 
@@ -153,17 +154,17 @@ class PhotoTest extends TestCase
     public function getAllPhotoOrderByCreatedAtDesc()
     {
         Photo::factory()->create([
-            'file_name' => 'test3.jpeg',
-            'created_at' => '2021-01-01 00:00:00'
-        ]);
+                                     'file_name' => 'test3.jpeg',
+                                     'created_at' => '2021-01-01 00:00:00'
+                                 ]);
         Photo::factory()->create([
-            'file_name' => 'test2.jpeg',
-            'created_at' => '2021-01-02 00:00:00'
-        ]);
+                                     'file_name' => 'test2.jpeg',
+                                     'created_at' => '2021-01-02 00:00:00'
+                                 ]);
         Photo::factory()->create([
-            'file_name' => 'test1.jpeg',
-            'created_at' => '2021-01-01 00:00:01'
-        ]);
+                                     'file_name' => 'test1.jpeg',
+                                     'created_at' => '2021-01-01 00:00:01'
+                                 ]);
 
         $photoList = $this->photo->getAllPhotoOrderByCreatedAtDesc();
 

@@ -14,18 +14,13 @@ class LikeAggregateTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $likeAggregate;
+    private LikeAggregate $likeAggregate;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->likeAggregate = new LikeAggregate();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**
@@ -427,24 +422,24 @@ class LikeAggregateTest extends TestCase
         $photoIdForSum = 'test_sum';
 
         Like::factory()->create([
-                                         'photo_id' => $photoIdForSum,
-                                     ]);
+                                    'photo_id' => $photoIdForSum,
+                                ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photoIdForSum,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 20,
-                                                  'start_at' => '2021-01-08',
-                                                  'end_at' => '2021-01-14',
-                                              ]);
+                                             'photo_id' => $photoIdForSum,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 20,
+                                             'start_at' => '2021-01-08',
+                                             'end_at' => '2021-01-14',
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photoIdForSum,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 30,
-                                                  'start_at' => '2021-01-15',
-                                                  'end_at' => '2021-01-21',
-                                              ]);
+                                             'photo_id' => $photoIdForSum,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 30,
+                                             'start_at' => '2021-01-15',
+                                             'end_at' => '2021-01-21',
+                                         ]);
 
         $result = $this->likeAggregate->getForAggregation(
             CarbonImmutable::parse('2021-01-01'),
@@ -456,8 +451,8 @@ class LikeAggregateTest extends TestCase
         $this->assertSame([
                               'photo_id' => $photoIdForSum,
                               'likes' => 50,
-                          ], $result->where('photo_id', $photoIdForSum)->first()->toArray());
-        $this->assertIsInt($result->where('photo_id', $photoIdForSum)->first()->likes);
+                          ], $result->firstWhere('photo_id', $photoIdForSum)->toArray());
+        $this->assertIsInt($result->firstWhere('photo_id', $photoIdForSum)->likes);
     }
 
     /**
@@ -470,59 +465,59 @@ class LikeAggregateTest extends TestCase
         $photo3 = 'photo3';
 
         Like::factory()->create([
-                                         'photo_id' => $photo1
-                                     ]);
+                                    'photo_id' => $photo1
+                                ]);
         Like::factory()->create([
-                                         'photo_id' => $photo2
-                                     ]);
+                                    'photo_id' => $photo2
+                                ]);
 
         //１週間全部のレコード
         for ($i = 1; $i <= 7; $i++) {
             LikeAggregate::factory()->create([
-                                                      'photo_id' => $photo1,
-                                                      'aggregate_type' => 1,
-                                                      'status' => 0,
-                                                      'likes' => $i,
-                                                      'start_at' => "2021-01-0$i",
-                                                      'end_at' => "2021-01-0$i",
-                                                  ]);
+                                                 'photo_id' => $photo1,
+                                                 'aggregate_type' => 1,
+                                                 'status' => 0,
+                                                 'likes' => $i,
+                                                 'start_at' => "2021-01-0$i",
+                                                 'end_at' => "2021-01-0$i",
+                                             ]);
         }
 
         //1週間の内三日分
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 1,
-                                                  'start_at' => '2021-01-01',
-                                                  'end_at' => '2021-01-01',
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 1,
+                                             'start_at' => '2021-01-01',
+                                             'end_at' => '2021-01-01',
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 4,
-                                                  'start_at' => '2021-01-04',
-                                                  'end_at' => '2021-01-04',
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 4,
+                                             'start_at' => '2021-01-04',
+                                             'end_at' => '2021-01-04',
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 7,
-                                                  'start_at' => '2021-01-07',
-                                                  'end_at' => '2021-01-07',
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 7,
+                                             'start_at' => '2021-01-07',
+                                             'end_at' => '2021-01-07',
+                                         ]);
 
         //取得できない（join先なし）
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo3,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 10,
-                                                  'start_at' => '2021-01-01',
-                                                  'end_at' => '2021-01-01',
-                                              ]);
+                                             'photo_id' => $photo3,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 10,
+                                             'start_at' => '2021-01-01',
+                                             'end_at' => '2021-01-01',
+                                         ]);
 
         $result = $this->likeAggregate->getForAggregation(
             CarbonImmutable::parse('2021-01-01'),
@@ -533,15 +528,15 @@ class LikeAggregateTest extends TestCase
         $this->assertSame(2, $result->count());
         $this->assertSame(
             ['photo_id' => $photo1, 'likes' => 28],
-            $result->where('photo_id', $photo1)->first()->toArray()
+            $result->firstWhere('photo_id', $photo1)->toArray()
         );
         $this->assertSame(
             ['photo_id' => $photo2, 'likes' => 12],
-            $result->where('photo_id', $photo2)->first()->toArray()
+            $result->firstWhere('photo_id', $photo2)->toArray()
         );
-        $this->assertIsInt($result->where('photo_id', $photo1)->first()->likes);
-        $this->assertIsInt($result->where('photo_id', $photo2)->first()->likes);
-        $this->assertNull($result->where('photo_id', $photo3)->first());
+        $this->assertIsInt($result->firstWhere('photo_id', $photo1)->likes);
+        $this->assertIsInt($result->firstWhere('photo_id', $photo2)->likes);
+        $this->assertNull($result->firstWhere('photo_id', $photo3));
     }
 
     /**
@@ -552,35 +547,35 @@ class LikeAggregateTest extends TestCase
         $photo1 = 'photo1';
 
         Like::factory()->create([
-                                         'photo_id' => $photo1
-                                     ]);
+                                    'photo_id' => $photo1
+                                ]);
 
         //１週間全部のレコード
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 1,
-                                                  'start_at' => '2021-02-27',
-                                                  'end_at' => '2021-02-27',
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 1,
+                                             'start_at' => '2021-02-27',
+                                             'end_at' => '2021-02-27',
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 1,
-                                                  'status' => 0,
-                                                  'likes' => 3,
-                                                  'start_at' => '2021-02-28',
-                                                  'end_at' => '2021-02-28',
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 1,
+                                             'status' => 0,
+                                             'likes' => 3,
+                                             'start_at' => '2021-02-28',
+                                             'end_at' => '2021-02-28',
+                                         ]);
         for ($i = 1; $i <= 5; $i++) {
             LikeAggregate::factory()->create([
-                                                      'photo_id' => $photo1,
-                                                      'aggregate_type' => 1,
-                                                      'status' => 0,
-                                                      'likes' => $i,
-                                                      'start_at' => "2021-03-0$i",
-                                                      'end_at' => "2021-03-0$i",
-                                                  ]);
+                                                 'photo_id' => $photo1,
+                                                 'aggregate_type' => 1,
+                                                 'status' => 0,
+                                                 'likes' => $i,
+                                                 'start_at' => "2021-03-0$i",
+                                                 'end_at' => "2021-03-0$i",
+                                             ]);
         }
 
         $result = $this->likeAggregate->getForAggregation(
@@ -608,89 +603,89 @@ class LikeAggregateTest extends TestCase
         $photo3 = 'photo3';
 
         Like::factory()->create([
-                                         'photo_id' => $photo1
-                                     ]);
+                                    'photo_id' => $photo1
+                                ]);
         Like::factory()->create([
-                                         'photo_id' => $photo2
-                                     ]);
+                                    'photo_id' => $photo2
+                                ]);
 
         //1ヶ月分の全週間レコード（週の初め1日パターン）
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 1,
-                                                  'start_at' => "2021-01-01",
-                                                  'end_at' => "2021-01-07",
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 1,
+                                             'start_at' => "2021-01-01",
+                                             'end_at' => "2021-01-07",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 2,
-                                                  'start_at' => "2021-01-08",
-                                                  'end_at' => "2021-01-14",
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 2,
+                                             'start_at' => "2021-01-08",
+                                             'end_at' => "2021-01-14",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 3,
-                                                  'start_at' => "2021-01-15",
-                                                  'end_at' => "2021-01-21",
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 3,
+                                             'start_at' => "2021-01-15",
+                                             'end_at' => "2021-01-21",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 4,
-                                                  'start_at' => "2021-01-22",
-                                                  'end_at' => "2021-01-28",
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 4,
+                                             'start_at' => "2021-01-22",
+                                             'end_at' => "2021-01-28",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo1,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 5,
-                                                  'start_at' => "2021-01-29",
-                                                  'end_at' => "2021-01-31",
-                                              ]);
+                                             'photo_id' => $photo1,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 5,
+                                             'start_at' => "2021-01-29",
+                                             'end_at' => "2021-01-31",
+                                         ]);
 
         //３週間弱分レコード（週の初めが前月パターン）
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 2,
-                                                  'start_at' => "2021-01-01",
-                                                  'end_at' => "2021-01-03",
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 2,
+                                             'start_at' => "2021-01-01",
+                                             'end_at' => "2021-01-03",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 4,
-                                                  'start_at' => "2021-01-04",
-                                                  'end_at' => "2021-01-10",
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 4,
+                                             'start_at' => "2021-01-04",
+                                             'end_at' => "2021-01-10",
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo2,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 6,
-                                                  'start_at' => "2021-01-18",
-                                                  'end_at' => "2021-01-24",
-                                              ]);
+                                             'photo_id' => $photo2,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 6,
+                                             'start_at' => "2021-01-18",
+                                             'end_at' => "2021-01-24",
+                                         ]);
 
         //取得できない（join先なし）
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $photo3,
-                                                  'aggregate_type' => 2,
-                                                  'status' => 0,
-                                                  'likes' => 10,
-                                                  'start_at' => '2021-01-01',
-                                                  'end_at' => '2021-01-01',
-                                              ]);
+                                             'photo_id' => $photo3,
+                                             'aggregate_type' => 2,
+                                             'status' => 0,
+                                             'likes' => 10,
+                                             'start_at' => '2021-01-01',
+                                             'end_at' => '2021-01-01',
+                                         ]);
 
         $result = $this->likeAggregate->getForAggregation(
             CarbonImmutable::parse('2020-12-31'),
@@ -758,7 +753,7 @@ class LikeAggregateTest extends TestCase
         );
 
         $this->assertSame(1, $result->where('photo_id', $photo1->photo_id)->count());
-        $this->assertSame(20, $result->where('photo_id', $photo1->photo_id)->first()->likes);
+        $this->assertSame(20, $result->firstWhere('photo_id', $photo1->photo_id)->likes);
         $this->assertSame(2, $result->where('photo_id', $photo2->photo_id)->count());
         $this->assertContains(20, $result->where('photo_id', $photo2->photo_id)->pluck('likes'));
         $this->assertContains(30, $result->where('photo_id', $photo2->photo_id)->pluck('likes'));
@@ -807,21 +802,21 @@ class LikeAggregateTest extends TestCase
         $type = 1;
 
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $targetId,
-                                                  'aggregate_type' => 1,
-                                                  'likes' => 10,
-                                                  'status' => 0,
-                                                  'start_at' => '2021-01-01',
-                                                  'end_at' => '2021-01-01',
-                                              ]);
+                                             'photo_id' => $targetId,
+                                             'aggregate_type' => 1,
+                                             'likes' => 10,
+                                             'status' => 0,
+                                             'start_at' => '2021-01-01',
+                                             'end_at' => '2021-01-01',
+                                         ]);
         LikeAggregate::factory()->create([
-                                                  'photo_id' => $notTargetId,
-                                                  'aggregate_type' => 1,
-                                                  'likes' => 10,
-                                                  'status' => 0,
-                                                  'start_at' => '2021-01-01',
-                                                  'end_at' => '2021-01-01',
-                                              ]);
+                                             'photo_id' => $notTargetId,
+                                             'aggregate_type' => 1,
+                                             'likes' => 10,
+                                             'status' => 0,
+                                             'start_at' => '2021-01-01',
+                                             'end_at' => '2021-01-01',
+                                         ]);
 
         $this->assertDatabaseHas('like_aggregates', [
             'photo_id' => $targetId,

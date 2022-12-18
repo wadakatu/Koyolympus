@@ -29,7 +29,7 @@ class GetPhotoRequestTest extends TestCase
         $this->assertSame($expect, $result);
     }
 
-    public function providerValidation()
+    public function providerValidation(): array
     {
         return [
             '正常' => [

@@ -12,18 +12,13 @@ use App\Http\Requests\LikeRequest;
 
 class LikeRequestTest extends TestCase
 {
-    private $request;
+    private LikeRequest $request;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->request = new LikeRequest();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

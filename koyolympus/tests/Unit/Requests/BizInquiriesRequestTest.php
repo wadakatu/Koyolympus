@@ -10,18 +10,13 @@ use App\Http\Requests\BizInquiriesRequest;
 
 class BizInquiriesRequestTest extends TestCase
 {
-    private $request;
+    private BizInquiriesRequest $request;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->request = new BizInquiriesRequest();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**

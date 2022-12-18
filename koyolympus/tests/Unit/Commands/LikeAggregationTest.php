@@ -38,11 +38,6 @@ class LikeAggregationTest extends TestCase
         $this->likeAggregateCommand = new LikeAggregation($this->likeService);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * ジョブが適切にプッシュされチェインされているかテスト
      *

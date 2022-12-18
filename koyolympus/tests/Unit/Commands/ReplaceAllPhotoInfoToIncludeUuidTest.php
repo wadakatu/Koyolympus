@@ -21,11 +21,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         $this->app->instance(BaseService::class, $this->replaceUuidService);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * 例外なしの場合、サービスクラスが適切に呼び出されているかテスト
      *
@@ -36,7 +31,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
-            ->shouldReceive('includeUuidInRecord')
+            ->expects('includeUuidInRecord')
             ->once();
         DB::shouldReceive('commit')->once();
 
@@ -45,7 +40,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 
         //finally statement.
         $this->replaceUuidService
-            ->shouldReceive('deleteAllLocalPhoto')
+            ->expects('deleteAllLocalPhoto')
             ->once()
             ->andReturnTrue();
 
@@ -65,7 +60,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
-            ->shouldReceive('includeUuidInRecord')
+            ->expects('includeUuidInRecord')
             ->once()
             ->andThrow(new \Exception('エラー！'));
         DB::shouldReceive('commit')->never();
@@ -75,7 +70,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 
         //finally statement.
         $this->replaceUuidService
-            ->shouldReceive('deleteAllLocalPhoto')
+            ->expects('deleteAllLocalPhoto')
             ->once()
             ->andReturnTrue();
 

@@ -14,16 +14,6 @@ use Illuminate\Support\Collection;
 
 class CheckConsistencyBetweenDBAndS3Test extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      * @dataProvider providerHandle
@@ -51,7 +41,7 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
         DB::shouldReceive('commit')
             ->times($prepare['commit']['times']);
 
-        DB:: shouldReceive('rollBack')
+        DB::shouldReceive('rollBack')
             ->times($prepare['rollBack']['times']);
 
         if (!isset($expect['message2'])) {

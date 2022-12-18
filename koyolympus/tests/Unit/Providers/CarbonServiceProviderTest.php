@@ -10,16 +10,6 @@ use Carbon\CarbonImmutable;
 
 class CarbonServiceProviderTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      * @dataProvider providerLastWeek

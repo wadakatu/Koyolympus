@@ -28,7 +28,7 @@ class PhotoSeeder extends Seeder
             $genre   = $this->getPhotoGenre($i);
             $fileUrl = config("const.PHOTO.GENRE_FILE_URL.$genre");
 
-            $photo            = factory(Photo::class)->make(['genre' => $genre]);
+            $photo            = Photo::factory()->make(['genre' => $genre]);
             $fileName         = $photo->id . '-test.jpeg';
             $photo->file_path = $fileUrl . '/' . $fileName;
 
@@ -55,8 +55,8 @@ class PhotoSeeder extends Seeder
 
         switch ($remainder) {
             case $remainder < 7:
-            $genre = $remainder;
-            break;
+                $genre = $remainder;
+                break;
             default:
                 $genre = 1;
                 break;

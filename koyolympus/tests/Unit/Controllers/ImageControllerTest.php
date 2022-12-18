@@ -40,13 +40,11 @@ class ImageControllerTest extends TestCase
         $genre = '1';
         $request = Mockery::mock(GetPhotoRequest::class);
         $request->expects('input')
-            ->once()
             ->with('genre')
             ->andReturns($genre);
 
         $this->photoService
             ->expects('getAllPhoto')
-            ->once()
             ->with($genre)
             ->andReturns(new LengthAwarePaginator([], 2, 10));
 
@@ -63,7 +61,6 @@ class ImageControllerTest extends TestCase
     {
         $this->photoService
             ->expects('getAllPhotoRandomly')
-            ->once()
             ->withNoArgs()
             ->andReturns(Collect([]));
 
@@ -86,13 +83,11 @@ class ImageControllerTest extends TestCase
 
         $fileSystemAdapter
             ->expects('exists')
-            ->once()
             ->with('/photo/landscape')
             ->andReturnTrue();
 
         $fileSystemAdapter
             ->expects('get')
-            ->once()
             ->with($filePath)
             ->andReturns('success');
 
@@ -113,13 +108,11 @@ class ImageControllerTest extends TestCase
         $fileSystemAdapter = Mockery::mock(FilesystemAdapter::class);
 
         Storage::shouldReceive('disk')
-            ->once()
             ->with('s3')
             ->andReturn($fileSystemAdapter);
 
         $fileSystemAdapter
             ->expects('exists')
-            ->once()
             ->with('/photo/landscape')
             ->andReturnFalse();
 
@@ -161,13 +154,11 @@ class ImageControllerTest extends TestCase
 
         $this->photoService
             ->expects('uploadPhotoDataToDB')
-            ->once()
             ->with($fileName, 1)
             ->andReturns($uniqueFileName = 'noError.jpeg');
 
         $this->photoService
             ->expects('uploadPhotoToS3')
-            ->once()
             ->with($file, $uniqueFileName, 1);
 
         $response = $this->imageController->uploadPhoto($request);
@@ -206,7 +197,6 @@ class ImageControllerTest extends TestCase
 
         $this->photoService
             ->expects('uploadPhotoDataToDB')
-            ->once()
             ->with($fileName, 1)
             ->andThrow(Exception::class);
 

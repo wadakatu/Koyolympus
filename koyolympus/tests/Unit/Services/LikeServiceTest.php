@@ -66,12 +66,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
             ->expects('getForDailyAggregation')
-            ->once()
             ->andReturns(new Collection([$like = new Like(['photo_id' => $photoId])]));
 
         $this->likeService
@@ -85,7 +83,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 [
                     "photo_id" => "test_id"
@@ -103,7 +100,6 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId, ['likes' => 0]);
 
         $this->likeService
@@ -112,7 +108,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '日次いいね集計 END');
 
         $this->likeService->aggregateLikeDaily();
@@ -129,17 +124,14 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
             ->expects('getForDailyAggregation')
-            ->once()
             ->andReturns(new Collection());
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '集計対象０件のためスキップ');
 
         DB::shouldReceive('beginTransaction')->never();
@@ -183,12 +175,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
             ->expects('getForDailyAggregation')
-            ->once()
             ->andReturns(new Collection([$likeAggregate1, $likeAggregate2, $likeAggregate3]));
 
         $this->likeService
@@ -202,7 +192,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
@@ -349,12 +338,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・日次]', '日次いいね集計 START');
 
         $this->like
             ->expects('getForDailyAggregation')
-            ->once()
             ->andReturn(new Collection([$likeAggregate1, $likeAggregate_exception, $likeAggregate3]));
 
         $this->likeService
@@ -368,7 +355,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
@@ -383,7 +369,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate_exception->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
@@ -415,7 +400,6 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId1, ['likes' => 0]);
         $this->like
             ->expects('saveByPhotoId')
@@ -428,7 +412,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputErrorLog')
-            ->once()
             ->with('[いいね集計・日次]', "例外発生　対象：$photoId2");
 
         $this->likeService
@@ -464,7 +447,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
@@ -480,7 +462,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->once();
@@ -489,7 +470,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]);
@@ -507,12 +487,10 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId, ['weekly_likes' => 10]);
 
         $this->likeService
             ->expects('updateForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]->toArray());
@@ -535,7 +513,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
         $this->likeService->aggregateLikeWeekly();
@@ -553,7 +530,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
 
         $this->likeAggregate
@@ -649,7 +625,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
@@ -665,7 +640,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->times(2);
@@ -674,7 +648,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1, $likeAggregate3) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]);
@@ -692,7 +665,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]);
@@ -710,16 +682,13 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId1, ['weekly_likes' => 30]);
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId2, ['weekly_likes' => 15]);
 
         $this->likeService
             ->expects('updateForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1, $likeAggregate3) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]->toArray());
@@ -737,7 +706,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeService
             ->expects('updateForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]->toArray());
@@ -759,7 +727,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 END');
 
         $this->likeService->aggregateLikeWeekly();
@@ -788,7 +755,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
@@ -804,7 +770,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->once();
@@ -813,7 +778,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate) {
                     $this->assertSame($likeAggregate->toArray(), $actual[0]);
@@ -851,7 +815,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputErrorLog')
-            ->once()
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId");
 
         $this->likeService
@@ -892,7 +855,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastWeek) {
                     $this->assertSame($startOfLastWeek->toDateTimeString(), $actual->toDateTimeString());
@@ -908,7 +870,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・週次]', '週次いいね集計 START');
 
         DB::shouldReceive('beginTransaction')->times(2);
@@ -917,7 +878,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]);
@@ -934,7 +894,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeService
             ->expects('registerForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate2) {
                     $this->assertSame($likeAggregate2->toArray(), $actual[0]);
@@ -969,7 +928,6 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId1, ['weekly_likes' => 10]);
         $this->like
             ->expects('saveByPhotoId')
@@ -982,7 +940,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('updateForWeeklyAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($likeAggregate1) {
                     $this->assertSame($likeAggregate1->toArray(), $actual[0]->toArray());
@@ -1034,7 +991,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputErrorLog')
-            ->once()
             ->with('[いいね集計・週次]', "例外発生 対象：$photoId2");
 
         $this->likeService
@@ -1070,12 +1026,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
@@ -1095,7 +1049,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1111,12 +1064,10 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photoId, ['month_likes' => 15]);
 
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photoId,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1138,7 +1089,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
         $this->likeService->aggregateLikeMonthly();
@@ -1158,7 +1108,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', "本日 $day 日なのでスキップ");
 
         $this->likeService
@@ -1320,12 +1269,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
@@ -1345,7 +1292,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1360,7 +1306,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1375,7 +1320,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate3->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1391,20 +1335,16 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photo1, ['month_likes' => 5]);
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photo2, ['month_likes' => 10]);
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photo3, ['month_likes' => 15]);
 
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1420,7 +1360,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1436,7 +1375,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1457,7 +1395,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 END');
 
         $this->likeService->aggregateLikeMonthly();
@@ -1486,12 +1423,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
@@ -1511,7 +1446,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1550,7 +1484,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputErrorLog')
-            ->once()
             ->with('[いいね集計・月次]', "例外発生　対象：$photoId");
 
         $this->likeService
@@ -1591,12 +1524,10 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputLog')
-            ->once()
             ->with('[いいね集計・月次]', '月次いいね集計 START');
 
         $this->likeAggregate
             ->expects('getForAggregation')
-            ->once()
             ->with(
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
                     $this->assertSame($startOfLastMonth->toDateTimeString(), $actual->toDateTimeString());
@@ -1616,7 +1547,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1631,7 +1561,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate2->toArray(),
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1663,7 +1592,6 @@ class LikeServiceTest extends TestCase
 
         $this->like
             ->expects('saveByPhotoId')
-            ->once()
             ->with($photo1, ['month_likes' => 5]);
         $this->like
             ->expects('saveByPhotoId')
@@ -1676,7 +1604,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startOfLastMonth) {
@@ -1725,7 +1652,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeService
             ->expects('outputErrorLog')
-            ->once()
             ->with('[いいね集計・月次]', "例外発生　対象：$photo2");
 
         $this->likeService
@@ -1766,7 +1692,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('registerForAggregation')
-            ->once()
             ->with(
                 $likeAggregate1->toArray(),
                 Mockery::on(function ($actual) use ($startAt) {
@@ -1845,7 +1770,6 @@ class LikeServiceTest extends TestCase
 
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo1,
                 Mockery::on(function ($actual) use ($startAt) {
@@ -1861,7 +1785,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($startAt) {
@@ -1877,7 +1800,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo2,
                 Mockery::on(function ($actual) use ($endAt) {
@@ -1893,7 +1815,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($startAt) {
@@ -1909,7 +1830,6 @@ class LikeServiceTest extends TestCase
             );
         $this->likeAggregate
             ->expects('updateForAggregation')
-            ->once()
             ->with(
                 $photo3,
                 Mockery::on(function ($actual) use ($endAt) {

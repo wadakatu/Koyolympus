@@ -38,13 +38,11 @@ class LikeControllerTest extends TestCase
 
         $this->request
             ->expects('get')
-            ->once()
             ->with('id')
             ->andReturns($id);
 
         $this->like
             ->expects('getAllLike')
-            ->once()
             ->with($id)
             ->andReturns($allLikes);
 
@@ -69,13 +67,11 @@ class LikeControllerTest extends TestCase
 
         $this->request
             ->expects('get')
-            ->once()
             ->with('id')
             ->andReturns($id);
 
         $this->like
             ->expects('addLike')
-            ->once()
             ->with($id);
 
         $response = $this->likeController->likePhoto($this->request);
@@ -101,13 +97,11 @@ class LikeControllerTest extends TestCase
 
         $this->request
             ->expects('get')
-            ->once()
             ->with('id')
             ->andReturns($id);
 
         $this->like
             ->expects('addLike')
-            ->once()
             ->with($id)
             ->andThrow($exception);
 
@@ -133,13 +127,11 @@ class LikeControllerTest extends TestCase
 
         $this->request
             ->expects('get')
-            ->once()
             ->with('id')
             ->andReturns($id);
 
         $this->like
             ->expects('subLike')
-            ->once()
             ->with($id);
 
         $response = $this->likeController->unlikePhoto($this->request);
@@ -165,13 +157,11 @@ class LikeControllerTest extends TestCase
 
         $this->request
             ->expects('get')
-            ->once()
             ->with('id')
             ->andReturns($id);
 
         $this->like
             ->expects('subLike')
-            ->once()
             ->with($id)
             ->andThrow($exception);
 

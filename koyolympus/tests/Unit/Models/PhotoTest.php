@@ -39,8 +39,8 @@ class PhotoTest extends TestCase
     {
         $this->photo = Mockery::mock(Photo::class)->makePartial();
 
-        $this->photo->expects('getRandomId')
-            ->once()
+        $this->photo
+            ->expects('getRandomId')
             ->andReturns('uuid');
 
         $this->photo->setId();

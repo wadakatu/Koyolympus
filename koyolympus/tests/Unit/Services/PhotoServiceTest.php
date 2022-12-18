@@ -44,8 +44,8 @@ class PhotoServiceTest extends TestCase
      */
     public function getAllPhoto($genre)
     {
-        $this->photo->shouldReceive('getAllPhoto')
-            ->once()
+        $this->photo
+            ->expects('getAllPhoto')
             ->with($genre)
             ->andReturn(Mockery::mock(LengthAwarePaginator::class));
 
@@ -70,8 +70,7 @@ class PhotoServiceTest extends TestCase
     public function getAllPhotoRandomly()
     {
         $this->photo
-            ->shouldReceive('getAllPhotoRandomly')
-            ->once()
+            ->expects('getAllPhotoRandomly')
             ->withNoArgs()
             ->andReturn(Collect([]));
 
@@ -90,8 +89,7 @@ class PhotoServiceTest extends TestCase
         $uniqueFileName = 'uniquePhoto.jpeg';
 
         $this->photo
-            ->shouldReceive('createPhotoInfo')
-            ->once()
+            ->expects('createPhotoInfo')
             ->with($fileName, $filePath, $genre)
             ->andReturn($uniqueFileName);
 
@@ -146,7 +144,7 @@ class PhotoServiceTest extends TestCase
         Storage::shouldReceive('disk')->once()->with('s3')->andReturn(
             $s3Disk = Mockery::mock(FilesystemAdapter::class)
         );
-        $s3Disk->shouldReceive('putFileAs')->once()->with($filePath, $file, $expectedUniqueFileName, 'public');
+        $s3Disk->expects('putFileAs')->with($filePath, $file, $expectedUniqueFileName, 'public');
 
         $this->photoService->uploadPhotoToS3($file, $expectedUniqueFileName, $genre);
     }
@@ -164,7 +162,7 @@ class PhotoServiceTest extends TestCase
         Storage::shouldReceive('disk')->once()->with('s3')->andReturn(
             $s3Disk = Mockery::mock(FilesystemAdapter::class)
         );
-        $s3Disk->shouldReceive('delete')->once()->with($filePath . '/' . $fileName);
+        $s3Disk->expects('delete')->with($filePath . '/' . $fileName);
 
         $this->photoService->deletePhotoFromS3($fileName, $genre);
     }
@@ -176,13 +174,11 @@ class PhotoServiceTest extends TestCase
     {
         $id = '1';
         $this->photo
-            ->shouldReceive('deletePhotoInfo')
-            ->once()
+            ->expects('deletePhotoInfo')
             ->with($id);
 
         $this->like
-            ->shouldReceive('deleteByPhotoId')
-            ->once()
+            ->expects('deleteByPhotoId')
             ->with($id);
 
         $this->photoService->deletePhotoFromDB($id);
@@ -207,18 +203,15 @@ class PhotoServiceTest extends TestCase
         );
 
         $this->photoService
-            ->shouldReceive('searchMultipleDuplicatePhotos')
-            ->once()
+            ->expects('searchMultipleDuplicatePhotos')
             ->andReturn($expected);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromS3')
-            ->once()
+            ->expects('deletePhotoFromS3')
             ->with($fileName, $genre);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromDB')
-            ->once()
+            ->expects('deletePhotoFromDB')
             ->with('id1');
 
         $actual = $this->photoService->deleteMultiplePhotosIfDuplicate();
@@ -240,16 +233,15 @@ class PhotoServiceTest extends TestCase
             ]
         );
 
-        $this->photoService->shouldReceive('searchMultipleDuplicatePhotos')
-            ->once()
+        $this->photoService->expects('searchMultipleDuplicatePhotos')
             ->andReturn($expected);
 
-        $this->photoService->shouldReceive('deletePhotoFromS3')
+        $this->photoService->expects('deletePhotoFromS3')
             ->twice()
             ->with($fileName, $genre);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromDB')
+            ->expects('deletePhotoFromDB')
             ->twice()
             ->with('id1');
 
@@ -264,8 +256,7 @@ class PhotoServiceTest extends TestCase
      */
     public function searchMultipleDuplicatePhotosDuplicateTwoRecordsAboutOnePhoto()
     {
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn(
                 new Collection(
                     [
@@ -313,8 +304,7 @@ class PhotoServiceTest extends TestCase
      */
     public function searchMultipleDuplicatePhotosDuplicateOneRecordAboutOnePhoto()
     {
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn(
                 new Collection(
                     [
@@ -370,8 +360,8 @@ class PhotoServiceTest extends TestCase
      */
     public function searchMultipleDuplicatePhotosDuplicateTwoEachRecordsAboutTwoPhotos()
     {
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo
+            ->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn(
                 new Collection(
                     [
@@ -427,8 +417,8 @@ class PhotoServiceTest extends TestCase
      */
     public function searchMultipleDuplicatePhotosDuplicateThreeEachRecordsAboutTwoPhotos()
     {
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo
+            ->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn(
                 new Collection(
                     [
@@ -507,8 +497,8 @@ class PhotoServiceTest extends TestCase
      */
     public function searchMultipleDuplicatePhotosWithError()
     {
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo
+            ->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn(
                 new Collection(
                     [
@@ -571,26 +561,22 @@ class PhotoServiceTest extends TestCase
         $duplicateList = new Collection([$duplicateTarget]);
 
         $this->photo
-            ->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+            ->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn($allPhotos);
 
         $this->photoService
-            ->shouldReceive('searchDuplicatePhoto')
-            ->once()
+            ->expects('searchDuplicatePhoto')
             ->with(
                 $allPhotos,
                 $fileName,
             )->andReturn($duplicateList);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromS3')
-            ->once()
+            ->expects('deletePhotoFromS3')
             ->with($fileName, $genre);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromDB')
-            ->once()
+            ->expects('deletePhotoFromDB')
             ->with('id1');
 
         $actual = $this->photoService->deletePhotoIfDuplicate($fileName);
@@ -639,23 +625,24 @@ class PhotoServiceTest extends TestCase
         );
         $duplicateList = new Collection([$duplicateTarget1, $duplicateTarget2, $duplicateTarget3]);
 
-        $this->photo->shouldReceive('getAllPhotoOrderByCreatedAtDesc')
-            ->once()
+        $this->photo
+            ->expects('getAllPhotoOrderByCreatedAtDesc')
             ->andReturn($allPhotos);
 
-        $this->photoService->shouldReceive('searchDuplicatePhoto')
-            ->once()
+        $this->photoService
+            ->expects('searchDuplicatePhoto')
             ->with(
                 $allPhotos,
                 $fileName,
             )->andReturn($duplicateList);
 
-        $this->photoService->shouldReceive('deletePhotoFromS3')
+        $this->photoService
+            ->expects('deletePhotoFromS3')
             ->times(3)
             ->with($fileName, $genre);
 
         $this->photoService
-            ->shouldReceive('deletePhotoFromDB')
+            ->expects('deletePhotoFromDB')
             ->times(3)
             ->with('id1');
 

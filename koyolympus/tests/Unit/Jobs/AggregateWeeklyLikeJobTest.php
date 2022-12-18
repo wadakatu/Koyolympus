@@ -38,13 +38,11 @@ class AggregateWeeklyLikeJobTest extends TestCase
     public function handle()
     {
         $this->likeService
-            ->shouldReceive('setCommandStartAt')
-            ->once()
+            ->expects('setCommandStartAt')
             ->with($this->startAt);
 
         $this->likeService
-            ->shouldReceive('aggregateLikeWeekly')
-            ->once();
+            ->expects('aggregateLikeWeekly');
 
         $this->job->handle();
     }
@@ -57,13 +55,11 @@ class AggregateWeeklyLikeJobTest extends TestCase
         $throwable = new Exception('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
-            ->once()
+            ->expects('outputThrowableLog')
             ->with('[いいね集計・週次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendThrowableMail')
-            ->once()
+            ->expects('sendThrowableMail')
             ->with(
                 '[Koyolympus/週次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()
@@ -80,13 +76,11 @@ class AggregateWeeklyLikeJobTest extends TestCase
         $throwable = new Error('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
-            ->once()
+            ->expects('outputThrowableLog')
             ->with('[いいね集計・週次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendThrowableMail')
-            ->once()
+            ->expects('sendThrowableMail')
             ->with(
                 '[Koyolympus/週次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()

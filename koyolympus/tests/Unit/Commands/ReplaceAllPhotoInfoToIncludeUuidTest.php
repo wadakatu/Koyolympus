@@ -31,8 +31,7 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //try statement.
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
-            ->expects('includeUuidInRecord')
-            ->once();
+            ->expects('includeUuidInRecord');
         DB::shouldReceive('commit')->once();
 
         //catch statement.
@@ -41,7 +40,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //finally statement.
         $this->replaceUuidService
             ->expects('deleteAllLocalPhoto')
-            ->once()
             ->andReturnTrue();
 
         $this->artisan('command:includeUuid')
@@ -61,7 +59,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         DB::shouldReceive('beginTransaction')->once();
         $this->replaceUuidService
             ->expects('includeUuidInRecord')
-            ->once()
             ->andThrow(new \Exception('エラー！'));
         DB::shouldReceive('commit')->never();
 
@@ -71,7 +68,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
         //finally statement.
         $this->replaceUuidService
             ->expects('deleteAllLocalPhoto')
-            ->once()
             ->andReturnTrue();
 
         $this->artisan('command:includeUuid')

@@ -88,7 +88,7 @@ class CheckConsistencyBetweenDBAndS3Test extends TestCase
         DB::shouldReceive('commit')
             ->never();
 
-        DB:: shouldReceive('rollBack')
+        DB::shouldReceive('rollBack')
             ->once();
 
         $this->artisan(

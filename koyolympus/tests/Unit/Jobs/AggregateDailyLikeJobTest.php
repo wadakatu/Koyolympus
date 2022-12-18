@@ -39,12 +39,10 @@ class AggregateDailyLikeJobTest extends TestCase
     {
         $this->likeService
             ->expects('setCommandStartAt')
-            ->once()
             ->with($this->startAt);
 
         $this->likeService
-            ->expects('aggregateLikeDaily')
-            ->once();
+            ->expects('aggregateLikeDaily');
 
         $this->job->handle();
     }
@@ -58,12 +56,10 @@ class AggregateDailyLikeJobTest extends TestCase
 
         $this->likeService
             ->expects('outputThrowableLog')
-            ->once()
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
             ->expects('sendThrowableMail')
-            ->once()
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()
@@ -81,12 +77,10 @@ class AggregateDailyLikeJobTest extends TestCase
 
         $this->likeService
             ->expects('outputThrowableLog')
-            ->once()
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
             ->expects('sendThrowableMail')
-            ->once()
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
                 $throwable->getMessage()

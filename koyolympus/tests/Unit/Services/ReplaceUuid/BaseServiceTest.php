@@ -65,7 +65,7 @@ class BaseServiceTest extends TestCase
 
         $photoList = new Collection($photoArray);
 
-        $this->photo->expects('all')->once()->andReturns($photoList);
+        $this->photo->expects('all')->andReturns($photoList);
         $this->baseService->expects('createLatestPhotoInfoIncludingUuid')
             ->times($params['createLatest'])
             ->with($oldPath)
@@ -225,9 +225,8 @@ class BaseServiceTest extends TestCase
 
         $photoList = new Collection($array);
 
-        $this->photo->expects('all')->once()->andReturns($photoList);
+        $this->photo->expects('all')->andReturns($photoList);
         $this->baseService->expects('createLatestPhotoInfoIncludingUuid')
-            ->once()
             ->with($oldPath)
             ->andReturns($newInfo);
         $this->baseService->expects('movePhotoToNewFolder')
@@ -302,7 +301,7 @@ class BaseServiceTest extends TestCase
         $oldS3Path = 'old/' . $fileName;
 
         Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
-        $s3Disk->expects('exists')->once()->with($oldS3Path)->andReturnTrue();
+        $s3Disk->expects('exists')->with($oldS3Path)->andReturnTrue();
 
         $result = $this->baseService->createLatestPhotoInfoIncludingUuid($oldS3Path);
 
@@ -327,7 +326,7 @@ class BaseServiceTest extends TestCase
     {
         $oldS3Path = 'old/test.jpeg';
         Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
-        $s3Disk->expects('exists')->once()->with($oldS3Path)->andReturnFalse();
+        $s3Disk->expects('exists')->with($oldS3Path)->andReturnFalse();
 
         $this->expectException(FileNotFoundException::class);
         $this->expectExceptionMessage("Photo file not found. Path: $oldS3Path");
@@ -352,13 +351,12 @@ class BaseServiceTest extends TestCase
 
         Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
 
-        $s3Disk->expects('get')->once()->with($oldS3Path)->andReturns($content);
-        $s3Disk->expects('putFileAs')->once()->with('new/', $file, $fileName, 'public');
-        $s3Disk->expects('delete')->once()->with($oldS3Path)->andReturnTrue();
+        $s3Disk->expects('get')->with($oldS3Path)->andReturns($content);
+        $s3Disk->expects('putFileAs')->with('new/', $file, $fileName, 'public');
+        $s3Disk->expects('delete')->with($oldS3Path)->andReturnTrue();
 
         $this->baseService
             ->expects('downloadS3PhotoToLocal')
-            ->once()
             ->with($fileName, $content)
             ->andReturns($file);
 
@@ -383,7 +381,7 @@ class BaseServiceTest extends TestCase
 
         Storage::shouldReceive('disk')->with('s3')->andReturn($s3Disk = Mockery::mock(FilesystemAdapter::class));
 
-        $s3Disk->expects('get')->once()->with($oldS3Path)->andReturnNull();
+        $s3Disk->expects('get')->with($oldS3Path)->andReturnNull();
         $s3Disk->expects('putFileAs')->never();
         $s3Disk->expects('delete')->never();
 
@@ -425,7 +423,7 @@ class BaseServiceTest extends TestCase
         Storage::shouldReceive('disk')
             ->with('public')
             ->andReturn($publicDisk = Mockery::mock(FilesystemAdapter::class));
-        $publicDisk->expects('deleteDirectory')->once()->with('local/')->andReturnTrue();
+        $publicDisk->expects('deleteDirectory')->with('local/')->andReturnTrue();
 
         $result = $this->baseService->deleteAllLocalPhoto();
 

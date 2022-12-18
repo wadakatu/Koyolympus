@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requests;
 
-use Validator;
-use Tests\TestCase;
 use App\Http\Requests\BizInquiriesRequest;
+use Tests\TestCase;
+use Validator;
 
 class BizInquiriesRequestTest extends TestCase
 {
@@ -33,8 +33,8 @@ class BizInquiriesRequestTest extends TestCase
     public function validationSuccess()
     {
         $dataList = [
-            'name' => 'test',
-            'email' => 'test@test.com',
+            'name'    => 'test',
+            'email'   => 'test@test.com',
             'opinion' => 'hello',
         ];
 
@@ -42,7 +42,7 @@ class BizInquiriesRequestTest extends TestCase
 
         $validator = Validator::make($dataList, $rules);
 
-        $result = $validator->passes();
+        $result   = $validator->passes();
         $messages = $validator->messages();
 
         $this->assertTrue($result);
@@ -52,6 +52,7 @@ class BizInquiriesRequestTest extends TestCase
     /**
      * @test
      * @dataProvider providerValidationError
+     *
      * @param $data
      * @param $expected
      */
@@ -61,7 +62,7 @@ class BizInquiriesRequestTest extends TestCase
 
         $validator = Validator::make($data, $rules);
 
-        $result = $validator->passes();
+        $result   = $validator->passes();
         $messages = $validator->messages();
 
         $this->assertFalse($result);
@@ -73,103 +74,103 @@ class BizInquiriesRequestTest extends TestCase
         return [
             '名前が未入力' => [
                 'data' => [
-                    'name' => '',
-                    'email' => 'test@test.com',
+                    'name'    => '',
+                    'email'   => 'test@test.com',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'name',
-                    'message' => "The name field is required.",
+                    'message'    => 'The name field is required.',
                 ],
             ],
             'メール未入力' => [
                 'data' => [
-                    'name' => 'test',
-                    'email' => '',
+                    'name'    => 'test',
+                    'email'   => '',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'email',
-                    'message' => "The email field is required.",
+                    'message'    => 'The email field is required.',
                 ],
             ],
             '意見未入力' => [
                 'data' => [
-                    'name' => 'test',
-                    'email' => 'test@test.com',
+                    'name'    => 'test',
+                    'email'   => 'test@test.com',
                     'opinion' => '',
                 ],
                 'expect' => [
                     'messageKey' => 'opinion',
-                    'message' => "The opinion field is required.",
+                    'message'    => 'The opinion field is required.',
                 ],
             ],
             '名前が数字' => [
                 'data' => [
-                    'name' => 1,
-                    'email' => 'test@test.com',
+                    'name'    => 1,
+                    'email'   => 'test@test.com',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'name',
-                    'message' => "The name must be a string.",
+                    'message'    => 'The name must be a string.',
                 ],
             ],
             'メールの形式エラー' => [
                 'data' => [
-                    'name' => 'test',
-                    'email' => 'test',
+                    'name'    => 'test',
+                    'email'   => 'test',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'email',
-                    'message' => "The email must be a valid email address.",
+                    'message'    => 'The email must be a valid email address.',
                 ],
             ],
             '意見が数字' => [
                 'data' => [
-                    'name' => 'test',
-                    'email' => 'test@test.com',
+                    'name'    => 'test',
+                    'email'   => 'test@test.com',
                     'opinion' => 1,
                 ],
                 'expect' => [
                     'messageKey' => 'opinion',
-                    'message' => "The opinion must be a string.",
+                    'message'    => 'The opinion must be a string.',
                 ],
             ],
             '名前が21文字以上' => [
                 'data' => [
-                    'name' => str_repeat('a', 21),
-                    'email' => 'test@test.com',
+                    'name'    => str_repeat('a', 21),
+                    'email'   => 'test@test.com',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'name',
-                    'message' => "The name may not be greater than 20 characters.",
+                    'message'    => 'The name may not be greater than 20 characters.',
                 ],
             ],
             'メールが256文字以上' => [
                 'data' => [
-                    'name' => 'hello',
-                    'email' => str_repeat('a', 256) . '@test.com',
+                    'name'    => 'hello',
+                    'email'   => str_repeat('a', 256) . '@test.com',
                     'opinion' => 'hello',
                 ],
                 'expect' => [
                     'messageKey' => 'email',
-                    'message' => "The email may not be greater than 255 characters.",
+                    'message'    => 'The email may not be greater than 255 characters.',
                 ],
             ],
             '意見が1000文字以上' => [
                 'data' => [
-                    'name' => 'hello',
-                    'email' => 'test@test.com',
+                    'name'    => 'hello',
+                    'email'   => 'test@test.com',
                     'opinion' => str_repeat('a', 1001),
                 ],
                 'expect' => [
                     'messageKey' => 'opinion',
-                    'message' => "The opinion may not be greater than 1000 characters.",
+                    'message'    => 'The opinion may not be greater than 1000 characters.',
                 ],
-            ]
+            ],
         ];
     }
 }

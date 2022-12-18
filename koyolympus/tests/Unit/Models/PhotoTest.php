@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models;
 
-use Str;
-use Mockery;
-use Tests\TestCase;
 use App\Models\Photo;
-use Illuminate\Support\Carbon;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Mockery;
+use Str;
+use Tests\TestCase;
 
 class PhotoTest extends TestCase
 {
     use RefreshDatabase;
 
     private Photo $photo;
+
     public $mockConsoleOutput = false;
 
     protected function setUp(): void
@@ -79,14 +80,14 @@ class PhotoTest extends TestCase
     public function getAllPhoto()
     {
         Photo::factory()->create([
-                                     'genre' => '1',
-                                 ]);
+            'genre' => '1',
+        ]);
         Photo::factory()->count(2)->create([
-                                               'genre' => '2',
-                                           ]);
+            'genre' => '2',
+        ]);
         Photo::factory()->count(3)->create([
-                                               'genre' => '3',
-                                           ]);
+            'genre' => '3',
+        ]);
 
         //ジャンルなし
         $records = $this->photo->getAllPhoto(null);
@@ -111,7 +112,7 @@ class PhotoTest extends TestCase
     public function createPhotoInfo()
     {
         $uniqueFileName = $this->photo->createPhotoInfo('test.jpeg', '/photo', 1);
-        $fileName = explode('.', $uniqueFileName)[1];
+        $fileName       = explode('.', $uniqueFileName)[1];
 
         $record = Photo::query()->where('genre', 1)->get();
 
@@ -122,27 +123,28 @@ class PhotoTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function deletePhotoInfo()
     {
-        $id = 'abcdefghiasw';
+        $id     = 'abcdefghiasw';
         $fakeId = 'abcdefghijkl';
         Photo::factory()->create([
-                                     'id' => $id,
-                                     'file_name' => 'test.jpeg',
-                                     'genre' => 1,
-                                 ]);
+            'id'        => $id,
+            'file_name' => 'test.jpeg',
+            'genre'     => 1,
+        ]);
         Photo::factory()->create([
-                                     'id' => $fakeId,
-                                     'file_name' => 'test2.jpeg',
-                                     'genre' => 2,
-                                 ]);
+            'id'        => $fakeId,
+            'file_name' => 'test2.jpeg',
+            'genre'     => 2,
+        ]);
 
         $this->photo->deletePhotoInfo($id);
 
         $recordNull = Photo::query()->where('id', $id)->get();
-        $record = Photo::query()->where('id', $fakeId)->get();
+        $record     = Photo::query()->where('id', $fakeId)->get();
 
         $this->assertSame(0, count($recordNull));
         $this->assertSame(1, count($record));
@@ -154,17 +156,17 @@ class PhotoTest extends TestCase
     public function getAllPhotoOrderByCreatedAtDesc()
     {
         Photo::factory()->create([
-                                     'file_name' => 'test3.jpeg',
-                                     'created_at' => '2021-01-01 00:00:00'
-                                 ]);
+            'file_name'  => 'test3.jpeg',
+            'created_at' => '2021-01-01 00:00:00',
+        ]);
         Photo::factory()->create([
-                                     'file_name' => 'test2.jpeg',
-                                     'created_at' => '2021-01-02 00:00:00'
-                                 ]);
+            'file_name'  => 'test2.jpeg',
+            'created_at' => '2021-01-02 00:00:00',
+        ]);
         Photo::factory()->create([
-                                     'file_name' => 'test1.jpeg',
-                                     'created_at' => '2021-01-01 00:00:01'
-                                 ]);
+            'file_name'  => 'test1.jpeg',
+            'created_at' => '2021-01-01 00:00:01',
+        ]);
 
         $photoList = $this->photo->getAllPhotoOrderByCreatedAtDesc();
 

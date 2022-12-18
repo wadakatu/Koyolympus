@@ -18,8 +18,9 @@ trait PrivateTrait
     private function getPrivateProperty(object $class, string $property)
     {
         $reflectionClass = new ReflectionClass($class);
-        $targetProperty = $reflectionClass->getProperty($property);
+        $targetProperty  = $reflectionClass->getProperty($property);
         $targetProperty->setAccessible(true);
+
         return $targetProperty->getValue($class);
     }
 
@@ -32,8 +33,9 @@ trait PrivateTrait
     private function getPrivatePropertyForMockObject(object $class, string $property)
     {
         $reflectionClass = new ReflectionClass($class);
-        $targetProperty = $reflectionClass->getParentClass()->getProperty($property);
+        $targetProperty  = $reflectionClass->getParentClass()->getProperty($property);
         $targetProperty->setAccessible(true);
+
         return $targetProperty->getValue($class);
     }
 }

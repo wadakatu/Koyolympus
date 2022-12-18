@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Jobs\AggregateDailyLikeJob;
+use App\Jobs\AggregateMonthlyLikeJob;
+use App\Jobs\AggregateWeeklyLikeJob;
+use App\Services\LikeService;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
-use App\Services\LikeService;
-use App\Jobs\AggregateDailyLikeJob;
-use App\Jobs\AggregateWeeklyLikeJob;
-use App\Jobs\AggregateMonthlyLikeJob;
 
 class LikeAggregation extends Command
 {
@@ -43,7 +43,7 @@ class LikeAggregation extends Command
         parent::__construct();
 
         $this->likeService = $likeService;
-        $this->startAt = CarbonImmutable::now();
+        $this->startAt     = CarbonImmutable::now();
     }
 
     /**

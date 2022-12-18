@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
-use Tests\TestCase;
+use App\Http\Controllers\v1\BizInquiriesController;
+use App\Http\Requests\BizInquiriesRequest;
 use App\Mails\BizInquiriesMail;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\BizInquiriesRequest;
-use App\Http\Controllers\v1\BizInquiriesController;
+use Tests\TestCase;
 
 class BizInquiriesControllerTest extends TestCase
 {
@@ -27,10 +27,10 @@ class BizInquiriesControllerTest extends TestCase
     {
         $request = new BizInquiriesRequest();
         $request->merge([
-                            'name' => 'test',
-                            'email' => 'test@gmail.com',
-                            'opinion' => 'test,test,test',
-                        ]);
+            'name'    => 'test',
+            'email'   => 'test@gmail.com',
+            'opinion' => 'test,test,test',
+        ]);
 
         Mail::fake();
 

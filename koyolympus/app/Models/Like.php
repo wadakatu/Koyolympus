@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\DateFormat;
 use DB;
 use Exception;
-use App\Models\Traits\DateFormat;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Like extends Model
 {
     use DateFormat;
     use HasFactory;
 
-
     protected $guarded = ['id'];
 
     /**
      * 写真IDを基に総いいね数を取得
      *
-     * @param string $uuid
+     * @param  string  $uuid
      * @return int
      */
     public function getAllLike(string $uuid): int
@@ -33,7 +32,7 @@ class Like extends Model
     /**
      * いいね数を1増加
      *
-     * @param string $uuid
+     * @param  string  $uuid
      * @return void
      */
     public function addLike(string $uuid): void
@@ -47,7 +46,7 @@ class Like extends Model
     /**
      * いいね数を1減少
      *
-     * @param string $uuid
+     * @param  string  $uuid
      * @return void
      */
     public function subLike(string $uuid): void
@@ -68,8 +67,8 @@ class Like extends Model
     /**
      * 写真IDを条件にいいね情報を更新
      *
-     * @param string $photoId
-     * @param array $value
+     * @param  string  $photoId
+     * @param  array  $value
      * @return void
      */
     public function saveByPhotoId(string $photoId, array $value): void
@@ -80,8 +79,9 @@ class Like extends Model
     /**
      * 写真IDを条件にいいね情報を削除
      *
-     * @param string $photoId
+     * @param  string  $photoId
      * @return void
+     *
      * @throws Exception
      */
     public function deleteByPhotoId(string $photoId): void

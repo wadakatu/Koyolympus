@@ -11,8 +11,8 @@ trait LogTrait
     /**
      * infoログを出力
      *
-     * @param string $title
-     * @param string $message
+     * @param  string  $title
+     * @param  string  $message
      * @return void
      */
     public function outputLog(string $title, string $message)
@@ -23,8 +23,8 @@ trait LogTrait
     /**
      * errorログを出力
      *
-     * @param string $title
-     * @param string $message
+     * @param  string  $title
+     * @param  string  $message
      * @return void
      */
     public function outputErrorLog(string $title, string $message)
@@ -35,8 +35,8 @@ trait LogTrait
     /**
      * エラー・例外発生時にerrorログを出力
      *
-     * @param string $title
-     * @param string $message
+     * @param  string  $title
+     * @param  string  $message
      * @return void
      */
     public function outputThrowableLog(string $title, string $message)

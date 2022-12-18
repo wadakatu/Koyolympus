@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Str;
 
 class LikeFactory extends Factory
 {
@@ -17,11 +17,11 @@ class LikeFactory extends Factory
     public function definition()
     {
         return [
-            'photo_id' => Str::random(12),
-            'likes' => $this->faker->numberBetween(1, 100),
-            'week_likes' => $this->faker->numberBetween(1, 100),
+            'photo_id'    => Str::random(12),
+            'likes'       => $this->faker->numberBetween(1, 100),
+            'week_likes'  => $this->faker->numberBetween(1, 100),
             'month_likes' => $this->faker->numberBetween(1, 100),
-            'all_likes' => $this->faker->numberBetween(1, 100)
+            'all_likes'   => $this->faker->numberBetween(1, 100),
         ];
     }
 }

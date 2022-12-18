@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
+use App\Console\Commands\LikeAggregation;
+use App\Jobs\AggregateDailyLikeJob;
+use App\Jobs\AggregateMonthlyLikeJob;
+use App\Jobs\AggregateWeeklyLikeJob;
+use App\Models\Like;
+use App\Models\LikeAggregate;
+use App\Services\LikeService;
+use App\Traits\PrivateTrait;
+use Carbon\CarbonImmutable;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Queue;
 use Tests\TestCase;
-use App\Models\Like;
-use Carbon\CarbonImmutable;
-use App\Traits\PrivateTrait;
-use App\Services\LikeService;
-use App\Models\LikeAggregate;
-use Illuminate\Support\Facades\DB;
-use App\Jobs\AggregateDailyLikeJob;
-use App\Jobs\AggregateWeeklyLikeJob;
-use App\Jobs\AggregateMonthlyLikeJob;
-use App\Console\Commands\LikeAggregation;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LikeAggregationTest extends TestCase
 {
@@ -24,7 +24,9 @@ class LikeAggregationTest extends TestCase
     use RefreshDatabase;
 
     private $likeAggregateCommand;
+
     private $likeService;
+
     private $carbon;
 
     protected function setUp(): void
@@ -33,7 +35,7 @@ class LikeAggregationTest extends TestCase
         CarbonImmutable::setTestNow('2022-01-01 00:00:01');
 
         $this->likeService = new LikeService(new Like(), new LikeAggregate());
-        $this->carbon = CarbonImmutable::now();
+        $this->carbon      = CarbonImmutable::now();
 
         $this->likeAggregateCommand = new LikeAggregation($this->likeService);
     }
@@ -52,7 +54,7 @@ class LikeAggregationTest extends TestCase
         $this->likeAggregateCommand->handle();
 
         Queue::assertPushed(AggregateDailyLikeJob::class, function ($job) {
-            return $this->likeService === $this->getPrivateProperty($job, 'likeService')
+            return $this->likeService                === $this->getPrivateProperty($job, 'likeService')
                 && $this->carbon->toDateTimeString() === $this->getPrivateProperty($job, 'startAt')->toDateTimeString();
         });
 

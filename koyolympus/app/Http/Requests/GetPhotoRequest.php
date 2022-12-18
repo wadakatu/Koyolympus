@@ -26,7 +26,7 @@ class GetPhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'genre' => 'integer'
+            'genre' => 'integer',
         ];
     }
 }

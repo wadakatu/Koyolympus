@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Commands;
 
+use App\Services\ReplaceUuid\BaseService;
 use DB;
 use Mockery;
 use Tests\TestCase;
-use App\Services\ReplaceUuid\BaseService;
 
 class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
 {
@@ -46,7 +46,6 @@ class ReplaceAllPhotoInfoToIncludeUuidTest extends TestCase
             ->expectsOutput('UUID置換処理開始')
             ->expectsOutput('UUID置換処理終了');
     }
-
 
     /**
      * 例外ありの場合、その例外をcatchできているかテスト

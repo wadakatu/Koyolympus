@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Controllers;
 
+use App\Http\Controllers\v1\LikeController;
+use App\Http\Requests\LikeRequest;
+use App\Models\Like;
 use DB;
+use Exception;
 use Log;
 use Mockery;
-use Exception;
 use Tests\TestCase;
-use App\Models\Like;
-use App\Http\Requests\LikeRequest;
-use App\Http\Controllers\v1\LikeController;
 
 class LikeControllerTest extends TestCase
 {
     private $likeController;
+
     private $like;
+
     private $request;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->like = Mockery::mock(Like::class);
-        $this->request = Mockery::mock(LikeRequest::class);
+        $this->like           = Mockery::mock(Like::class);
+        $this->request        = Mockery::mock(LikeRequest::class);
         $this->likeController = new LikeController($this->like);
     }
 
@@ -33,7 +35,7 @@ class LikeControllerTest extends TestCase
      */
     public function getLikeSum()
     {
-        $id = '1';
+        $id       = '1';
         $allLikes = 100;
 
         $this->request
@@ -82,11 +84,12 @@ class LikeControllerTest extends TestCase
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function likePhotoWithException()
     {
-        $id = '3';
+        $id        = '3';
         $exception = new Exception('例外発生！');
 
         DB::shouldReceive('beginTransaction')->once();
@@ -113,6 +116,7 @@ class LikeControllerTest extends TestCase
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function unlikePhoto()
@@ -142,11 +146,12 @@ class LikeControllerTest extends TestCase
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function unlikePhotoWithException()
     {
-        $id = '5';
+        $id        = '5';
         $exception = new Exception('例外発生！');
 
         DB::shouldReceive('beginTransaction')->once();

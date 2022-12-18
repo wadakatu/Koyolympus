@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Jobs;
 
-use Error;
-use Mockery;
-use Exception;
-use Tests\TestCase;
-use Carbon\CarbonImmutable;
-use App\Services\LikeService;
 use App\Jobs\AggregateWeeklyLikeJob;
+use App\Services\LikeService;
+use Carbon\CarbonImmutable;
+use Error;
+use Exception;
+use Mockery;
+use Tests\TestCase;
 
 class AggregateWeeklyLikeJobTest extends TestCase
 {
     private $job;
 
     private $likeService;
+
     private $startAt;
 
     protected function setUp(): void
@@ -26,13 +27,14 @@ class AggregateWeeklyLikeJobTest extends TestCase
         CarbonImmutable::setTestNow('2021-01-01 00:00:05');
 
         $this->likeService = Mockery::mock(LikeService::class);
-        $this->startAt = CarbonImmutable::now();
+        $this->startAt     = CarbonImmutable::now();
 
         $this->job = new AggregateWeeklyLikeJob($this->likeService, $this->startAt);
     }
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function handle()

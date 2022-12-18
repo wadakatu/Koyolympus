@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Mails\ThrowableMail;
+use App\Models\Like;
+use App\Models\LikeAggregate;
+use App\Traits\LogTrait;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use DB;
 use Exception;
-use Carbon\Carbon;
-use App\Traits\LogTrait;
-use App\Models\Like;
-use Carbon\CarbonImmutable;
-use App\Mails\ThrowableMail;
-use App\Models\LikeAggregate;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Eloquent\Collection;
 
 class LikeService
 {
@@ -37,15 +36,14 @@ class LikeService
 
     public function __construct(Like $like, LikeAggregate $likeAggregate)
     {
-        $this->like = $like;
+        $this->like          = $like;
         $this->likeAggregate = $likeAggregate;
     }
-
 
     /**
      * コマンド実行日をプロパティにセット
      *
-     * @param CarbonImmutable $carbon
+     * @param  CarbonImmutable  $carbon
      * @return void
      */
     public function setCommandStartAt(CarbonImmutable $carbon): void
@@ -66,6 +64,7 @@ class LikeService
 
         if ($targetRecords->isEmpty()) {
             $this->outputLog('[いいね集計・日次]', '集計対象０件のためスキップ');
+
             return;
         }
 
@@ -95,15 +94,16 @@ class LikeService
      */
     public function aggregateLikeWeekly(): void
     {
-        if (!$this->startAt->isSunday()) {
+        if (! $this->startAt->isSunday()) {
             Carbon::setLocale('ja');
             $dayOfWeek = $this->startAt->isoFormat('dddd');
             $this->outputLog('[いいね集計・週次]', "本日 $dayOfWeek なのでスキップ");
+
             return;
         }
 
         $startOfLastWeek = Carbon::startOfLastWeek($this->startAt);
-        $endOfLastWeek = Carbon::endOfLastWeek($this->startAt);
+        $endOfLastWeek   = Carbon::endOfLastWeek($this->startAt);
 
         $targetRecords = $this->likeAggregate->getForAggregation($startOfLastWeek, $endOfLastWeek, $this->dailyType);
 
@@ -139,14 +139,15 @@ class LikeService
      */
     public function aggregateLikeMonthly(): void
     {
-        if (!Carbon::isFirstDayOfMonth($this->startAt)) {
+        if (! Carbon::isFirstDayOfMonth($this->startAt)) {
             $day = $this->startAt->day;
             $this->outputLog('[いいね集計・月次]', "本日 $day 日なのでスキップ");
+
             return;
         }
 
         $startOfLastMonth = Carbon::startOfLastMonth($this->startAt);
-        $endOfLastMonth = Carbon::endOfLastMonth($this->startAt);
+        $endOfLastMonth   = Carbon::endOfLastMonth($this->startAt);
 
         $this->outputLog('[いいね集計・月次]', '月次いいね集計 START');
 
@@ -186,9 +187,9 @@ class LikeService
     /**
      * 週毎のいいね数を登録
      *
-     * @param array $records
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
+     * @param  array  $records
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
      * @return void
      */
     public function registerForWeeklyAggregation(
@@ -231,9 +232,9 @@ class LikeService
     /**
      * 週毎のいいね数を更新
      *
-     * @param \Illuminate\Support\Collection<int, LikeAggregate> $records
-     * @param CarbonImmutable $startAt
-     * @param CarbonImmutable $endAt
+     * @param  \Illuminate\Support\Collection<int, LikeAggregate>  $records
+     * @param  CarbonImmutable  $startAt
+     * @param  CarbonImmutable  $endAt
      * @return void
      */
     public function updateForWeeklyAggregation(
@@ -280,8 +281,8 @@ class LikeService
     /**
      * エラー・例外発生時にメールを送信
      *
-     * @param string $subject
-     * @param string $message
+     * @param  string  $subject
+     * @param  string  $message
      * @return void
      */
     public function sendThrowableMail(
@@ -291,7 +292,7 @@ class LikeService
         $params = [
             'subject' => $subject,
             'message' => $message,
-            'startAt' => Carbon::now()->toDateTimeString()
+            'startAt' => Carbon::now()->toDateTimeString(),
         ];
 
         Mail::to(config('const.MAIL'))->send(new ThrowableMail($params));

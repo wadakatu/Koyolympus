@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Mails;
 
-use Tests\TestCase;
 use App\Mails\ThrowableMail;
+use Tests\TestCase;
 
 class ThrowableMailTest extends TestCase
 {
     private ThrowableMail $mail;
+
     private array $params;
 
     protected function setUp(): void

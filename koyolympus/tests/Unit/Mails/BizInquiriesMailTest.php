@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Mails;
 
-use Tests\TestCase;
 use App\Mails\BizInquiriesMail;
+use Tests\TestCase;
 
 class BizInquiriesMailTest extends TestCase
 {
     private BizInquiriesMail $mail;
+
     private array $params;
 
     protected function setUp(): void

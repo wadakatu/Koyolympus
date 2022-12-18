@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use Log;
-use Lang;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Lang;
+use Log;
 
 class LikeRequest extends FormRequest
 {
@@ -36,7 +36,7 @@ class LikeRequest extends FormRequest
     /**
      * バリデーション失敗時の処理
      *
-     * @param Validator $validator
+     * @param  Validator  $validator
      * @return void
      */
     protected function failedValidation(Validator $validator)

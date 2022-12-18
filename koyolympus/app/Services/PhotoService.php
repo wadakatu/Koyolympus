@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Storage;
-use Exception;
 use App\Models\Like;
 use App\Models\Photo;
-use Illuminate\Support\Carbon;
-use PHPStan\Type\CallableType;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Collection;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Storage;
 
 class PhotoService
 {
@@ -23,12 +22,13 @@ class PhotoService
     public function __construct(Photo $photo, Like $like)
     {
         $this->photo = $photo;
-        $this->like = $like;
+        $this->like  = $like;
     }
 
     /**
      * DBから写真のパスを全て取得
-     * @param string|null $genre
+     *
+     * @param  string|null  $genre
      * @return LengthAwarePaginator<Photo>
      */
     public function getAllPhoto(?string $genre): LengthAwarePaginator
@@ -38,6 +38,7 @@ class PhotoService
 
     /**
      * DBから写真のパスをランダムで全て取得
+     *
      * @return Collection<int, Photo>
      */
     public function getAllPhotoRandomly(): Collection
@@ -48,8 +49,8 @@ class PhotoService
     /**
      * 写真情報をデータベースにアップロード
      *
-     * @param string $fileName
-     * @param int $genre
+     * @param  string  $fileName
+     * @param  int  $genre
      * @return string
      */
     public function uploadPhotoDataToDB(string $fileName, int $genre): string
@@ -63,9 +64,10 @@ class PhotoService
 
     /**
      * 写真をS3バケットにアップロード
-     * @param UploadedFile $file
-     * @param string $uniqueFileName
-     * @param int $genre
+     *
+     * @param  UploadedFile  $file
+     * @param  string  $uniqueFileName
+     * @param  int  $genre
      */
     public function uploadPhotoToS3(UploadedFile $file, string $uniqueFileName, int $genre): void
     {
@@ -79,8 +81,9 @@ class PhotoService
 
     /**
      * S3から写真のデータを削除
-     * @param string $fileName
-     * @param int $genre
+     *
+     * @param  string  $fileName
+     * @param  int  $genre
      */
     public function deletePhotoFromS3(string $fileName, int $genre): void
     {
@@ -92,7 +95,9 @@ class PhotoService
 
     /**
      * DBから写真レコードを削除
-     * @param string $id
+     *
+     * @param  string  $id
+     *
      * @throws Exception
      */
     public function deletePhotoFromDB(string $id): void
@@ -104,7 +109,9 @@ class PhotoService
 
     /**
      * DB内に重複している写真があれば、DBとS3から削除
+     *
      * @return Collection<int, Photo>
+     *
      * @throws Exception
      */
     public function deleteMultiplePhotosIfDuplicate(): Collection
@@ -124,7 +131,9 @@ class PhotoService
 
     /**
      * 写真一覧から重複している写真データを探索（複数写真が対象）
+     *
      * @return Collection<int, Photo>
+     *
      * @throws Exception
      */
     public function searchMultipleDuplicatePhotos(): Collection
@@ -140,10 +149,10 @@ class PhotoService
          * @var Photo $photo
          */
         foreach ($photoList as $key => $photo) {
-            $fileName = explode('.', $photo->file_name)[1];
+            $fileName                   = explode('.', $photo->file_name)[1];
             $photoNameList[$fileName][] = [
-                'index' => $key,
-                'id' => $photo->id,
+                'index'      => $key,
+                'id'         => $photo->id,
                 'created_at' => is_null($photo->created_at)
                     ? Carbon::now()->timestamp
                     : $photo->created_at->timestamp,
@@ -155,7 +164,7 @@ class PhotoService
             if (count($photoInfoArray) === 1) {
                 unset($photoList[$photoInfoArray[0]['index']]);
             } else {
-                $createdAtArr = array_column($photoInfoArray, "created_at");
+                $createdAtArr = array_column($photoInfoArray, 'created_at');
                 //Unixタイムスタンプを基に写真配列を降順に並び替える
                 array_multisort(
                     $createdAtArr,
@@ -179,15 +188,16 @@ class PhotoService
     /**
      * 重複した写真をDBとS3から削除する
      *
-     * @param string $fileName
+     * @param  string  $fileName
      * @return array
+     *
      * @throws Exception
      */
     public function deletePhotoIfDuplicate(string $fileName): array
     {
         //入力されたファイル名と一致する重複レコードを取得
         $duplicatePhotoFiles = $this->searchDuplicatePhoto($this->photo->getAllPhotoOrderByCreatedAtDesc(), $fileName);
-        $fileName = null;
+        $fileName            = null;
 
         //重複レコードをDBとS3から削除
         foreach ($duplicatePhotoFiles as $duplicateFile) {
@@ -203,9 +213,10 @@ class PhotoService
     /**
      * 重複する写真を検索（１つの写真が対象）
      *
-     * @param Collection<int, Photo> $fileList
-     * @param string $fileName
+     * @param  Collection<int, Photo>  $fileList
+     * @param  string  $fileName
      * @return Collection<int, Photo>
+     *
      * @throws Exception
      */
     public function searchDuplicatePhoto(Collection $fileList, string $fileName): Collection

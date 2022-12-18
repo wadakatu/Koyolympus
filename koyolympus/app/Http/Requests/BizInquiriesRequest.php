@@ -28,8 +28,8 @@ class BizInquiriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:20',
-            'email' => 'required|email|max:255',
+            'name'    => 'required|string|max:20',
+            'email'   => 'required|email|max:255',
             'opinion' => 'required|string|max:1000',
         ];
     }
@@ -37,14 +37,14 @@ class BizInquiriesRequest extends FormRequest
     /**
      * バリデーション失敗時の処理
      *
-     * @param Validator $validator
+     * @param  Validator  $validator
      * @return void
      */
     protected function failedValidation(Validator $validator)
     {
-        $response['status'] = 400;
+        $response['status']     = 400;
         $response['statusText'] = 'Failed validation.';
-        $response['errors'] = $validator->errors();
+        $response['errors']     = $validator->errors();
         throw new HttpResponseException(response()->json($response, 400));
     }
 }

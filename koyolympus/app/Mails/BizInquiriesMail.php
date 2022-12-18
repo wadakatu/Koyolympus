@@ -18,7 +18,7 @@ class BizInquiriesMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param array $params
+     * @param  array  $params
      */
     public function __construct(array $params)
     {

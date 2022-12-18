@@ -31,11 +31,6 @@ class AggregateWeeklyLikeJobTest extends TestCase
         $this->job = new AggregateWeeklyLikeJob($this->likeService, $this->startAt);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      * @throws Exception

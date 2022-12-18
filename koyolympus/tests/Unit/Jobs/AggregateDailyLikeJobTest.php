@@ -31,11 +31,6 @@ class AggregateDailyLikeJobTest extends TestCase
         $this->job = new AggregateDailyLikeJob($this->likeService, $this->startAt);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * @test
      * @throws Exception
@@ -43,12 +38,12 @@ class AggregateDailyLikeJobTest extends TestCase
     public function handle()
     {
         $this->likeService
-            ->shouldReceive('setCommandStartAt')
+            ->expects('setCommandStartAt')
             ->once()
             ->with($this->startAt);
 
         $this->likeService
-            ->shouldReceive('aggregateLikeDaily')
+            ->expects('aggregateLikeDaily')
             ->once();
 
         $this->job->handle();
@@ -62,12 +57,12 @@ class AggregateDailyLikeJobTest extends TestCase
         $throwable = new Exception('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
+            ->expects('outputThrowableLog')
             ->once()
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendThrowableMail')
+            ->expects('sendThrowableMail')
             ->once()
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',
@@ -85,12 +80,12 @@ class AggregateDailyLikeJobTest extends TestCase
         $throwable = new Error('例外です！');
 
         $this->likeService
-            ->shouldReceive('outputThrowableLog')
+            ->expects('outputThrowableLog')
             ->once()
             ->with('[いいね集計・日次]', $throwable->getMessage());
 
         $this->likeService
-            ->shouldReceive('sendthrowableMail')
+            ->expects('sendThrowableMail')
             ->once()
             ->with(
                 '[Koyolympus/日次いいね集計] 例外発生のお知らせ',

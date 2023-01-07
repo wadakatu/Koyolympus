@@ -164,34 +164,28 @@ jobs:
           working_directory: koyolympus
           command: node_modules/jest/bin/jest.js
 
-  test_deploy:
-    executor:
-      name: ubuntu
-    steps:
-      - aws-cli/assume-role-with-web-identity:
-        role-arn: ${AWS_ROLE_ARN}
-      - run: aws sts get-caller-identity
-
   deploy:
     executor:
       name: ubuntu
     steps:
       - aws-cli/assume-role-with-web-identity:
-        role-arn: ${AWS_ROLE_ARN}
-      - run:
-          name: revoke-security-group
-          command: |
-            MY_IP=`curl -f -s ifconfig.me`
-            aws ec2 revoke-security-group-ingress --group-id
-            ${DEPLOY_SG_ID} --protocol tcp --port 22 --cidr ${MY_IP}/32 0 1 2 3 15
+          role-arn: ${AWS_ROLE_ARN}
       - run:
           name: authorize-security-group
           command: |
-            aws ec2 authorize-security-group-ingress --group-id ${DEPLOY_SG_ID}--protocol tcp --port 22 --cidr ${MY_IP}/32
+            MY_IP=`curl -f -s ifconfig.me`
+            aws ec2 authorize-security-group-ingress --region ${AWS_REGION} \
+            --group-id ${DEPLOY_SG_ID} --protocol tcp --port 22 --cidr ${MY_IP}/32
       - run:
           name: deploy
           command: |
             ssh ${USER_NAME}@${HOST_NAME} 'sh -s' < .circleci/remote.sh ${CIRCLE_TAG}
+      - run:
+          name: revoke-security-group
+          command: |
+            MY_IP=`curl -f -s ifconfig.me`
+            aws ec2 revoke-security-group-ingress --region ${AWS_REGION} \
+            --group-id  ${DEPLOY_SG_ID} --protocol tcp --port 22 --cidr ${MY_IP}/32
 
 workflows:
   version: 2
@@ -243,8 +237,6 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
-      - test_deploy:
-          context: koyolympus
       - deploy:
           context: koyolympus
           requires:

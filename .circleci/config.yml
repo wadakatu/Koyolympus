@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@3.1.4
+
 executors:
   php:
     docker:
@@ -165,13 +168,24 @@ jobs:
     executor:
       name: ubuntu
     steps:
-      - checkout
+      - aws-cli/assume-role-with-web-identity:
+          role-arn: ${AWS_ROLE_ARN}
       - run:
-          name: install aws cli
-          command: sudo pip install awscli
+          name: authorize-security-group
+          command: |
+            MY_IP=`curl -f -s ifconfig.me`
+            aws ec2 authorize-security-group-ingress --region ${AWS_REGION} \
+            --group-id ${DEPLOY_SG_ID} --protocol tcp --port 22 --cidr ${MY_IP}/32
       - run:
-          name: run shell script for deploying
-          command: .circleci/deploy.sh ${CIRCLE_TAG}
+          name: deploy
+          command: |
+            ssh ${USER_NAME}@${HOST_NAME} 'sh -s' < .circleci/remote.sh ${CIRCLE_TAG}
+      - run:
+          name: revoke-security-group
+          command: |
+            MY_IP=`curl -f -s ifconfig.me`
+            aws ec2 revoke-security-group-ingress --region ${AWS_REGION} \
+            --group-id  ${DEPLOY_SG_ID} --protocol tcp --port 22 --cidr ${MY_IP}/32
 
 workflows:
   version: 2
